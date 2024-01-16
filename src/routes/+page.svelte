@@ -1,19 +1,19 @@
 <script lang="ts">
-  import Icon from "@iconify/svelte";
-  import Plot from "svelte-plotly.js";
+ import Icon from "@iconify/svelte";
 
-  let today = new Date();
+ let today = new Date();
 
-  let year = today.getFullYear();
-  let month = today.getMonth();
-  let date = today.getDate();
+ let year = today.getFullYear();
+ let month = today.getMonth();
+ let date = today.getDate();
 
-  let slots = [];
+ let slots = [];
 
   for (let i = 0; i < 30; i++) {
     let day = new Date(year, month, date + i);
     if ([1, 3, 5].includes(day.getDay())) {
       let item = {
+          id: i,
         day: day,
         month: day.toLocaleDateString(
           "fr",
@@ -35,11 +35,11 @@
         status: "ok"
       };
 
-      let cancelled_day = new Date(2024, 0, 24);
+      let cancelled_day = new Date(2024, 0, 19);
       if (day.toDateString() == cancelled_day.toDateString()) {
         item.status = "cancelled";
       }
-      if (day.toDateString() == new Date(2024, 1, 7).toDateString()) {
+      if (day.toDateString() == new Date(2024, 0, 22).toDateString()) {
         item.status = "no_referrent";
       }
       slots.push(item);
@@ -52,49 +52,18 @@
       {name: 'pierre', range: [new Date(2024, 0, 14, 19, 30), new Date(2024, 0, 14, 22, 0)]},
       {name: 'josiane', range: [new Date(2024, 0, 14, 19, 0), new Date(2024, 0, 14, 22, 0)]}]
 
-  let traces = [];
-  let i = 0;
-  for (let ref of refs) {
-    traces.push({
-      x: ref.range,
-      y: [i, i],
-      type: "scatter"
-    });
-    i += 1;
-  }
+ for(let ref of refs){
+   ref['presence'] = []
+   let day = new Date(ref.range[0])
+   day.setHours(18, 0)
+   console.log(day)
+   for(let i=0;i<16; i++){
+     let newDateObj = new Date(day.getTime() + i*15*60000);
+     ref['presence'].push((newDateObj >= ref.range[0]) && (newDateObj < ref.range[1]))
+   }
+ }
 
-  let data = traces;
-  let layout = {
-    barmode: "stack",
-    xaxis: {
-      "tickformat": "%H:%M",
-      showgrid: false,
-      range: [new Date(2024, 0, 14, 18), new Date(2024, 0, 14, 22)]
-    },
-    yaxis: {
-        showgrid: false,
-        tick0: 0,
-        dtick: 0,
-    },
-    showlegend: false,
-    paper_bgcolor: "rgba(0,0,0,0)",
-    plot_bgcolor: "rgba(0,0,0,0)",
-    font: {
-      //             family: 'Courier New, monospace',
-      size: 18,
-      color: "white"
-    },
-      autosize: true,
-      margin: {
-      b: 50,
-      t: 0,
-      pad: 4
-    },
-    width: 500,
-  };
- let config = {responsive: true}
 </script>
-
 <!-- Responsive Container (recommended) -->
 <div class="table-container">
   <!-- Native Table Element -->
@@ -102,15 +71,14 @@
     <thead>
     <tr>
       <th>Date</th>
-      <th>Creneau</th>
       <th>Plot</th>
     </tr>
     </thead>
     <tbody>
-    {#each slots as row, i}
+    {#each slots as row,i (row.id)}
       {#if (i === 0) || (slots[i - 1].day.getMonth() != slots[i].day.getMonth()) }
         <tr>
-          <td colspan="3">
+          <td colspan="2">
               <div class="h2">
               {row.month}
               </div>
@@ -119,18 +87,19 @@
       {/if}
       <tr>
           <td>
-              <div class="h3">{row.date}</div>
+              <div >{row.date}</div>
           </td>
         {#if row.status == 'no_referrent'}
           <td class="no_referrent">
-              <div class="h3">
+              <div >
             Pas de referent pour le moment
               </div>
           </td>
         {:else if row.status == 'cancelled'}
           <td class="cancelled">
-            <div class="h3"
+            <div
               style="display: flex"
+                class="h3"
             >
               <Icon icon="mdi:alert" />
               <div style="margin-left: 10px">Session annulee</div>
@@ -138,18 +107,27 @@
           </td>
         {:else}
           <td>
-              <div class="h3">
-                  {row.range}
-              </div>
+              <table >
+                  <thead>
+                      <td>Nom</td>
+                      <td colspan="4">18:00</td>
+                      <td colspan="4">19:00</td>
+                      <td colspan="4">20:00</td>
+                      <td colspan="4">21:00</td>
+                  </thead>
+
+                  <tbody>
+                  {#each refs as ref (ref.name)}
+                      <tr>
+                          <td>{ref.name}</td>
+                        {#each ref.presence as present}
+                          <td class:present={present}></td>
+                          {/each}
+                      </tr>
+                    {/each}
+                  </tbody>
           </td>
         {/if}
-
-        <td>
-            <div>
-                <Plot data={data} layout={layout} config={config} />
-          </div>
-        </td>
-
       </tr>
     {/each}
     </tbody>
@@ -158,6 +136,12 @@
 </div>
 
 <style>
+    thead{
+        /*text-align: left;*/
+    }
+    .present{
+        background-color: green;
+    }
     .no_referrent {
         color: orange;
     }

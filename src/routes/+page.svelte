@@ -1,5 +1,6 @@
 <script lang="ts">
     import Icon from "@iconify/svelte";
+    import {edition_enabled} from "$lib/stores"
 
     let today = new Date();
 
@@ -9,7 +10,6 @@
 
     let current_user = "benoit";
 
-    let edition_enabled = true;
 
     let is_updating = false;
     let new_start_point = 0;
@@ -76,7 +76,7 @@
     }
 
  function start_update(i: number, ref: string) {
-     if (!edition_enabled || ref.name != current_user) {
+     if (!$edition_enabled || ref.name != current_user) {
          return
      }
 
@@ -93,7 +93,7 @@
  }
 
     function on_hover(i: number, ref: string) {
-        if (!is_updating || !edition_enabled || ref.name != current_user) {
+        if (!is_updating || !$edition_enabled || ref.name != current_user) {
             return
         }
 
@@ -112,6 +112,7 @@
     }
 
 </script>
+
 
 <div>
     {#each slots as row,i (row.id)}
@@ -163,7 +164,7 @@
                                 <tr class="py-0 divide-x divide-y">
                                     <td>
                                         {ref.name}
-                                        {#if edition_enabled && ref.name == current_user}
+                                        {#if $edition_enabled && ref.name == current_user}
                                             <button class="button" on:click={delete_line}>
                                                 <Icon icon="ph:trash" style="color: red"
                                                 />

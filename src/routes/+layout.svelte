@@ -42,11 +42,24 @@
 			<svelte:fragment slot="trail">
           <LightSwitch />
 
-          {#if $user && $edition_enabled}
-                  <button class="btn border" on:click={()=>{$edition_enabled=false}}>
-                      {$user}: sortir du mode edition
-                  </button>
-              {:else}
+          {#if $user}
+              <p>
+              {$user}
+              </p>
+
+              <button class="btn border bg-tertiary-900" on:click={()=>{$edition_enabled=!$edition_enabled}}>
+                  {#if $edition_enabled}
+                      Sortir du mode edition
+                  {:else}
+                      Entrer en mode edition
+                  {/if}
+              </button>
+
+              <button class="btn border" on:click={()=>{$user=''}}>
+                      Se deconnecter
+              </button>
+
+          {:else}
               <button class="btn border" on:click={()=>modalStore.trigger({
 	                                                type: 'component',
 	                                                component: 'modalLogin',
@@ -55,10 +68,7 @@
 						      Espace staff
 					    </button>
           {/if}
-
-
       </svelte:fragment>
-
 
 		</AppBar>
 	</svelte:fragment>

@@ -1,28 +1,32 @@
 <script lang="ts">
-    import type {SvelteComponent} from 'svelte';
-    import {ListBox, ListBoxItem} from '@skeletonlabs/skeleton';
-    // Stores
-    import {user, edition_enabled} from '$lib/stores'
-    import {getModalStore} from '@skeletonlabs/skeleton';
+ import type {SvelteComponent} from 'svelte';
+ import {ListBox, ListBoxItem} from '@skeletonlabs/skeleton';
+ // Stores
+ import {user, edition_enabled, refs} from '$lib/stores'
+ import {getModalStore} from '@skeletonlabs/skeleton';
 
-    // Props
-    /** Exposes parent props to this component. */
-    export let parent: SvelteComponent;
+ // Props
+ /** Exposes parent props to this component. */
+ export let parent: SvelteComponent;
 
-    const modalStore = getModalStore();
+ const modalStore = getModalStore();
  let showPassword = false;
 
  let current_user = $user;
 
-    // Form Data
-    const formData = {
-        password: '',
-    };
+ let failed_login_text = ''
 
-    // We've created a custom submit function to pass the response and close the modal.
-    function onFormSubmit(): void {
-        if ($modalStore[0].response) $modalStore[0].response(formData);
+ let password = ''
 
+ // We've created a custom submit function to pass the response and close the modal.
+     function onFormSubmit(): void {
+         //         if ($modalStore[0].response) $modalStore[0].response(formData);
+         if(password != 'robert'){
+             failed_login_text = 'Mot de passe incorrect'
+            return
+        }
+
+         failed_login_text = ''
         $user = current_user
         $edition_enabled = true
         modalStore.close();
@@ -33,7 +37,6 @@
     const cHeader = 'text-2xl font-bold';
     const cForm = 'p-2 space-y-4 rounded-container-token';
 
-    let users = ['benoit', 'josiane', 'dom']
     let new_user = ''
 </script>
 
@@ -53,7 +56,7 @@
 
                 <section class="p-4">
                     <ListBox class="border p-4 rounded-container-token">
-                        {#each users as item}
+                        {#each Object.keys(refs) as item}
                             <ListBoxItem bind:group={current_user} name={item} value={item}>{item}</ListBoxItem>
                         {/each}
                     </ListBox>
@@ -71,7 +74,10 @@
 
                 <section class="p-4">
                 <input
-                    class="input" type="text"
+                    id="new-user"
+                    class="input"
+                    type="text"
+                    name="new-user"
                     bind:value={new_user}
                            autocomplete="off"
                     placeholder="Valentine S."/>
@@ -82,8 +88,9 @@
                 <p>Mot de passe</p>
                 <input id="current-password"
                        class="input"
-                       type={showPassword?"text":"password"}
+                       type="password"
                        name="password"
+                       bind:value={password}
                        autocomplete="current-password"
                        placeholder="Mot de passe" required />
             </label>
@@ -98,6 +105,9 @@
             <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Annuler</button>
             <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}
             type="submit" form="login-form">Passer en mode edition</button>
+            {#if failed_login_text}
+                <div class="text-red" >{failed_login_text}</div>
+                {/if}
         </footer>
     </div>
 {/if}

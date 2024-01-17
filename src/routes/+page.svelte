@@ -1,14 +1,12 @@
 <script lang="ts">
     import Icon from "@iconify/svelte";
-    import {edition_enabled} from "$lib/stores"
+    import {edition_enabled, refs, user} from "$lib/stores"
 
     let today = new Date();
 
     let year = today.getFullYear();
     let month = today.getMonth();
     let date = today.getDate();
-
-    let current_user = "benoit";
 
 
     let is_updating = false;
@@ -55,11 +53,6 @@
     }
 
 
-    let refs = {
-        benoit: {name: "benoit", range: [new Date(2024, 0, 14, 18, 30), new Date(2024, 0, 14, 21)]},
-        pierre: {name: "pierre", range: [new Date(2024, 0, 14, 19, 30), new Date(2024, 0, 14, 22, 0)]},
-        josiane: {name: "josiane", range: [new Date(2024, 0, 14, 19, 0), new Date(2024, 0, 14, 22, 0)]}
-    };
 
     for (let ref of Object.values(refs)) {
         ref["presence"] = [];
@@ -76,38 +69,38 @@
     }
 
  function start_update(i: number, ref: string) {
-     if (!$edition_enabled || ref.name != current_user) {
+     if (!$edition_enabled || ref.name != $user) {
          return
      }
 
      if (!is_updating) {
-         refs[current_user].presence = Array(16).fill(false);
-         refs[current_user].presence[i] = 'ok';
+         refs[$user].presence = Array(16).fill(false);
+         refs[$user].presence[i] = 'ok';
          new_start_point = i;
      } else {
          for (let pos = Math.min(new_start_point, i); pos <= Math.max(new_start_point, i); pos++) {
-             refs[current_user].presence[pos] = 'ok';
+             refs[$user].presence[pos] = 'ok';
          }
      }
      is_updating = !is_updating;
  }
 
     function on_hover(i: number, ref: string) {
-        if (!is_updating || !$edition_enabled || ref.name != current_user) {
+        if (!is_updating || !$edition_enabled || ref.name != $user) {
             return
         }
 
-        refs[current_user].presence = Array(16).fill('')
+        refs[$user].presence = Array(16).fill('')
 
         for (let pos = Math.min(new_start_point, i); pos <= Math.max(new_start_point, i); pos++) {
-            refs[current_user].presence[pos] = 'temp';
+            refs[$user].presence[pos] = 'temp';
         }
-        refs[current_user].presence[new_start_point] = 'ok';
+        refs[$user].presence[new_start_point] = 'ok';
     }
 
     function delete_line() {
         console.log('do you come here?')
-        refs[current_user].presence = Array(16).fill('')
+        refs[$user].presence = Array(16).fill('')
         console.log(refs)
     }
 
@@ -141,30 +134,33 @@
 
                         <tbody>
 
-                        {#if row.status == 'no_referrent'}
+                        {#if row.status == 'cancelled'}
                             <tr>
-                                <td class="no_referrent" colspan="16">
-                                    <div class="h3">
-                                        Pas de referent·e pour le moment
-                                    </div>
-                                </td>
-                            </tr>
-                        {:else if row.status == 'cancelled'}
-                            <tr>
-                                <td class="cancelled" colspan="16">
+                                <td class="cancelled" colspan="100%">
                                     <div
-                                            class="h3"
+                                        class="h3"
                                     >
                                         Session annulee
                                     </div>
                                 </td>
                             </tr>
                         {:else}
+                            {#if row.status == 'no_referrent'}
+                            <tr>
+                                <td class="no_referrent" colspan="100%">
+                                    <div class="h3">
+                                        Pas de referent·e pour le moment
+                                    </div>
+                                </td>
+                            </tr>
+                            {/if}
+
                             {#each Object.values(refs) as ref}
+                                {#if row.status == 'ok' || ($edition_enabled && ref.name == $user)}
                                 <tr class="py-0 divide-x divide-y">
                                     <td>
                                         {ref.name}
-                                        {#if $edition_enabled && ref.name == current_user}
+                                        {#if $edition_enabled && ref.name == $user}
                                             <button class="button" on:click={delete_line}>
                                                 <Icon icon="ph:trash" style="color: red"
                                                 />
@@ -179,6 +175,7 @@
                                                           on:click={()=>start_update(i, ref)}></td>
                                     {/each}
                                 </tr>
+                                {/if}
                             {/each}
                         {/if}
                         </tbody>

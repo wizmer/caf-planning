@@ -11,10 +11,11 @@
  import { storePopup } from '@skeletonlabs/skeleton';
  import '../app.postcss';
  import { goto } from '$app/navigation';
- import {edition_enabled} from "$lib/stores"
  import { Modal, getModalStore } from '@skeletonlabs/skeleton';
  import type { ModalSettings, ModalComponent, ModalStore } from '@skeletonlabs/skeleton';
  import ModalLogin from './ModalLogin.svelte';
+ import {user} from '$lib/stores'
+ import {edition_enabled} from "$lib/stores"
 
  initializeStores();
  storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
@@ -41,12 +42,21 @@
 			<svelte:fragment slot="trail">
           <LightSwitch />
 
-          <button class="btn border" on:click={()=>modalStore.trigger({
-	type: 'component',
-	component: 'modalLogin',
-})}>
-						  Espace staff
-					</button>
+          {#if $user && $edition_enabled}
+                  <button class="btn border" on:click={()=>{$edition_enabled=false}}>
+                      {$user}: sortir du mode edition
+                  </button>
+              {:else}
+              <button class="btn border" on:click={()=>modalStore.trigger({
+	                                                type: 'component',
+	                                                component: 'modalLogin',
+                                                  })}>
+
+						      Espace staff
+					    </button>
+          {/if}
+
+
       </svelte:fragment>
 
 

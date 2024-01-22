@@ -2,8 +2,9 @@
  import Icon from "@iconify/svelte";
  import {user} from "$lib/stores"
  import SveltyPicker from 'svelty-picker'
- import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
+ import { ListBox, LightSwitch, ListBoxItem } from '@skeletonlabs/skeleton';
 
+ import { dev } from '$app/environment';
  let calendar = {};
 
 
@@ -24,8 +25,8 @@
  }
  timeslots.push(`22:00`)
 
-     for (let i = 0; i < 30; i++) {
-         let day = new Date(year, month, date + i);
+ for (let i = 0; i < 30; i++) {
+     let day = new Date(year, month, date + i);
      if ([1, 3, 5].includes(day.getDay())) {
          let item = {
              id: i,
@@ -98,14 +99,14 @@
                         {:else }
                         Mon creneau:
                         De:
-                        <select bind:value={row.refs[$user].start}>
+                        <select class="border rounded" bind:value={row.refs[$user].start}>
                             {#each timeslots.slice(0, -1) as time}
                                 <option value={time}>{time}</option>
                             {/each}
                         </select>
 
                         A:
-                        <select bind:value={row.refs[$user].end}>
+                        <select class="border rounded" bind:value={row.refs[$user].end}>
                             {#each timeslots.slice(1) as time}
                                 {#if !row.refs[$user].start || row.refs[$user].start < time}
                                 <option value={time}>{time}</option>

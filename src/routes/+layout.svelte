@@ -15,7 +15,6 @@
  import type { ModalSettings, ModalComponent, ModalStore } from '@skeletonlabs/skeleton';
  import ModalLogin from './ModalLogin.svelte';
  import {user} from '$lib/stores'
- import {edition_enabled} from "$lib/stores"
 
  initializeStores();
  storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
@@ -46,14 +45,6 @@
               <p>
               {$user}
               </p>
-
-              <button class="btn border bg-tertiary-900" on:click={()=>{$edition_enabled=!$edition_enabled}}>
-                  {#if $edition_enabled}
-                      Sortir du mode edition
-                  {:else}
-                      Entrer en mode edition
-                  {/if}
-              </button>
 
               <button class="btn border" on:click={()=>{$user=''}}>
                       Se deconnecter

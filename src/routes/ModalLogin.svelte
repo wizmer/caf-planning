@@ -2,7 +2,7 @@
  import type {SvelteComponent} from 'svelte';
  import {ListBox, ListBoxItem} from '@skeletonlabs/skeleton';
  // Stores
- import {user, edition_enabled, refs} from '$lib/stores'
+ import {user} from '$lib/stores'
  import {getModalStore} from '@skeletonlabs/skeleton';
 
  // Props
@@ -23,21 +23,22 @@
          //         if ($modalStore[0].response) $modalStore[0].response(formData);
          if(password != 'robert'){
              failed_login_text = 'Mot de passe incorrect'
-            return
-        }
+             return
+         }
 
          failed_login_text = ''
-        $user = current_user
-        $edition_enabled = true
-        modalStore.close();
-    }
+         $user = current_user
+         modalStore.close();
+     }
 
-    // Base Classes
-    const cBase = 'card p-4 w-modal shadow-xl space-y-4';
-    const cHeader = 'text-2xl font-bold';
-    const cForm = 'p-2 space-y-4 rounded-container-token';
+ // Base Classes
+ const cBase = 'card p-4 w-modal shadow-xl space-y-4';
+ const cHeader = 'text-2xl font-bold';
+ const cForm = 'p-2 space-y-4 rounded-container-token';
 
-    let new_user = ''
+ let new_user = ''
+ let refs = ['benoit', 'pierre', 'josiane']
+
 </script>
 
 <!-- @component This example creates a simple form modal. -->
@@ -56,7 +57,7 @@
 
                 <section class="p-4">
                     <ListBox class="border p-4 rounded-container-token">
-                        {#each Object.keys(refs) as item}
+                        {#each refs as item}
                             <ListBoxItem bind:group={current_user} name={item} value={item}>{item}</ListBoxItem>
                         {/each}
                     </ListBox>
@@ -104,7 +105,7 @@
         <footer class="modal-footer {parent.regionFooter}">
             <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Annuler</button>
             <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}
-            type="submit" form="login-form">Passer en mode edition</button>
+            type="submit" form="login-form">Login</button>
             {#if failed_login_text}
                 <div class="text-red" >{failed_login_text}</div>
                 {/if}

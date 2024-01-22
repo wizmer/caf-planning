@@ -40,6 +40,7 @@
 		"prettier-plugin-svelte": "^2.10.1",
 		"svelte": "^4.2.8",
 		"svelte-check": "^3.6.2",
+		"svelty-picker": "^5.2.1",
 		"tailwindcss": "^3.4.0",
 		"tslib": "^2.4.1",
 		"typescript": "^5.3.3",
@@ -47,5 +48,11 @@
 		"vite-plugin-tailwind-purgecss": "^0.2.0",
 		"vitest": "^1.0.0"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@popperjs/core": "^2.11.8",
+		"flowbite": "^2.2.1",
+		"flowbite-svelte": "^0.44.22",
+		"tailwind-merge": "^2.2.0"
+	}
 }

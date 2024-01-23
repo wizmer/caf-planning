@@ -53,6 +53,7 @@
 		"@popperjs/core": "^2.11.8",
 		"flowbite": "^2.2.1",
 		"flowbite-svelte": "^0.44.22",
+		"postgresql-client": "^2.10.5",
 		"tailwind-merge": "^2.2.0"
 	}
 }

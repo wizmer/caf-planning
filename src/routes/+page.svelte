@@ -4,9 +4,10 @@
  import SveltyPicker from 'svelty-picker'
  import { ListBox, LightSwitch, ListBoxItem } from '@skeletonlabs/skeleton';
 
+ import type { PageData } from './$types';
  import { dev } from '$app/environment';
  let calendar = {};
-
+ export let data: PageData;
 
  let today = new Date();
 
@@ -46,25 +47,16 @@
                      month: "long"
                  }
              ),
-
-             // date: day.getDay(),
-             range: "18-20",
              status: "ok",
              adding_slot: false,
-             refs: {
-                 benoit: {name: "benoit", range: [new Date(2024, month, date+i, 18, 30), new Date(2024, month, date+i, 21)],
-                         start: '', end:''},
-                 pierre: {name: "pierre", range: [new Date(2024, month, date+i, 19, 30), new Date(2024, month, date+i, 22, 0)],
-                         start: '18:00', end: '19:30'},
-                 josiane: {name: "josiane", range: [new Date(2024, month, date+i, 19, 0), new Date(2024, month, date+i, 22, 0)],
-                          start: '19:30', end:'21:00'}
-             }
          };
 
          let cancelled_day = new Date(2024, 0, 19);
          if (day.toDateString() == cancelled_day.toDateString()) {
              item.status = "cancelled";
          }
+
+         item.refs = data.slots[day] || {}
          slots.push(item);
      }
  }

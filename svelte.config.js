@@ -1,6 +1,6 @@
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import dotenv from 'dotenv';
-import adapter from '@sveltejs/adapter-static';
+import adapter from '@sveltejs/adapter-node';
 dotenv.config();
 
 /** @type {import('@sveltejs/kit').Config} */

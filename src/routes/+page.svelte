@@ -3,22 +3,19 @@
  import {user} from "$lib/stores"
  import SveltyPicker from 'svelty-picker'
  import { ListBox, LightSwitch, ListBoxItem } from '@skeletonlabs/skeleton';
+ import { DateTime } from 'luxon'
 
  import type { PageData } from './$types';
  import { dev } from '$app/environment';
  let calendar = {};
  export let data: PageData;
 
- let today = new Date();
-
- let year = today.getFullYear();
- let month = today.getMonth();
- let date = today.getDate();
  let is_updating = false;
  let new_start_point = 0;
 
- let slots = [];
+ let slots = {};
 
+ let test = 4
  let timeslots = []
  for(let i=0;i<4; i++){
      timeslots.push(`${18+i}:00`)
@@ -26,38 +23,47 @@
  }
  timeslots.push(`22:00`)
 
+ let today = DateTime.now().setZone('Europe/Paris').setLocale('fr').startOf('day')
+
  for (let i = 0; i < 30; i++) {
-     let day = new Date(year, month, date + i);
-     if ([1, 3, 5].includes(day.getDay())) {
+     let day = today.plus({days: i})
+
+     if ([1, 3, 5].includes(day.weekday)) {
          let item = {
              id: i,
              day: day,
-             month: day.toLocaleDateString(
-                 "fr",
-                 {
-                     year: "numeric",
-                     month: "long"
-                 }
-             ),
-             date: day.toLocaleDateString(
-                 "fr",
-                 {
-                     weekday: "long",
-                     day: "numeric",
-                     month: "long"
-                 }
-             ),
+             month: day.month,
+             date: day.toLocaleString({ weekday: 'long', day: 'numeric', month: 'long' }),
              status: "ok",
              adding_slot: false,
+             refs: (data.slots[day] || {})
          };
 
-         let cancelled_day = new Date(2024, 0, 19);
-         if (day.toDateString() == cancelled_day.toDateString()) {
-             item.status = "cancelled";
-         }
+         // let cancelled_day = new Date(2024, 0, 19);
+         // if (day.toDateString() == cancelled_day.toDateString()) {
+         //     item.status = "cancelled";
+         // }
 
-         item.refs = data.slots[day] || {}
-         slots.push(item);
+         if($user && !($user in item.refs)){
+             item.refs[$user] = {name: $user, start: '', end: ''}
+         }
+         slots[day] = item
+     }
+ }
+
+
+
+
+ function update_timeslot(ref, day) {
+     if((!ref.start && !ref.end) || (ref.start && ref.end)){
+         console.log(day)
+		     fetch('/api/slot', {
+			       method: 'POST',
+             body: JSON.stringify({day: day, ref: ref}),
+			       headers: {
+				         'content-type': 'application/json',
+			       },
+		     });
      }
  }
 
@@ -65,10 +71,10 @@
 
 
 <div>
-    {#each slots as row,i (row.id)}
-        {#if (i === 0) || (slots[i - 1].day.getMonth() != slots[i].day.getMonth()) }
+    {#each Object.values(slots) as row,i (row.id)}
+        {#if (i === 0) || (Object.values(slots)[i - 1].month != row.month) }
             <div class="h2 p-4">
-                {row.month}
+                {row.day.toFormat('MMMM')}
             </div>
         {/if}
 
@@ -80,44 +86,44 @@
 
             <section class="p-4">
                 {#if row.status != 'cancelled'}
-                    <div>
+                    <div >
 
                         {#if $user}
-                        {#if !row.refs[$user].start && !row.refs[$user].end && !row.adding_slot}
-                            <button type="button" class="btn bg-primary-500"
-                            on:click={()=>{row.adding_slot=true}}>
-                                Ajouter mon creneau
-                            </button>
-                        {:else }
-                        Mon creneau:
-                        De:
-                        <select class="border rounded" bind:value={row.refs[$user].start}>
-                            {#each timeslots.slice(0, -1) as time}
-                                <option value={time}>{time}</option>
-                            {/each}
-                        </select>
+                            {#if !row.refs[$user]?.start && !row.refs[$user]?.end && !row.adding_slot}
+                                <button type="button" class="btn bg-primary-500"
+                                        on:click={()=>{row.adding_slot=true}}>
+                                    Ajouter mon creneau
+                                </button>
+                            {:else }
+                                    Mon creneau:
 
-                        A:
-                        <select class="border rounded" bind:value={row.refs[$user].end}>
-                            {#each timeslots.slice(1) as time}
-                                {#if !row.refs[$user].start || row.refs[$user].start < time}
-                                <option value={time}>{time}</option>
-                                {/if}
-                            {/each}
-                        </select>
+                                <!-- <label for="select-start-{i}">De: </label> -->
+                                        <select id="select-start-{i}" class="border rounded" bind:value={row.refs[$user].start} on:change={()=>update_timeslot(row.refs[$user], row.day)}>
+                                            {#each timeslots.slice(0, -1) as time}
+                                                <option value={time}>{time}</option>
+                                            {/each}
+                                        </select>
 
-                        <button type="button" class="btn text-white bg-red-400 hover:bg-red-500"
-                                on:click={()=>{
+                                        <!-- <label for="select-end-{i}" class="p-4">A: </label> -->
+                                        <select id="select-end-{i}" class="border rounded" bind:value={row.refs[$user].end} on:change={()=>update_timeslot(row.refs[$user], row.day)}>
+                                            {#each timeslots.slice(1) as time}
+                                                {#if !row.refs[$user].start || row.refs[$user].start < time}
+                                                    <option value={time}>{time}</option>
+                                                {/if}
+                                            {/each}
+                                        </select>
 
-                                         row.refs[$user].start = '';
-                                         row.refs[$user].end = '';
-                                         row.adding_slot = false
-                                         }}
-                        >
-                            Enlever mon creneau
-                        </button>
-
-                        {/if}
+                                    <button type="button" class="btn text-white bg-red-400 hover:bg-red-500"
+                                            on:click={()=>{
+                                                     row.refs[$user].start = '';
+                                                     row.refs[$user].end = '';
+                                                     row.adding_slot = false;
+                                                     update_timeslot(row.refs[$user], row.day);
+                                                     }}
+                                    >
+                                        Enlever mon creneau
+                                    </button>
+                            {/if}
 
                         {/if}
                     </div>
@@ -146,7 +152,7 @@
                                     </td>
                                 </tr>
                             {:else}
-                                {#if slots[i].refs.length == 0}
+                                {#if Object.values(row.refs).filter((ref)=>(ref.start && ref.end)).length == 0}
                                     <tr>
                                         <td class="no_referrent" colspan="100%">
                                             <div class="h3">
@@ -156,8 +162,8 @@
                                     </tr>
                                 {/if}
 
-                                {#each Object.values(slots[i].refs) as ref}
-                                    {#if row.status == 'ok'}
+                                {#each Object.values(row.refs) as ref}
+                                    {#if row.status == 'ok' && ref.start && ref.end}
                                         <tr class="py-0 divide-x divide-y">
                                             <td>
                                                 {ref.name}

@@ -21,10 +21,11 @@
  initializeStores();
  storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
+ export let data;
 
  const modalStore = getModalStore();
  const modalRegistry: Record<string, ModalComponent> = {
-	   modalLogin: { ref: ModalLogin },
+	   modalLogin: { ref: ModalLogin, 	props: { referents: data.referents }, },
  };
 
 </script>
@@ -42,18 +43,9 @@
                 <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Planning</span>
             </a>
 
-            {#if dev}
-                <LightSwitch />
-            {/if}
-
-
                 {#if $user}
-                    <p>
-                        {$user}
-                    </p>
-
                     <button class="btn border" on:click={()=>{$user=''}}>
-                        Se deconnecter
+                        {$user}: Se deconnecter
                     </button>
 
                 {:else}

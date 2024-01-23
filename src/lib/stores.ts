@@ -5,6 +5,6 @@ import { browser } from "$app/environment"
 export const user = writable(browser && localStorage.getItem("user"))
 user.subscribe(value => {
     if(browser){
-    localStorage.setItem("user", value);
+        localStorage.setItem("user", value);
     }
 });

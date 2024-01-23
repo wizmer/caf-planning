@@ -37,7 +37,8 @@
  const cForm = 'p-2 space-y-4 rounded-container-token';
 
  let new_user = ''
- let refs = ['benoit', 'pierre', 'josiane']
+
+ export let referents;
 
 </script>
 
@@ -56,9 +57,9 @@
                 </header>
 
                 <section class="p-4">
-                    <ListBox class="border p-4 rounded-container-token">
-                        {#each refs as item}
-                            <ListBoxItem bind:group={current_user} name={item} value={item}>{item}</ListBoxItem>
+                    <ListBox class="border rounded-container-token">
+                        {#each referents as item}
+                            <ListBoxItem bind:group={current_user} name={item[0]} value={item[1]}>{item[1]}</ListBoxItem>
                         {/each}
                     </ListBox>
                 </section>

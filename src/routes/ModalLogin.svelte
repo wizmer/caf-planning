@@ -18,6 +18,11 @@
 
  let password = ''
 
+ let radio = '1'
+
+ $: login_enabled = (radio === '1') ? (current_user !== '') : (new_user !== '')
+ $: connection_string = "Se connecter" + (login_enabled ? " en tant que: " + (radio=='1' ? current_user : new_user) : "")
+
  // We've created a custom submit function to pass the response and close the modal.
      function onFormSubmit(): void {
          //         if ($modalStore[0].response) $modalStore[0].response(formData);
@@ -51,7 +56,7 @@
             <div class="card">
                 <header class="card-header">
 	                  <label class="flex items-center space-x-2">
-		                    <input class="radio" type="radio" checked name="radio-direct" value="1" />
+		                    <input bind:group={radio} class="radio" type="radio" checked name="radio-direct" value="1" />
                         <p>Utilisateur existant</p>
 	                  </label>
                 </header>
@@ -59,7 +64,8 @@
                 <section class="p-4">
                     <ListBox class="border rounded-container-token">
                         {#each referents as item}
-                            <ListBoxItem bind:group={current_user} name={item[0]} value={item[1]}>{item[1]}</ListBoxItem>
+                            <ListBoxItem on:click={()=>radio='1'}
+                                 bind:group={current_user} name={item[0]} value={item[1]}>{item[1]}</ListBoxItem>
                         {/each}
                     </ListBox>
                 </section>
@@ -69,20 +75,25 @@
 
                 <header class="card-header">
                 <label class="flex items-center space-x-2">
-		                <input class="radio" type="radio" name="radio-direct" value="2" />
+		                <input bind:group={radio} class="radio" type="radio" name="radio-direct" value="2" />
 		                <p>Nouvel utilisateur</p>
 	              </label>
                 </header>
 
                 <section class="p-4">
-                <input
-                    id="new-user"
-                    class="input"
-                    type="text"
-                    name="new-user"
-                    bind:value={new_user}
-                           autocomplete="off"
-                    placeholder="Valentine S."/>
+                    <input
+                        id="new-user"
+                        class="input"
+                        type="text"
+                        name="new-user"
+                        on:click={()=>{
+                            radio='2';
+                                 current_user='';
+                            }
+                            }
+                            bind:value={new_user}
+                        autocomplete="off"
+                        placeholder="Valentine S."/>
                 </section>
             </div>
 
@@ -105,8 +116,8 @@
 
         <footer class="modal-footer {parent.regionFooter}">
             <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Annuler</button>
-            <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}
-            type="submit" form="login-form">Login</button>
+            <button class="btn {parent.buttonPositive}" on:click={onFormSubmit} disabled={!login_enabled}
+            type="submit" form="login-form">{connection_string}</button>
             {#if failed_login_text}
                 <div class="text-red" >{failed_login_text}</div>
                 {/if}

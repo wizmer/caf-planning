@@ -5,6 +5,7 @@ import { DateTime } from 'luxon'
 
 
 export async function load(){
+    console.log('reloading')
     // Create connection
     const connection = new Connection(DB_STRING);
     // Connect to database server
@@ -29,7 +30,6 @@ export async function load(){
     }
 
     const result2 = await connection.query(' select * from referents');
-    console.log(slots)
 
     // Disconnect from server
     await connection.close();

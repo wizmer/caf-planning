@@ -1,9 +1,14 @@
 <script lang="ts">
  import Icon from "@iconify/svelte";
+ import {invalidateAll} from '$app/navigation'
  import {user} from "$lib/stores"
  import SveltyPicker from 'svelty-picker'
- import { ListBox, LightSwitch, ListBoxItem } from '@skeletonlabs/skeleton';
+ import { getToastStore, ListBox, LightSwitch, ListBoxItem } from '@skeletonlabs/skeleton';
  import { DateTime } from 'luxon'
+
+
+ let toastStore = getToastStore();
+
 
  import type { PageData } from './$types';
  import { dev } from '$app/environment';
@@ -56,14 +61,25 @@
 
  function update_timeslot(ref, day) {
      if((!ref.start && !ref.end) || (ref.start && ref.end)){
-         console.log(day)
 		     fetch('/api/slot', {
 			       method: 'POST',
              body: JSON.stringify({day: day, ref: ref}),
 			       headers: {
 				         'content-type': 'application/json',
 			       },
-		     });
+		     }).then((response) => {
+             if (!response.ok) {
+			           toastStore.trigger({
+				             message: "Une erreur est survenue. La page va être rechargée.",
+				             classes: 'bg-error-500',
+                     timeout: 10000,
+			           });
+
+                 setTimeout(function() {
+                     window.location.reload(true);
+                 }, 4000);
+             }
+         });
      }
  }
 

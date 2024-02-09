@@ -1,24 +1,15 @@
 <script lang="ts">
-	import Icon from '@iconify/svelte';
-	import { invalidateAll } from '$app/navigation';
 	import { user } from '$lib/stores';
-	import SveltyPicker from 'svelty-picker';
-	import { getToastStore, ListBox, LightSwitch, ListBoxItem } from '@skeletonlabs/skeleton';
+	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { DateTime } from 'luxon';
 
 	let toastStore = getToastStore();
 
 	import type { PageData } from './$types';
-	import { dev } from '$app/environment';
-	let calendar = {};
 	export let data: PageData;
-
-	let is_updating = false;
-	let new_start_point = 0;
 
 	let slots = {};
 
-	let test = 4;
 	let timeslots = [];
 	for (let i = 0; i < 4; i++) {
 		timeslots.push(`${18 + i}:00`);
@@ -190,7 +181,7 @@
 												{ref.name}
 											</td>
 
-											{#each timeslots.slice(0, -1) as time, i}
+											{#each timeslots.slice(0, -1) as time}
 												<td class:present={ref.start <= time && ref.end > time} />
 											{/each}
 										</tr>

@@ -1,10 +1,8 @@
-import type { PageLoad } from './$types';
 import { Connection } from 'postgresql-client';
 import { DB_STRING } from '$env/static/private';
 import { DateTime } from 'luxon';
 
 export async function load() {
-	console.log('reloading');
 	// Create connection
 	const connection = new Connection(DB_STRING);
 	// Connect to database server
@@ -16,14 +14,14 @@ export async function load() {
 	);
 
 	const rows: any[] = result.rows;
-	let slots = {};
-	for (let row of rows) {
-		let day = DateTime.fromISO(row[2].toISOString()).setZone('Europe/Paris');
+	const slots = {};
+	for (const row of rows) {
+		const day = DateTime.fromISO(row[2].toISOString()).setZone('Europe/Paris');
 
 		if (!(day in slots)) {
 			slots[day] = {};
 		}
-		let user = row[6];
+		const user = row[6];
 		slots[day][user] = {
 			name: user,
 			start: row[3].toTimeString().slice(0, 5),

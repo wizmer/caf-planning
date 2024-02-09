@@ -1,19 +1,13 @@
 <script lang="ts">
 	// Most of your app wide CSS should be put in this file
-	import { dev, browser } from '$app/environment';
 	import '../app.postcss';
-	import { page } from '$app/stores';
-	import { base } from '$app/paths';
-	import { AppShell, AppBar, Toast, initializeStores } from '@skeletonlabs/skeleton';
-	import Icon from '@iconify/svelte';
+	import { AppShell, Toast, initializeStores } from '@skeletonlabs/skeleton';
 	import icon from '$lib/assets/big-icon.png';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import '../app.postcss';
-	import { goto } from '$app/navigation';
 	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
-	import type { ModalSettings, ModalComponent, ModalStore } from '@skeletonlabs/skeleton';
-	import { LightSwitch } from '@skeletonlabs/skeleton';
+	import type { ModalComponent } from '@skeletonlabs/skeleton';
 
 	import ModalLogin from './ModalLogin.svelte';
 	import { user } from '$lib/stores';

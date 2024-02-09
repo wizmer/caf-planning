@@ -3,6 +3,7 @@
 	import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
 	// Stores
 	import { last_user, user } from '$lib/stores';
+	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	// Props
@@ -10,7 +11,6 @@
 	export let parent: SvelteComponent;
 
 	const modalStore = getModalStore();
-	let showPassword = false;
 
 	let current_user = $last_user;
 
@@ -19,6 +19,7 @@
 	let password = '';
 
 	let radio = 'existing';
+	let toastStore = getToastStore();
 
 	$: login_enabled = radio === 'existing' ? current_user !== '' : new_user !== '';
 	$: connection_string =

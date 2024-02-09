@@ -47,10 +47,15 @@
 			//     item.status = "cancelled";
 			// }
 
-			if ($user && !($user in item.refs)) {
-				item.refs[$user] = { name: $user, start: '', end: '' };
-			}
 			slots[day] = item;
+		}
+	}
+
+	$: {
+		for (let slot of Object.values(slots)) {
+			if ($user && !($user in slot.refs)) {
+				slot.refs[$user] = { name: $user, start: '', end: '' };
+			}
 		}
 	}
 
@@ -137,10 +142,12 @@
 									type="button"
 									class="btn text-white bg-red-400 hover:bg-red-500"
 									on:click={() => {
-										row.refs[$user].start = '';
-										row.refs[$user].end = '';
+										if ($user in row.refs) {
+											row.refs[$user].start = '';
+											row.refs[$user].end = '';
+											update_timeslot(row.refs[$user], row.day);
+										}
 										row.adding_slot = false;
-										update_timeslot(row.refs[$user], row.day);
 									}}
 								>
 									Enlever mon creneau

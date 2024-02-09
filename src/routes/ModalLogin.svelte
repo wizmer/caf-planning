@@ -34,8 +34,33 @@
 		}
 
 		failed_login_text = '';
-		$user = current_user;
+		if (radio === 'new') {
+			create_ref(new_user);
+		}
+		$user = radio === 'existing' ? current_user : new_user;
 		modalStore.close();
+	}
+
+	function create_ref(ref) {
+		fetch('/api/referent', {
+			method: 'POST',
+			body: JSON.stringify({ name: ref }),
+			headers: {
+				'content-type': 'application/json'
+			}
+		}).then((response) => {
+			if (!response.ok) {
+				toastStore.trigger({
+					message: 'Une erreur est survenue. La page va être rechargée.',
+					classes: 'bg-error-500',
+					timeout: 10000
+				});
+
+				setTimeout(function () {
+					window.location.reload(true);
+				}, 4000);
+			}
+		});
 	}
 
 	// Base Classes

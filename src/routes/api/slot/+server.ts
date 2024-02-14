@@ -41,3 +41,16 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	return new Response('error');
 };
+
+export const DELETE: RequestHandler = async ({ request }) => {
+	const { ref_id } = await request.json();
+
+	const connection = new Connection(DB_STRING);
+	await connection.connect();
+	console.log('ref_id');
+	console.log(ref_id);
+	await connection.query(`delete from slots where ref_id = ${ref_id}`);
+	await connection.query(`delete from referents where id = ${ref_id}`);
+	await connection.close();
+	return new Response('ok');
+};

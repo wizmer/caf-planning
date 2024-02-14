@@ -15,11 +15,19 @@ CREATE TABLE slots(
   );
 
 
-insert into referents values
-  (0, 'pierre'),
-  (1, 'julie'),
-  (2, 'antony'),
-  (3, 'miriam');
+INSERT INTO referents(name) VALUES
+('Christophe'),
+('Jerome'),
+('Dom S.'),
+('Florian'),
+('Dominique'),
+('Benoît C'),
+('Noémie'),
+('Nicolas'),
+('Alain'),
+('Jonathan'),
+('Timothée'),
+('Pierre S.'),
+('Josiane');
 
-
-insert into slots values (0, 0, '2024-01-24', '18:00', '20:30')
+INSERT INTO slots VALUES (DEFAULT, 1, '2024-01-24', '18:00', '20:30');

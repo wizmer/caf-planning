@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
+export const admin = writable(false);
 export const user = writable(browser ? localStorage.getItem('user') ?? '' : '');
 export const last_user = writable(browser ? localStorage.getItem('last-user') ?? '' : '');
 user.subscribe((value) => {
@@ -13,3 +14,5 @@ user.subscribe((value) => {
 		}
 	}
 });
+
+export const REFERENT = 'referent.e';

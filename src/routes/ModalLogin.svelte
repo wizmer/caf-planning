@@ -6,13 +6,17 @@
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
-	// Props
-	/** Exposes parent props to this component. */
+
+	let new_user = '';
+
+	export let referents;
+
 	export let parent: SvelteComponent;
 
 	const modalStore = getModalStore();
 
-	let current_user = $last_user;
+	// Do not preselect $last_user if it no longer exists
+	let current_user = referents.map((item) => item[1]).includes($last_user) ? $last_user : '';
 
 	let failed_login_text = '';
 
@@ -68,10 +72,6 @@
 	const cBase = 'card p-4 w-modal shadow-xl space-y-4';
 	const cHeader = 'text-2xl font-bold';
 	const cForm = 'p-2 space-y-4 rounded-container-token';
-
-	let new_user = '';
-
-	export let referents;
 </script>
 
 <!-- @component This example creates a simple form modal. -->
@@ -92,8 +92,8 @@
 				<ListBox class="border rounded-container-token">
 					{#each referents as item}
 						<ListBoxItem bind:group={current_user} name={item[0]} value={item[1]}
-							>{item[1]}</ListBoxItem
-						>
+							>{item[1]}
+						</ListBoxItem>
 					{/each}
 				</ListBox>
 			{:else}

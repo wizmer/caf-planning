@@ -17,10 +17,10 @@
 	}
 	timeslots.push(`22:00`);
 
-	let today = DateTime.now().setZone('Europe/Paris').setLocale('fr').startOf('day');
+	let today = DateTime.now().setZone('utc+0', { keepLocalTime: true }).startOf('day');
 
 	for (let i = 0; i < 30; i++) {
-		let day = today.plus({ days: i });
+		let day = today.plus({ days: i })
 
 		if ([1, 3, 5].includes(day.weekday)) {
 			let item = {
@@ -30,7 +30,7 @@
 				date: day.toLocaleString({ weekday: 'long', day: 'numeric', month: 'long' }),
 				status: 'ok',
 				adding_slot: false,
-				refs: data.slots[day] || {}
+				refs: data.slots[`${day}`] || {}
 			};
 
 			// let cancelled_day = new Date(2024, 0, 19);

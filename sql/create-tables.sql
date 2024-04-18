@@ -1,3 +1,4 @@
+\connect caf;
 DROP TABLE if exists slots;
 DROP TABLE if exists referents;
 
@@ -13,6 +14,10 @@ CREATE TABLE slots(
   start_at TIME WITHOUT TIME ZONE NOT NULL,
   end_at TIME WITHOUT TIME ZONE NOT NULL
   );
+
+GRANT ALL ON referents to bcoste;
+GRANT ALL ON slots to bcoste;
+GRANT USAGE ON SEQUENCE slots_id_seq TO bcoste;
 
 
 INSERT INTO referents(name) VALUES

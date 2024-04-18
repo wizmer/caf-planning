@@ -16,8 +16,7 @@ export async function load() {
 	const rows: any[] = result.rows;
 	const slots = {};
 	for (const row of rows) {
-		const day = DateTime.fromISO(row[2].toISOString()).setZone('Europe/Paris');
-
+		const day = DateTime.fromISO(row[2].toISOString()).toUTC();
 		if (!(day in slots)) {
 			slots[day] = {};
 		}

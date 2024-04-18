@@ -6,6 +6,7 @@
 	let toastStore = getToastStore();
 
 	import type { PageData } from './$types';
+	import { base } from '$app/paths';
 	export let data: PageData;
 
 	let slots = {};
@@ -52,7 +53,7 @@
 
 	function update_timeslot(ref, day) {
 		if ((!ref.start && !ref.end) || (ref.start && ref.end)) {
-			fetch('/api/slot', {
+			fetch(`${base}/api/slot`, {
 				method: 'POST',
 				body: JSON.stringify({ day: day, ref: ref }),
 				headers: {

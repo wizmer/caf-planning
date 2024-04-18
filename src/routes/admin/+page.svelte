@@ -10,6 +10,7 @@
 	let password;
 
 	import { dev } from '$app/environment';
+	import { base } from '$app/paths';
 
 	if (dev) {
 		// to make development easier
@@ -47,7 +48,7 @@
 		for (let user of referents_to_remove) {
 			for (let i = 0; i < referents.length; i++) {
 				if (referents[i][1] === user) {
-					fetch('/api/slot', {
+					fetch(`${base}/api/slot`, {
 						method: 'DELETE',
 						body: JSON.stringify({ ref_id: referents[i][0] }),
 						headers: {

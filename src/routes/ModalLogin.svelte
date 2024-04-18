@@ -6,6 +6,7 @@
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+	import { base } from '$app/paths';
 
 	let new_user = '';
 
@@ -47,7 +48,7 @@
 	}
 
 	function create_ref(ref) {
-		fetch('/api/referent', {
+		fetch(`${base}/api/referent`, {
 			method: 'POST',
 			body: JSON.stringify({ name: ref }),
 			headers: {

@@ -1,0 +1,13 @@
+{
+    "apps" : [
+{
+        "name"        : "caf",
+        "script"      : "./build/index.js --port 3002",
+        "watch"       : true,
+        "env": {
+            "PORT": "3001"
+        }
+    }
+    ]
+}
+

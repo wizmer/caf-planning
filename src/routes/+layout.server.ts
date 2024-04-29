@@ -2,6 +2,7 @@ import { Connection } from 'postgresql-client';
 import { DB_STRING } from '$env/static/private';
 import { DateTime } from 'luxon';
 
+
 export async function load() {
 	// Create connection
 	const connection = new Connection(DB_STRING);
@@ -28,9 +29,11 @@ export async function load() {
 		};
 	}
 
-	const result2 = await connection.query(' select * from referents');
+	const referents = await connection.query('select * from referents');
+	const events = await connection.query('select * from events');
 
-	// Disconnect from server
+	const events_groups = Object.fromEntries(events.rows.map((row) => [row[1], row]))
+
 	await connection.close();
-	return { slots, referents: result2.rows };
+	return { slots, events: events_groups, referents: referents.rows };
 }

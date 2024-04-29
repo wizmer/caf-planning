@@ -11,12 +11,19 @@
 
 	import { dev } from '$app/environment';
 	import { base } from '$app/paths';
+	import { create_slots } from '../utils';
 
 	if (dev) {
 		// to make development easier
-		//      $admin = true;
+		$admin = true;
 	}
 
+	const slots = create_slots();
+	let events = data.events;
+	let type = 'cancelled';
+	let date = Object.values(slots)[0].day.toISO().substring(0, 10);
+
+	const refs = {};
 	let referents_to_remove = [];
 	const modalStore = getModalStore();
 	const toastStore = getToastStore();
@@ -42,6 +49,36 @@
 			}
 		};
 		modalStore.trigger(modal);
+	}
+
+	function delete_event(day) {
+		for (const key of Object.keys(events)) {
+			if (events[key][1] == day) {
+				delete events[key];
+			}
+		}
+		fetch(`${base}/api/event`, {
+			method: 'DELETE',
+			body: JSON.stringify({ day }),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+		events = events;
+	}
+
+	function add_event(day, type) {
+		fetch(`${base}/api/event`, {
+			method: 'POST',
+			body: JSON.stringify({ day, type }),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+
+		console.log('events', events);
+		events[day] = [-1, day, type];
+		events = events;
 	}
 
 	function delete_users() {
@@ -89,6 +126,40 @@
 		<button class="btn bg-primary-500" on:click={enter_admin}>Enter admin mode</button>
 	</div>
 {:else}
+	<div>
+		<div class="h2">Evenements speciaux</div>
+		{#each Object.values(events) as event}
+			<div class="flex flex-row items-center gap-4 border">
+				<div>
+					{event[1]}
+				</div>
+				<div>
+					{event[2]}
+				</div>
+				<button class="btn bg-secondary-500" on:click={() => delete_event(event[1])}
+					>Supprimer l'evenement</button
+				>
+			</div>
+		{/each}
+		<div class="flex flex-row">
+			<select id="type" bind:value={type}>
+				<option value="cancelled">Annulation</option>
+				<option value="new-slot">Nouveau creneau</option>
+			</select>
+
+			<select id="date" bind:value={date}>
+				{#each Object.values(slots) as slot}
+					<option value={slot.day.toISO().substring(0, 10)}
+						>{slot.day.toISO().substring(0, 10)}</option
+					>
+				{/each}
+			</select>
+			<button class="btn bg-primary-500" on:click={() => add_event(date, type)}
+				>Appliquer l'evenement</button
+			>
+		</div>
+	</div>
+
 	<label for="list">Suppression des {REFERENT}s</label>
 	<ListBox name="list" class="border rounded-container-token" multiple>
 		{#each referents as item}

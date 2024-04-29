@@ -1,4 +1,5 @@
 \connect caf;
+DROP TABLE if exists events;
 DROP TABLE if exists slots;
 DROP TABLE if exists referents;
 
@@ -15,8 +16,15 @@ CREATE TABLE slots(
   end_at TIME WITHOUT TIME ZONE NOT NULL
   );
 
+CREATE TABLE events(
+  id SERIAL PRIMARY KEY,
+  day VARCHAR(10) NOT NULL UNIQUE,
+  type VARCHAR NOT NULL
+);
+
 GRANT ALL ON referents to bcoste;
 GRANT ALL ON slots to bcoste;
+GRANT ALL ON events to bcoste;
 GRANT USAGE ON SEQUENCE slots_id_seq TO bcoste;
 
 
@@ -36,3 +44,4 @@ INSERT INTO referents(name) VALUES
 ('Josiane');
 
 INSERT INTO slots VALUES (DEFAULT, 1, '2024-01-24', '18:00', '20:30');
+INSERT INTO events VALUES (DEFAULT, '2024-05-01', 'cancelled');

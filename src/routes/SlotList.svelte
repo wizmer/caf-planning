@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { user } from '$lib/stores';
-	import { DateTime } from 'luxon';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 
 	let toastStore = getToastStore();
@@ -19,7 +18,7 @@
 	let slots = create_slots();
 
 	Object.entries(slots).forEach(([date, slot]) => {
-		if (![1, 3, 5].includes(slot.day.weekday)) {
+		if (![1, 2, 5].includes(slot.day.weekday)) {
 			slot.status = 'non-planned';
 		}
 		const day = slot.day.toISO().substring(0, 10);

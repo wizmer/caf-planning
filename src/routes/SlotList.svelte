@@ -164,7 +164,7 @@
 									{/if}
 
 									{#each Object.values(row.refs) as ref}
-										{#if row.status == 'ok' && ref.start && ref.end}
+										{#if (['ok','new-slot'].includes(row.status) && ref.start && ref.end}
 											<tr class="py-0 divide-x divide-y">
 												<td>
 													{ref.name}

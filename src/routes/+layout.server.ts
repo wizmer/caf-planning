@@ -28,7 +28,7 @@ export async function load() {
 	}
 
 	const referents = await connection.query('select * from referents');
-	const events = await connection.query('select * from events');
+	const events = await connection.query('select * from events where date(day) >= now()');
 
 	const events_groups = Object.fromEntries(events.rows.map((row) => [row[1], row]));
 

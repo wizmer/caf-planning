@@ -28,7 +28,6 @@ export function create_slots() {
 		// }
 
 		slots[item.day] = item;
-		console.log('item', item);
 	}
 	return slots;
 }

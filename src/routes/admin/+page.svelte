@@ -75,7 +75,6 @@
 			}
 		});
 
-		console.log('events', events);
 		events[day] = [-1, day, type];
 		events = events;
 	}

@@ -12,13 +12,11 @@
 
 	const events = data.events;
 	const refs = data.slots;
-	console.log('refs', refs);
 
 	let slots = create_slots();
 
 	Object.entries(slots).forEach(([date, slot]) => {
 		const day = slot.day;
-		console.log('day', day);
 
 		if (day in events) {
 			slot.status = events[day][2];
@@ -33,7 +31,6 @@
 				slot.refs[$user] = { name: $user, start: '', end: '' };
 			}
 		}
-		console.log('slots', slots);
 	}
 
 	function update_timeslot(ref, day) {

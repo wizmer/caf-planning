@@ -9,7 +9,7 @@ export async function connectionContext(func: (connection: Connection) => Promis
 		// Connect to database server
 		await connection.connect();
 
-		return func(connection);
+		return await func(connection);
 	} catch (error) {
 		console.error(error);
 		throw error;

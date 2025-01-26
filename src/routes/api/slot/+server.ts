@@ -1,5 +1,5 @@
-import type { RequestHandler } from './$types';
 import { Connection } from 'postgresql-client';
+import type { RequestHandler } from './$types';
 
 import { DB_STRING } from '$env/static/private';
 
@@ -47,8 +47,6 @@ export const DELETE: RequestHandler = async ({ request }) => {
 
 	const connection = new Connection(DB_STRING);
 	await connection.connect();
-	console.log('ref_id');
-	console.log(ref_id);
 	await connection.query(`delete from slots where ref_id = ${ref_id}`);
 	await connection.query(`delete from referents where id = ${ref_id}`);
 	await connection.close();

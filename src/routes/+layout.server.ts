@@ -1,7 +1,5 @@
-import { Connection } from 'postgresql-client';
 import { DB_STRING } from '$env/static/private';
-import { DateTime } from 'luxon';
-
+import { Connection } from 'postgresql-client';
 
 export async function load() {
 	// Create connection
@@ -17,7 +15,7 @@ export async function load() {
 	const rows: any[] = result.rows;
 	const slots = {};
 	for (const row of rows) {
-		const day = DateTime.fromISO(row[2].toISOString()).toUTC();
+		const day = row[2];
 		if (!(day in slots)) {
 			slots[day] = {};
 		}
@@ -32,7 +30,7 @@ export async function load() {
 	const referents = await connection.query('select * from referents');
 	const events = await connection.query('select * from events');
 
-	const events_groups = Object.fromEntries(events.rows.map((row) => [row[1], row]))
+	const events_groups = Object.fromEntries(events.rows.map((row) => [row[1], row]));
 
 	await connection.close();
 	return { slots, events: events_groups, referents: referents.rows };

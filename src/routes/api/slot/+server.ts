@@ -1,5 +1,5 @@
-import type { RequestHandler } from './$types';
 import { Connection } from 'postgresql-client';
+import type { RequestHandler } from './$types';
 
 import { DB_STRING } from '$env/static/private';
 

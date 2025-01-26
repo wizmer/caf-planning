@@ -11,7 +11,7 @@ CREATE TABLE referents(
 CREATE TABLE slots(
   id SERIAL PRIMARY KEY,
   ref_id INTEGER REFERENCES referents (id),
-  day DATE NOT NULL,
+  day VARCHAR(10) NOT NULL,
   start_at TIME WITHOUT TIME ZONE NOT NULL,
   end_at TIME WITHOUT TIME ZONE NOT NULL
   );
@@ -43,5 +43,5 @@ INSERT INTO referents(name) VALUES
 ('Pierre S.'),
 ('Josiane');
 
-INSERT INTO slots VALUES (DEFAULT, 1, '2024-01-24', '18:00', '20:30');
+INSERT INTO slots VALUES (DEFAULT, 1, '2025-01-27', '18:00', '20:30');
 INSERT INTO events VALUES (DEFAULT, '2024-05-01', 'cancelled');

@@ -1,0 +1,20 @@
+services:
+  db:
+    container_name: caf-planning-db
+    image: postgres:17
+    environment:
+      POSTGRES_USER: bcoste
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: caf
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    tmpfs:
+      - /var/lib/postgresql/data
+    volumes:
+      - ./sql/create-tables.sql:/docker-entrypoint-initdb.d/init.sql

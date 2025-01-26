@@ -4,7 +4,7 @@
 
 	import { base } from '$app/paths';
 	import type { PageData } from './$types';
-	import { create_slots, timeslots } from './utils';
+	import { capitalize, create_slots, timeslots } from './utils';
 
 	export let data: PageData;
 
@@ -65,122 +65,121 @@
 	{#each Object.values(slots) as row, i (row.id)}
 		{#if i === 0 || Object.values(slots)[i - 1].month != row.month}
 			<div class="h2 p-4">
-				{row.day}
+				{capitalize(row.date.toLocaleString('fr-FR', { month: 'long', year: 'numeric' }))}
 			</div>
 		{/if}
 
-		{#if row.status != 'non-planned'}
-			<div class="card">
-				<header class="card-header">
-					<div class="h3">{row.date}</div>
-				</header>
+		<div class="card">
+			<header class="card-header">
+				<div class="h3">
+					{row.date.toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+				</div>
+			</header>
 
-				<section class="p-4">
-					{#if row.status != 'cancelled'}
-						{#if $user}
-							{#if !row.refs[$user]?.start && !row.refs[$user]?.end && !row.adding_slot}
-								<button
-									type="button"
-									class="btn bg-primary-500"
-									on:click={() => {
-										row.adding_slot = true;
-									}}
+			<section class="p-4">
+				{#if row.status != 'cancelled'}
+					{#if $user}
+						{#if !row.refs[$user]?.start && !row.refs[$user]?.end && !row.adding_slot}
+							<button
+								type="button"
+								class="btn bg-primary-500"
+								on:click={() => {
+									row.adding_slot = true;
+								}}
+							>
+								Ajouter mon creneau
+							</button>
+						{:else}
+							<div class="flex flex-row flex-wrap justify-center items-center gap-2 mb-4">
+								<label for="select-start-{i}">Mon créneau: </label>
+								<select
+									id="select-start-{i}"
+									class="border rounded"
+									bind:value={row.refs[$user].start}
+									on:change={() => update_timeslot(row.refs[$user], row.day)}
 								>
-									Ajouter mon creneau
-								</button>
-							{:else}
-								<div class="flex flex-row flex-wrap justify-center items-center gap-2 mb-4">
-									<label for="select-start-{i}">Mon créneau: </label>
-									<select
-										id="select-start-{i}"
-										class="border rounded"
-										bind:value={row.refs[$user].start}
-										on:change={() => update_timeslot(row.refs[$user], row.day)}
-									>
-										{#each timeslots.slice(0, -1) as time}
+									{#each timeslots.slice(0, -1) as time}
+										<option value={time}>{time}</option>
+									{/each}
+								</select>
+
+								<select
+									id="select-end-{i}"
+									class="border rounded"
+									bind:value={row.refs[$user].end}
+									on:change={() => update_timeslot(row.refs[$user], row.day)}
+								>
+									{#each timeslots.slice(1) as time}
+										{#if !row.refs[$user].start || row.refs[$user].start < time}
 											<option value={time}>{time}</option>
-										{/each}
-									</select>
-
-									<!-- <label for="select-end-{i}" class="p-4">A: </label> -->
-									<select
-										id="select-end-{i}"
-										class="border rounded"
-										bind:value={row.refs[$user].end}
-										on:change={() => update_timeslot(row.refs[$user], row.day)}
-									>
-										{#each timeslots.slice(1) as time}
-											{#if !row.refs[$user].start || row.refs[$user].start < time}
-												<option value={time}>{time}</option>
-											{/if}
-										{/each}
-									</select>
-
-									<button
-										type="button"
-										class="btn text-white bg-red-400 hover:bg-red-500"
-										on:click={() => {
-											if ($user in row.refs) {
-												row.refs[$user].start = '';
-												row.refs[$user].end = '';
-												update_timeslot(row.refs[$user], row.day);
-											}
-											row.adding_slot = false;
-										}}
-									>
-										Enlever mon creneau
-									</button>
-								</div>
-							{/if}
-						{/if}
-					{/if}
-
-					<div class="table-container">
-						<table class="table table-auto table-hover max-w-prose">
-							<thead class="divide-x divide-x-2">
-								<th>Nom</th>
-								<th colspan="2">18:00</th>
-								<th colspan="2">19:00</th>
-								<th colspan="2">20:00</th>
-								<th colspan="2">21:00</th>
-							</thead>
-
-							<tbody>
-								{#if row.status == 'cancelled'}
-									<tr>
-										<td class="cancelled" colspan="100%">
-											<div class="h3">Session annulee</div>
-										</td>
-									</tr>
-								{:else}
-									{#if Object.values(row.refs).filter((ref) => ref.start && ref.end).length == 0}
-										<tr>
-											<td class="no_referrent" colspan="100%">
-												<div class="h3">Pas de referent·e pour le moment</div>
-											</td>
-										</tr>
-									{/if}
-
-									{#each Object.values(row.refs) as ref}
-										{#if ['ok', 'new-slot'].includes(row.status) && ref.start && ref.end}
-											<tr class="py-0 divide-x divide-y">
-												<td>
-													{ref.name}
-												</td>
-
-												{#each timeslots.slice(0, -1) as time}
-													<td class:present={ref.start <= time && ref.end > time} />
-												{/each}
-											</tr>
 										{/if}
 									{/each}
+								</select>
+
+								<button
+									type="button"
+									class="btn text-white bg-red-400 hover:bg-red-500"
+									on:click={() => {
+										if ($user in row.refs) {
+											row.refs[$user].start = '';
+											row.refs[$user].end = '';
+											update_timeslot(row.refs[$user], row.day);
+										}
+										row.adding_slot = false;
+									}}
+								>
+									Enlever mon creneau
+								</button>
+							</div>
+						{/if}
+					{/if}
+				{/if}
+
+				<div class="table-container">
+					<table class="table table-auto table-hover max-w-prose">
+						<thead class="divide-x divide-x-2">
+							<th>Nom</th>
+							<th colspan="2">18:00</th>
+							<th colspan="2">19:00</th>
+							<th colspan="2">20:00</th>
+							<th colspan="2">21:00</th>
+						</thead>
+
+						<tbody>
+							{#if row.status == 'cancelled'}
+								<tr>
+									<td class="cancelled" colspan="100%">
+										<div class="h3">Session annulee</div>
+									</td>
+								</tr>
+							{:else}
+								{#if Object.values(row.refs).filter((ref) => ref.start && ref.end).length == 0}
+									<tr>
+										<td class="no_referrent" colspan="100%">
+											<div class="h3">Pas de referent·e pour le moment</div>
+										</td>
+									</tr>
 								{/if}
-							</tbody>
-						</table>
-					</div>
-				</section>
-			</div>
-		{/if}
+
+								{#each Object.values(row.refs) as ref}
+									{#if ['ok', 'new-slot'].includes(row.status) && ref.start && ref.end}
+										<tr class="py-0 divide-x divide-y">
+											<td>
+												{ref.name}
+											</td>
+
+											{#each timeslots.slice(0, -1) as time}
+												<td class:present={ref.start <= time && ref.end > time} />
+											{/each}
+										</tr>
+									{/if}
+								{/each}
+							{/if}
+						</tbody>
+					</table>
+				</div>
+			</section>
+		</div>
 	{/each}
 </div>
 

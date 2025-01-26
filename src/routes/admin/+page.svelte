@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { admin, REFERENT } from '$lib/stores';
-	import { getToastStore, getModalStore } from '@skeletonlabs/skeleton';
+	import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
 
-	import type { PageData } from './$types';
-	export let data: PageData;
 	import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
 
 	import { goto } from '$app/navigation';
-	let password;
+	export let data: PageData;
 
 	import { dev } from '$app/environment';
 	import { base } from '$app/paths';
+	import type { PageData } from '../$types';
 	import { create_slots } from '../utils';
 
+	let password;
 	if (dev) {
 		// to make development easier
 		$admin = true;
@@ -21,9 +21,8 @@
 	const slots = create_slots();
 	let events = data.events;
 	let type = 'cancelled';
-	let date = Object.values(slots)[0].day.toISO().substring(0, 10);
+	let date = Object.values(slots)[0].day;
 
-	const refs = {};
 	let referents_to_remove = [];
 	const modalStore = getModalStore();
 	const toastStore = getToastStore();
@@ -149,9 +148,7 @@
 
 			<select id="date" bind:value={date}>
 				{#each Object.values(slots) as slot}
-					<option value={slot.day.toISO().substring(0, 10)}
-						>{slot.day.toISO().substring(0, 10)}</option
-					>
+					<option value={slot.day}>{slot.day}</option>
 				{/each}
 			</select>
 			<button class="btn bg-primary-500" on:click={() => add_event(date, type)}

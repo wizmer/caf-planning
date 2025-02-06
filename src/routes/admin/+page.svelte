@@ -11,6 +11,7 @@
 	import { base } from '$app/paths';
 	import type { PageData } from '../$types';
 	import { create_slots } from '../utils';
+	import { DateTime } from 'luxon';
 
 	let password;
 	if (dev) {
@@ -19,6 +20,7 @@
 	}
 
 	const slots = create_slots();
+	const slotstoCreateEvents = Array.apply(null, Array(30)).map((val,index) => DateTime.now().set({day: (DateTime.now().day+ index +1)}).toISODate());
 	let events = data.events;
 	let type = 'cancelled';
 	let date = Object.values(slots)[0].day;
@@ -144,12 +146,19 @@
 				<option value="cancelled">Annulation</option>
 				<option value="new-slot">Nouveau creneau</option>
 			</select>
-
+			{#if type == 'cancelled'}
+				<select id="date" bind:value={date}>
+					{#each Object.values(slots) as slot}
+						<option value={slot.day}>{slot.day}</option>
+					{/each}
+				</select>
+			{:else}
 			<select id="date" bind:value={date}>
-				{#each Object.values(slots) as slot}
-					<option value={slot.day}>{slot.day}</option>
+				{#each slotstoCreateEvents as slot}
+					<option value={slot}>{slot}</option>
 				{/each}
 			</select>
+			{/if}
 			<button class="btn bg-primary-500" on:click={() => add_event(date, type)}
 				>Appliquer l'evenement</button
 			>

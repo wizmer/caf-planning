@@ -20,7 +20,7 @@
 	}
 
 	const slots = create_slots();
-	const slotstoCreateEvents = Array.apply(null, Array(30)).map((val,index) => DateTime.now().set({day: (DateTime.now().day+ index +1)}).toISODate());
+	const slotstoCreateEvents = Array.apply(null, Array(60)).map((val,index) => DateTime.now().set({day: (DateTime.now().day+ index +1)}).toISODate());
 	let events = data.events;
 	let type = 'cancelled';
 	let date = Object.values(slots)[0].day;

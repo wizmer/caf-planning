@@ -69,7 +69,23 @@
 		<div class="card">
 			<header class="card-header">
 				<div class="h3">
-					{row.date.toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+					<span
+						>{row.date.toLocaleString('fr-FR', {
+							weekday: 'long',
+							day: 'numeric',
+							month: 'long'
+						})}</span
+					>
+
+					{#if row.status == 'new-slot'}
+						<span class="p-1 w-fit bg-success-500 rounded-md">
+							<span
+								class="text-center text-xs text-on-success-token font-medium font-['General Sans']"
+							>
+								créneau additionnel
+							</span>
+						</span>
+					{/if}
 				</div>
 			</header>
 
@@ -79,7 +95,7 @@
 						{#if !row.refs[$user]?.start && !row.refs[$user]?.end && !row.adding_slot}
 							<button
 								type="button"
-								class="btn bg-primary-500"
+								class="btn bg-primary-500 mb-4"
 								on:click={() => {
 									row.adding_slot = true;
 								}}
@@ -91,7 +107,7 @@
 								<label for="select-start-{i}">Mon créneau: </label>
 								<select
 									id="select-start-{i}"
-									class="border rounded"
+									class="select w-fit border rounded"
 									bind:value={row.refs[$user].start}
 									on:change={() => update_timeslot(row.refs[$user], row.day)}
 								>
@@ -102,7 +118,7 @@
 
 								<select
 									id="select-end-{i}"
-									class="border rounded"
+									class="select w-fit border rounded"
 									bind:value={row.refs[$user].end}
 									on:change={() => update_timeslot(row.refs[$user], row.day)}
 								>

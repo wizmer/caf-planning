@@ -43,7 +43,7 @@ INSERT INTO referents(name) VALUES
 ('Pierre S.'),
 ('Josiane');
 
-INSERT INTO slots VALUES (DEFAULT, 1, '2025-01-27', '18:00', '20:30');
+INSERT INTO slots VALUES (DEFAULT, 1, '2025-02-07', '18:00', '20:30');
 
 INSERT INTO events VALUES
   (DEFAULT, '2024-05-01', 'cancelled'),

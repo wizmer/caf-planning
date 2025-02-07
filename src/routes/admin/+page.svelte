@@ -126,11 +126,11 @@
 	</div>
 {:else}
 	<div class="flex flex-col gap-8">
-		<div class="card m-4 p-4">
+		<div class="card m-4 p-4 flex flex-col gap-4">
 			<h2 class="h2">Evenements speciaux:</h2>
 			<ul class="list">
 				{#each Object.values(events) as event}
-					<li>
+					<li class="mb-4">
 						<span>-</span>
 						<span class="flex flex-row flex-wrap items-center gap-4">
 							<div>

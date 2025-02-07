@@ -1,16 +1,21 @@
 <script lang="ts">
 	// Most of your app wide CSS should be put in this file
-	import '../app.postcss';
-	import { AppShell, Toast, initializeStores } from '@skeletonlabs/skeleton';
 	import icon from '$lib/assets/big-icon.png';
-	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
-	import { storePopup } from '@skeletonlabs/skeleton';
+	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
+	import {
+		AppShell,
+		LightSwitch,
+		Modal,
+		Toast,
+		getModalStore,
+		initializeStores,
+		storePopup,
+		type ModalComponent
+	} from '@skeletonlabs/skeleton';
 	import '../app.postcss';
-	import { Modal, getModalStore } from '@skeletonlabs/skeleton';
-	import type { ModalComponent } from '@skeletonlabs/skeleton';
 
-	import ModalLogin from './ModalLogin.svelte';
 	import { user } from '$lib/stores';
+	import ModalLogin from './ModalLogin.svelte';
 
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
@@ -36,27 +41,30 @@
 				>
 			</a>
 
-			{#if $user}
-				<button
-					class="btn border"
-					on:click={() => {
-						$user = '';
-					}}
-				>
-					{$user}: Se deconnecter
-				</button>
-			{:else}
-				<button
-					class="btn border"
-					on:click={() =>
-						modalStore.trigger({
-							type: 'component',
-							component: 'modalLogin'
-						})}
-				>
-					Espace staff
-				</button>
-			{/if}
+			<div class="flex flex-row items-center gap-4">
+				{#if $user}
+					<button
+						class="btn border"
+						on:click={() => {
+							$user = '';
+						}}
+					>
+						{$user}: Se deconnecter
+					</button>
+				{:else}
+					<button
+						class="btn border"
+						on:click={() =>
+							modalStore.trigger({
+								type: 'component',
+								component: 'modalLogin'
+							})}
+					>
+						Espace staff
+					</button>
+				{/if}
+				<LightSwitch />
+			</div>
 		</div>
 	</nav>
 

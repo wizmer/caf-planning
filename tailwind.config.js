@@ -8,7 +8,7 @@ import { cafTheme } from './caf-theme.js';
 /** @type {import('tailwindcss').Config} */
 export default {
 	// 2. Opt for dark mode to be handled via the class method
-	darkMode: 'class',
+	darkMode: 'selector',
 	content: [
 		'./node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}',
 		'./src/**/*.{html,js,svelte,ts}',

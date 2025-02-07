@@ -1,19 +1,26 @@
 import { DateTime } from 'luxon';
 
-export function create_slots() {
+export function create_slots(events) {
 	const slots = {};
+
+	const newSlotEvents = Object.fromEntries(
+		Object.entries(events).filter(([key, value]) => {
+			return value[2] === 'new-slot';
+		})
+	);
 
 	const today = DateTime.now().setZone('utc+0', { keepLocalTime: true }).startOf('day');
 
 	for (let i = 0; i < 20; i++) {
 		const day = today.plus({ days: i }) as DateTime;
 
-		if (![1, 2, 5].includes(day.weekday)) {
+		const dayStr = day.toISO().slice(0, 10);
+		if (![1, 2, 5].includes(day.weekday) && !(dayStr in newSlotEvents)) {
 			continue;
 		}
 		const item = {
 			id: i,
-			day: day.toISO().slice(0, 10),
+			day: dayStr,
 			month: day.month,
 			// date: day.toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
 			date: day.toJSDate(),
@@ -29,6 +36,7 @@ export function create_slots() {
 
 		slots[item.day] = item;
 	}
+
 	return slots;
 }
 

@@ -6,8 +6,6 @@
 	import type { PageData } from './$types';
 	import { capitalize, create_slots, timeslots } from './utils';
 
-	import { DateTime } from 'luxon';
-
 	export let data: PageData;
 
 	const toastStore = getToastStore();
@@ -15,22 +13,7 @@
 	const events = data.events;
 	const refs = data.slots;
 
-	let slots = create_slots();
-
-	Object.values(events).forEach((event) =>{
-		if(event[2] == "new-slot" && !Object.keys(slots)[event[1]]){
-			let day = DateTime.fromISO(event[1]);
-			slots[event[1]] = {
-				id: 0,
-				day: day.toISO().slice(0, 10),
-				month: day.month,
-				date: day.toJSDate(),
-				status: 'ok',
-				adding_slot: false,
-				refs: {}
-			};
-		}
-	});
+	let slots = create_slots(events);
 
 	Object.entries(slots).forEach(([date, slot]) => {
 		const day = slot.day;

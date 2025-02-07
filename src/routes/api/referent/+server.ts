@@ -1,21 +1,16 @@
-import type { RequestHandler } from './$types';
 import { Connection } from 'postgresql-client';
+import type { RequestHandler } from './$types';
 
-import { DB_STRING } from '$env/static/private';
+import { connectionContext } from '../../../server/utils';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const { name } = await request.json();
 
-	const connection = new Connection(DB_STRING);
-	// Connect to database server
-	await connection.connect();
+	return connectionContext(async (connection: Connection) => {
+		const q = `INSERT INTO referents(name) VALUES ('${name}')`;
+		// Execute query and fetch rows
+		await connection.query(q);
 
-	const q = `INSERT INTO referents(name) VALUES ('${name}')`;
-	// Execute query and fetch rows
-	await connection.query(q);
-
-	// Disconnect from server
-	await connection.close();
-
-	return new Response('ok');
+		return new Response('ok');
+	});
 };

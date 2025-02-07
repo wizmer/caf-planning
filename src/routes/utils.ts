@@ -11,7 +11,7 @@ export function create_slots(events) {
 
 	const today = DateTime.now().setZone('utc+0', { keepLocalTime: true }).startOf('day');
 
-	for (let i = 0; i < 20; i++) {
+	for (let i = 0; i < 60; i++) {
 		const day = today.plus({ days: i }) as DateTime;
 
 		const dayStr = day.toISO().slice(0, 10);

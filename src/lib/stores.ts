@@ -1,5 +1,5 @@
-import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
+import { writable } from 'svelte/store';
 
 export const admin = writable(false);
 export const user = writable(browser ? localStorage.getItem('user') ?? '' : '');
@@ -15,4 +15,4 @@ user.subscribe((value) => {
 	}
 });
 
-export const REFERENT = 'referent.e';
+export const REFERENT = 'référent·e';

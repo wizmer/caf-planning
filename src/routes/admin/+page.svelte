@@ -9,6 +9,7 @@
 
 	import { dev } from '$app/environment';
 	import { base } from '$app/paths';
+	import { DateTime } from 'luxon';
 	import type { PageData } from '../$types';
 	import { create_slots } from '../utils';
 
@@ -18,7 +19,7 @@
 		$admin = true;
 	}
 
-	const slots = create_slots();
+	const slots = create_slots({});
 	let events = data.events;
 	let type = 'cancelled';
 	let date = Object.values(slots)[0].day;
@@ -124,49 +125,72 @@
 		<button class="btn bg-primary-500" on:click={enter_admin}>Enter admin mode</button>
 	</div>
 {:else}
-	<div>
-		<div class="h2">Evenements speciaux</div>
-		{#each Object.values(events) as event}
-			<div class="flex flex-row items-center gap-4 border">
-				<div>
-					{event[1]}
-				</div>
-				<div>
-					{event[2]}
-				</div>
-				<button class="btn bg-secondary-500" on:click={() => delete_event(event[1])}
-					>Supprimer l'evenement</button
+	<div class="flex flex-col gap-8">
+		<div class="card m-4 p-4 flex flex-col gap-4">
+			<h2 class="h2">Evenements speciaux:</h2>
+			<ul class="list">
+				{#each Object.values(events) as event}
+					<li class="mb-4">
+						<span>-</span>
+						<span class="flex flex-row flex-wrap items-center gap-4">
+							<div>
+								{event[1]}
+							</div>
+							<div>
+								{event[2]}
+							</div>
+							<button class="btn btn-sm bg-secondary-500" on:click={() => delete_event(event[1])}
+								>Supprimer l'evenement</button
+							>
+						</span>
+					</li>
+				{/each}
+			</ul>
+
+			<h3 class="h3">Creer un nouvel evenement</h3>
+			<div class="flex flex-row flex-wrap gap-4">
+				<select class="select w-fit" id="type" bind:value={type}>
+					<option value="cancelled">Annulation</option>
+					<option value="new-slot">Nouveau creneau</option>
+				</select>
+				{#if type == 'cancelled'}
+					<select class="select w-fit" id="date" bind:value={date}>
+						{#each Object.values(slots) as slot}
+							<option value={slot.day}>{slot.day}</option>
+						{/each}
+					</select>
+				{:else}
+					{@const slotstoCreateEvents = Array.apply(null, Array(60)).map((val, index) =>
+						DateTime.now()
+							.set({ day: DateTime.now().day + index + 1 })
+							.toISODate()
+					)}
+					<select class="select w-fit" id="date" bind:value={date}>
+						{#each slotstoCreateEvents as slot}
+							<option value={slot}>{slot}</option>
+						{/each}
+					</select>
+				{/if}
+				<button class="btn bg-primary-500" on:click={() => add_event(date, type)}
+					>Appliquer l'evenement</button
 				>
 			</div>
-		{/each}
-		<div class="flex flex-row">
-			<select id="type" bind:value={type}>
-				<option value="cancelled">Annulation</option>
-				<option value="new-slot">Nouveau creneau</option>
-			</select>
+		</div>
 
-			<select id="date" bind:value={date}>
-				{#each Object.values(slots) as slot}
-					<option value={slot.day}>{slot.day}</option>
+		<div class="card flex flex-col m-4 p-4 gap-4">
+			<h2 class="h2">Suppression des {REFERENT}s</h2>
+			<ListBox name="list" class="border rounded-container-token" multiple>
+				{#each referents as item}
+					<ListBoxItem bind:group={referents_to_remove} name={item[0]} value={item[1]}
+						>{item[1]}
+					</ListBoxItem>
 				{/each}
-			</select>
-			<button class="btn bg-primary-500" on:click={() => add_event(date, type)}
-				>Appliquer l'evenement</button
+			</ListBox>
+			<button
+				on:click={trigger_modal}
+				class="btn bg-secondary-500"
+				disabled={!referents_to_remove.length}>Supprimer {REFERENT}s</button
 			>
 		</div>
 	</div>
-
-	<label for="list">Suppression des {REFERENT}s</label>
-	<ListBox name="list" class="border rounded-container-token" multiple>
-		{#each referents as item}
-			<ListBoxItem bind:group={referents_to_remove} name={item[0]} value={item[1]}
-				>{item[1]}
-			</ListBoxItem>
-		{/each}
-	</ListBox>
-	<button
-		on:click={trigger_modal}
-		class="btn bg-secondary-500"
-		disabled={!referents_to_remove.length}>Supprimer {REFERENT}s</button
-	>
 {/if}

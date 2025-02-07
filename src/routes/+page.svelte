@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { user } from '$lib/stores';
+	import { REFERENT, user } from '$lib/stores';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 
 	import { base } from '$app/paths';
@@ -13,7 +13,7 @@
 	const events = data.events;
 	const refs = data.slots;
 
-	let slots = create_slots();
+	let slots = create_slots(events);
 
 	Object.entries(slots).forEach(([date, slot]) => {
 		const day = slot.day;
@@ -153,7 +153,7 @@
 								{#if Object.values(row.refs).filter((ref) => ref.start && ref.end).length == 0}
 									<tr>
 										<td class="no_referrent" colspan="100%">
-											<div class="h3">Pas de referent·e pour le moment</div>
+											<div class="h3">Pas de {REFERENT} pour le moment</div>
 										</td>
 									</tr>
 								{/if}

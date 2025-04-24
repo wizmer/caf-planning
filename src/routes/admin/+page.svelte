@@ -162,7 +162,7 @@
 				{:else}
 					{@const slotstoCreateEvents = Array.apply(null, Array(60)).map((val, index) =>
 						DateTime.now()
-							.set({ day: DateTime.now().day + index + 1 })
+							.set({ day: DateTime.now().day + index })
 							.toISODate()
 					)}
 					<select class="select w-fit" id="date" bind:value={date}>

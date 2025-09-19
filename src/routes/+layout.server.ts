@@ -4,7 +4,7 @@ import { connectionContext } from '../server/utils';
 export async function load() {
 	return connectionContext(async (connection: Connection) => {
 		const result = await connection.query(
-			'select * from slots join referents on slots.ref_id = referents.id'
+			"select * from slots join referents on slots.ref_id = referents.id where date(day) >= (now() - INTERVAL '1 day')"
 		);
 
 		const rows: any[] = result.rows;
@@ -23,7 +23,9 @@ export async function load() {
 		}
 
 		const referents = await connection.query('select * from referents');
-		const events = await connection.query(`select * from events where date(day) >= (now() - INTERVAL '1 day')`);
+		const events = await connection.query(
+			`select * from events where date(day) >= (now() - INTERVAL '1 day')`
+		);
 
 		const events_groups = Object.fromEntries(events.rows.map((row) => [row[1], row]));
 		return { slots, events: events_groups, referents: referents.rows };

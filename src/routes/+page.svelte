@@ -150,7 +150,7 @@
 
 				<div class="table-container">
 					<table class="table table-auto table-hover max-w-prose">
-						<thead class="divide-x divide-x-2">
+						<thead class="divider-x">
 							<th>Nom</th>
 							<th colspan="2">18:00</th>
 							<th colspan="2">19:00</th>
@@ -176,7 +176,7 @@
 
 								{#each Object.values(row.refs) as ref}
 									{#if ['ok', 'new-slot'].includes(row.status) && ref.start && ref.end}
-										<tr class="py-0 divide-x divide-y">
+										<tr class="py-0 divider-x divide-y">
 											<td>
 												{ref.name}
 											</td>
@@ -200,6 +200,10 @@
 	.table thead th {
 		padding-left: 2px !important;
 		padding-right: 2px !important;
+		text-align: left;
+	}
+	.table thead th:nth-child(1) {
+		text-align: center; /* Center-align header cell text */
 	}
 
 	.table tbody td {
@@ -233,5 +237,15 @@
 	.card {
 		margin-top: 20px;
 		margin-bottom: 20px;
+	}
+
+	.divider-x th {
+		border-right-width: 0px;
+		border-left-width: 4px;
+	}
+
+	.divider-x td {
+		border-right-width: 0px;
+		border-left-width: 1px;
 	}
 </style>

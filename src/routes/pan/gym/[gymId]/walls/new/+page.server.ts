@@ -1,14 +1,14 @@
 import { PrismaClient } from '@prisma/client';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { randomUUID } from 'crypto';
-import type { Actions } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
+import { randomUUID } from 'crypto';
+import { mkdir, writeFile } from 'fs/promises';
+import { join } from 'path';
+import type { Actions } from './$types';
 
 const prisma = new PrismaClient();
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	default: async ({ request, params }) => {
 		const formData = await request.formData();
 		const wallName = formData.get('wallName') as string;
 		const wallDescription = formData.get('wallDescription') as string;
@@ -25,10 +25,11 @@ export const actions: Actions = {
 
 		try {
 			// Create wall in database
-			const wall = await prisma.walls.create({
+			const wall = await prisma.wall.create({
 				data: {
 					name: wallName.trim(),
-					description: wallDescription?.trim() || null
+					description: wallDescription?.trim() || null,
+					gym_id: parseInt(params.gymId)
 				}
 			});
 

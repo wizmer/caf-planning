@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model events {
+  id   Int    @id @default(autoincrement())
+  day  String @unique @db.VarChar(10)
+  type String @db.VarChar
+}
+
+model referents {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique @db.VarChar
+  slots slots[]
+}
+
+model slots {
+  id        Int        @id @default(autoincrement())
+  ref_id    Int?
+  day       String     @db.VarChar(10)
+  start_at  DateTime   @db.Time(6)
+  end_at    DateTime   @db.Time(6)
+  referents referents? @relation(fields: [ref_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}

@@ -1,16 +1,27 @@
-import { Connection } from 'postgresql-client';
+import { PrismaClient } from '@prisma/client';
 import type { RequestHandler } from './$types';
 
-import { connectionContext } from '../../../server/utils';
+const prisma = new PrismaClient();
 
 export const POST: RequestHandler = async ({ request }) => {
 	const { name } = await request.json();
 
-	return connectionContext(async (connection: Connection) => {
-		const q = `INSERT INTO referents(name) VALUES ('${name}')`;
-		// Execute query and fetch rows
-		await connection.query(q);
+	try {
+		await prisma.referents.create({
+			data: {
+				name: name
+			}
+		});
 
 		return new Response('ok');
-	});
+	} catch (error) {
+		console.error('Error creating referent:', error);
+
+		// Handle unique constraint violation (duplicate name)
+		if (error.code === 'P2002') {
+			return new Response('Referent with this name already exists', { status: 400 });
+		}
+
+		return new Response('Error creating referent', { status: 500 });
+	}
 };

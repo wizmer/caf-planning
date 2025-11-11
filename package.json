@@ -14,7 +14,9 @@
 		"test:integration": "playwright test",
 		"test:unit": "vitest",
 		"deploy": "npm run build && gsutil -m cp -R build/* gs://caf-planning-staticfiles",
-		"psql": "PGPASSWORD=postgres psql -U bcoste --host 127.0.0.1 --port 5432 -d caf"
+		"psql": "PGPASSWORD=postgres psql -U bcoste --host 127.0.0.1 --port 5432 -d caf",
+		"prisma:migrate:dev": "DATABASE_URL=\"postgresql://bcoste:postgres@127.0.0.1:5432/caf\" npx prisma migrate dev",
+		"prisma:migrate:baseline:create": "DATABASE_URL=\"postgresql://bcoste:postgres@127.0.0.1:5432/caf\" npx prisma migrate dev --create-only --name init_baseline"
 	},
 	"devDependencies": {
 		"@floating-ui/dom": "^1.5.3",
@@ -52,10 +54,12 @@
 	"type": "module",
 	"dependencies": {
 		"@popperjs/core": "^2.11.8",
+		"@prisma/client": "^6.19.0",
 		"flowbite": "^2.2.1",
 		"flowbite-svelte": "^0.44.22",
 		"luxon": "^3.4.4",
 		"postgresql-client": "^2.10.5",
+		"prisma": "^6.19.0",
 		"tailwind-merge": "^2.2.0"
 	}
 }

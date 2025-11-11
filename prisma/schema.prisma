@@ -27,3 +27,36 @@ model slots {
   end_at    DateTime   @db.Time(6)
   referents referents? @relation(fields: [ref_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
+
+model gym  {
+  id          Int          @id @default(autoincrement())
+  name        String       @db.VarChar(100)
+  description String?      @db.Text
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  walls       walls[]
+}
+
+model walls {
+  id          Int          @id @default(autoincrement())
+  gym_id      Int
+  gym         gym          @relation(fields: [gym_id], references: [id], onDelete: Cascade)
+  name        String       @db.VarChar(100)
+  description String?      @db.Text
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  wall_photos wall_photos[]
+}
+
+model wall_photos {
+  id         Int      @id @default(autoincrement())
+  wall_id    Int
+  file_path  String   @db.VarChar(500)
+  file_name  String   @db.VarChar(255)
+  mime_type  String   @db.VarChar(50)
+  file_size  Int
+  uploaded_at DateTime @default(now())
+  wall       walls    @relation(fields: [wall_id], references: [id], onDelete: Cascade)
+  
+  @@index([wall_id])
+}

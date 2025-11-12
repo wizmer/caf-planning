@@ -16,7 +16,11 @@
 		"deploy": "npm run build && gsutil -m cp -R build/* gs://caf-planning-staticfiles",
 		"psql": "PGPASSWORD=postgres psql -U bcoste --host 127.0.0.1 --port 5432 -d caf",
 		"prisma:migrate:dev": "DATABASE_URL=\"postgresql://bcoste:postgres@127.0.0.1:5432/caf\" npx prisma migrate dev",
-		"prisma:migrate:baseline:create": "DATABASE_URL=\"postgresql://bcoste:postgres@127.0.0.1:5432/caf\" npx prisma migrate dev --create-only --name init_baseline"
+		"prisma:migrate:baseline:create": "DATABASE_URL=\"postgresql://bcoste:postgres@127.0.0.1:5432/caf\" npx prisma migrate dev --create-only --name init_baseline",
+		"db:pgdump:dev": "PGPASSWORD=postgres pg_dump -U bcoste --host 127.0.0.1 --port 5432 -d caf -f sql/init.sql",
+		"db:reset": "DATABASE_URL=\"postgresql://bcoste:postgres@127.0.0.1:5432/caf\" npx prisma migrate reset",
+		"db:seed": "DATABASE_URL=\"postgresql://bcoste:postgres@127.0.0.1:5432/caf\" npx prisma db seed",
+		"db:regenerate": "npm run db:reset -- -f && npm run db:seed && npm run db:pgdump:dev"
 	},
 	"devDependencies": {
 		"@floating-ui/dom": "^1.5.3",

@@ -17,4 +17,5 @@ services:
     tmpfs:
       - /var/lib/postgresql/data
     volumes:
-      - ./sql/create-tables.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./sql/create-tables.sql:/docker-entrypoint-initdb.d/1_create_tables.sql

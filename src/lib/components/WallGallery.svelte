@@ -18,7 +18,14 @@
 		{ index: 2, wallId: 5, type: 'handhold', x: 30, y: 60 },
 		{ index: 3, wallId: 5, type: 'foothold', x: 40, y: 70 },
 		{ index: 4, wallId: 5, type: 'both', x: 50, y: 50 },
-		{ index: 5, wallId: 5, type: 'top', x: 60, y: 20 }
+		{ index: 5, wallId: 5, type: 'top', x: 60, y: 20 },
+		{ index: 6, wallId: 6, type: 'top', x: 60, y: 20 },
+		{ index: 7, wallId: 6, type: 'foothold', x: 45, y: 65 },
+		{ index: 8, wallId: 6, type: 'both', x: 55, y: 45 },
+		{ index: 9, wallId: 7, type: 'start', x: 25, y: 75 },
+		{ index: 10, wallId: 7, type: 'handhold', x: 35, y: 55 },
+		{ index: 11, wallId: 7, type: 'foothold', x: 50, y: 60 },
+		{ index: 12, wallId: 7, type: 'top', x: 65, y: 25 }
 	];
 
 	let currentIndex = 0;
@@ -63,7 +70,7 @@
 			<img
 				src="/uploads/{currentWall.photo.file_path}"
 				alt={currentWall.name}
-				class="w-full h-full object-cover aspect-video"
+				class="w-full h-auto object-contain max-h-96"
 			/>
 
 			<!-- Move Circles Overlay -->
@@ -136,7 +143,7 @@
 		</div>
 
 		<!-- Move Legend -->
-		{#if currentWallMoves.length > 0}
+		{#if route}
 			<div class="card p-4 mt-4">
 				<h4 class="h4 mb-2">Move Legend</h4>
 				<div class="flex flex-wrap gap-4 text-sm">

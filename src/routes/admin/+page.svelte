@@ -5,30 +5,34 @@
 	import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
 
 	import { goto } from '$app/navigation';
-	export let data: PageData;
 
 	import { dev } from '$app/environment';
 	import { base } from '$app/paths';
 	import { DateTime } from 'luxon';
 	import type { PageData } from '../$types';
 	import { create_slots } from '../utils';
+	interface Props {
+		data: PageData;
+	}
 
-	let password;
+	let { data }: Props = $props();
+
+	let password = $state();
 	if (dev) {
 		// to make development easier
 		$admin = true;
 	}
 
 	const slots = create_slots({});
-	let events = data.events;
-	let type = 'cancelled';
-	let date = Object.values(slots)[0].day;
+	let events = $state(data.events);
+	let type = $state('cancelled');
+	let date = $state(Object.values(slots)[0].day);
 
-	let referents_to_remove = [];
+	let referents_to_remove = $state([]);
 	const modalStore = getModalStore();
 	const toastStore = getToastStore();
 
-	let referents = data.referents;
+	let referents = $state(data.referents);
 	function enter_admin() {
 		if (password == 'AdminSallaz') {
 			goto('/admin');
@@ -122,7 +126,7 @@
 			autocomplete="off"
 			placeholder="Enter admin password"
 		/>
-		<button class="btn bg-primary-500" on:click={enter_admin}>Enter admin mode</button>
+		<button class="btn bg-primary-500" onclick={enter_admin}>Enter admin mode</button>
 	</div>
 {:else}
 	<div class="flex flex-col gap-8">
@@ -139,7 +143,7 @@
 							<div>
 								{event[2]}
 							</div>
-							<button class="btn btn-sm bg-secondary-500" on:click={() => delete_event(event[1])}
+							<button class="btn btn-sm bg-secondary-500" onclick={() => delete_event(event[1])}
 								>Supprimer l'evenement</button
 							>
 						</span>
@@ -171,7 +175,7 @@
 						{/each}
 					</select>
 				{/if}
-				<button class="btn bg-primary-500" on:click={() => add_event(date, type)}
+				<button class="btn bg-primary-500" onclick={() => add_event(date, type)}
 					>Appliquer l'evenement</button
 				>
 			</div>
@@ -187,7 +191,7 @@
 				{/each}
 			</ListBox>
 			<button
-				on:click={trigger_modal}
+				onclick={trigger_modal}
 				class="btn bg-secondary-500"
 				disabled={!referents_to_remove.length}>Supprimer {REFERENT}s</button
 			>

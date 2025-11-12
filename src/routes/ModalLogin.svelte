@@ -8,28 +8,32 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 	import { base } from '$app/paths';
 
-	let new_user = '';
+	let new_user = $state('');
 
-	export let referents;
 
-	export let parent: SvelteComponent;
+	interface Props {
+		referents: any;
+		parent: SvelteComponent;
+	}
+
+	let { referents, parent }: Props = $props();
 
 	const modalStore = getModalStore();
 
 	// Do not preselect $last_user if it no longer exists
-	let current_user = referents.map((item) => item[1]).includes($last_user) ? $last_user : '';
+	let current_user = $state(referents.map((item) => item[1]).includes($last_user) ? $last_user : '');
 
-	let failed_login_text = '';
+	let failed_login_text = $state('');
 
-	let password = '';
+	let password = $state('');
 
-	let radio = 'existing';
+	let radio = $state('existing');
 	let toastStore = getToastStore();
 
-	$: login_enabled = radio === 'existing' ? current_user !== '' : new_user !== '';
-	$: connection_string =
-		'Se connecter' +
-		(login_enabled ? ' en tant que: ' + (radio == 'existing' ? current_user : new_user) : '');
+	let login_enabled = $derived(radio === 'existing' ? current_user !== '' : new_user !== '');
+	let connection_string =
+		$derived('Se connecter' +
+		(login_enabled ? ' en tant que: ' + (radio == 'existing' ? current_user : new_user) : ''));
 
 	// We've created a custom submit function to pass the response and close the modal.
 	function onFormSubmit(): void {
@@ -125,10 +129,10 @@
 		</form>
 
 		<footer class="modal-footer {parent.regionFooter}">
-			<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>Annuler</button>
+			<button class="btn {parent.buttonNeutral}" onclick={parent.onClose}>Annuler</button>
 			<button
 				class="btn {parent.buttonPositive}"
-				on:click={onFormSubmit}
+				onclick={onFormSubmit}
 				disabled={!login_enabled}
 				type="submit"
 				form="login-form">{connection_string}</button

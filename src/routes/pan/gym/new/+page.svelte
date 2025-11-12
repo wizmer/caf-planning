@@ -2,7 +2,11 @@
 	import GymForm from '$lib/components/GymForm.svelte';
 	import type { ActionData } from './$types';
 
-	export let form: ActionData;
+	interface Props {
+		form: ActionData;
+	}
+
+	let { form }: Props = $props();
 </script>
 
 <div class="container mx-auto p-4 space-y-4 max-w-2xl">

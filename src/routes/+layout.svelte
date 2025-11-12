@@ -20,7 +20,7 @@
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
-	export let data;
+	let { data, children } = $props();
 
 	const modalStore = getModalStore();
 	const modalRegistry: Record<string, ModalComponent> = {
@@ -45,7 +45,7 @@
 				{#if $user}
 					<button
 						class="btn border"
-						on:click={() => {
+						onclick={() => {
 							$user = '';
 						}}
 					>
@@ -54,7 +54,7 @@
 				{:else}
 					<button
 						class="btn border"
-						on:click={() =>
+						onclick={() =>
 							modalStore.trigger({
 								type: 'component',
 								component: 'modalLogin'
@@ -68,15 +68,17 @@
 		</div>
 	</nav>
 
-	<slot />
-	<svelte:fragment slot="pageFooter">
-		<div class="flex flex-row justify-center">
-			<div>
-				Vous cherchez <a
-					href="/admin"
-					class="font-medium text-blue-600 dark:text-blue-500 hover:underline">l'espace admin ?</a
-				>
+	{@render children?.()}
+	{#snippet pageFooter()}
+	
+			<div class="flex flex-row justify-center">
+				<div>
+					Vous cherchez <a
+						href="/admin"
+						class="font-medium text-blue-600 dark:text-blue-500 hover:underline">l'espace admin ?</a
+					>
+				</div>
 			</div>
-		</div>
-	</svelte:fragment>
+		
+	{/snippet}
 </AppShell>

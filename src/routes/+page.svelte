@@ -1,3 +1,5 @@
+<!-- @migration-task Error while migrating Svelte code: `<th>` cannot be a child of `<thead>`. `<thead>` only allows these children: `<tr>`, `<style>`, `<script>`, `<template>`. The browser will 'repair' the HTML (by moving, removing, or inserting elements) which breaks Svelte's assumptions about the structure of your components.
+https://svelte.dev/e/node_invalid_placement -->
 <script lang="ts">
 	import { REFERENT, user } from '$lib/stores';
 	import { getToastStore } from '@skeletonlabs/skeleton';
@@ -151,11 +153,13 @@
 				<div class="table-container">
 					<table class="table table-auto table-hover max-w-prose">
 						<thead class="divider-x">
-							<th>Nom</th>
-							<th colspan="2">18:00</th>
-							<th colspan="2">19:00</th>
-							<th colspan="2">20:00</th>
-							<th colspan="2">21:00</th>
+							<tr>
+								<th>Nom</th>
+								<th colspan="2">18:00</th>
+								<th colspan="2">19:00</th>
+								<th colspan="2">20:00</th>
+								<th colspan="2">21:00</th>
+							</tr>
 						</thead>
 
 						<tbody>

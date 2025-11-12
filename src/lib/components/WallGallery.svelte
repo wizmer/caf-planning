@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Wall } from '@prisma/client';
 
-	export let walls: Wall[];
 
 	interface Move {
 		index: number;
@@ -11,7 +10,12 @@
 		y: number;
 	}
 
-	export let route: Move[] = [];
+	interface Props {
+		walls: Wall[];
+		route?: Move[];
+	}
+
+	let { walls, route = $bindable([]) }: Props = $props();
 
 	route = [
 		{ index: 1, wallId: 5, type: 'start', x: 20, y: 80 },
@@ -28,7 +32,7 @@
 		{ index: 12, wallId: 7, type: 'top', x: 65, y: 25 }
 	];
 
-	let currentIndex = 0;
+	let currentIndex = $state(0);
 
 	function nextWall() {
 		currentIndex = (currentIndex + 1) % walls.length;
@@ -42,8 +46,8 @@
 		currentIndex = index;
 	}
 
-	$: currentWall = walls[currentIndex];
-	$: currentWallMoves = route.filter((move) => move.wallId === currentWall?.id);
+	let currentWall = $derived(walls[currentIndex]);
+	let currentWallMoves = $derived(route.filter((move) => move.wallId === currentWall?.id));
 
 	function getMoveColor(type: string) {
 		switch (type) {
@@ -89,7 +93,7 @@
 			<!-- Navigation Arrows -->
 			{#if walls.length > 1}
 				<button
-					on:click={prevWall}
+					onclick={prevWall}
 					class="btn-icon variant-filled-surface absolute left-4 top-1/2 transform -translate-y-1/2"
 					aria-label="Previous wall"
 				>
@@ -104,7 +108,7 @@
 				</button>
 
 				<button
-					on:click={nextWall}
+					onclick={nextWall}
 					class="btn-icon variant-filled-surface absolute right-4 top-1/2 transform -translate-y-1/2"
 					aria-label="Next wall"
 				>
@@ -148,23 +152,23 @@
 				<h4 class="h4 mb-2">Move Legend</h4>
 				<div class="flex flex-wrap gap-4 text-sm">
 					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full bg-success-500 border border-surface-50" />
+						<div class="w-4 h-4 rounded-full bg-success-500 border border-surface-50"></div>
 						<span>Start</span>
 					</div>
 					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full bg-primary-500 border border-surface-50" />
+						<div class="w-4 h-4 rounded-full bg-primary-500 border border-surface-50"></div>
 						<span>Handhold</span>
 					</div>
 					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full bg-warning-500 border border-surface-50" />
+						<div class="w-4 h-4 rounded-full bg-warning-500 border border-surface-50"></div>
 						<span>Foothold</span>
 					</div>
 					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full bg-secondary-500 border border-surface-50" />
+						<div class="w-4 h-4 rounded-full bg-secondary-500 border border-surface-50"></div>
 						<span>Both</span>
 					</div>
 					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full bg-error-500 border border-surface-50" />
+						<div class="w-4 h-4 rounded-full bg-error-500 border border-surface-50"></div>
 						<span>Top</span>
 					</div>
 				</div>
@@ -176,7 +180,7 @@
 			<div class="flex justify-center mt-4 space-x-2 overflow-x-auto pb-2">
 				{#each walls as wall, index}
 					<button
-						on:click={() => goToWall(index)}
+						onclick={() => goToWall(index)}
 						class="flex-shrink-0 w-20 h-16 rounded-md overflow-hidden border-2 transition-all {index ===
 						currentIndex
 							? 'border-primary-500'

@@ -30,8 +30,8 @@
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/adapter-node": "^2.0.2",
 		"@sveltejs/adapter-static": "^3.0.0",
-		"@sveltejs/kit": "^2.0.0",
-		"@sveltejs/vite-plugin-svelte": "^3.0.0",
+		"@sveltejs/kit": "^2.5.27",
+		"@sveltejs/vite-plugin-svelte": "^4.0.0",
 		"@tailwindcss/forms": "^0.5.7",
 		"@tailwindcss/typography": "^0.5.10",
 		"@types/google.maps": "^3.54.10",
@@ -41,17 +41,16 @@
 		"dotenv": "^16.3.1",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^8.10.0",
-		"eslint-plugin-svelte": "^2.35.1",
+		"eslint-plugin-svelte": "^2.45.1",
 		"postcss": "^8.4.32",
-		"prettier": "^2.8.8",
-		"prettier-plugin-svelte": "^2.10.1",
-		"svelte": "^4.2.8",
-		"svelte-check": "^3.6.2",
-		"svelty-picker": "^5.2.1",
+		"prettier": "^3.1.0",
+		"prettier-plugin-svelte": "^3.2.6",
+		"svelte": "^5.0.0",
+		"svelte-check": "^4.0.0",
 		"tailwindcss": "^3.4.0",
 		"tslib": "^2.4.1",
-		"typescript": "^5.3.3",
-		"vite": "^5.0.0",
+		"typescript": "^5.5.0",
+		"vite": "^5.4.4",
 		"vite-plugin-tailwind-purgecss": "^0.2.0",
 		"vitest": "^1.0.0"
 	},
@@ -59,11 +58,8 @@
 	"dependencies": {
 		"@popperjs/core": "^2.11.8",
 		"@prisma/client": "^6.19.0",
-		"flowbite": "^2.2.1",
-		"flowbite-svelte": "^0.44.22",
 		"luxon": "^3.4.4",
 		"postgresql-client": "^2.10.5",
-		"prisma": "^6.19.0",
-		"tailwind-merge": "^2.2.0"
+		"prisma": "^6.19.0"
 	}
 }

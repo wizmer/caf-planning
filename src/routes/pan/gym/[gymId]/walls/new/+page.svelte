@@ -4,12 +4,16 @@
 	import { FileDropzone } from '@skeletonlabs/skeleton';
 	import type { ActionData } from './$types';
 
-	export let form: ActionData;
+	interface Props {
+		form: ActionData;
+	}
 
-	let files: FileList;
-	let wallName = '';
-	let wallDescription = '';
-	let isUploading = false;
+	let { form }: Props = $props();
+
+	let files: FileList = $state();
+	let wallName = $state('');
+	let wallDescription = $state('');
+	let isUploading = $state(false);
 
 	function validateFiles(fileList: FileList): boolean {
 		const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
@@ -82,7 +86,7 @@
 				bind:value={wallDescription}
 				placeholder="Optional description of the wall section..."
 				rows="3"
-			/>
+			></textarea>
 		</label>
 
 		<label class="label">
@@ -94,25 +98,27 @@
 				multiple
 				classes="border-2 border-dashed border-primary-500 p-6 rounded-container-token bg-primary-50-900-token"
 			>
-				<svelte:fragment slot="lead">
-					<div class="text-center">
-						<svg
-							class="mx-auto h-12 w-12 fill-token"
-							stroke="currentColor"
-							fill="none"
-							viewBox="0 0 48 48"
-						>
-							<path
-								d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							/>
-						</svg>
-						<p class="mt-2 text-sm">Drop wall photos here or click to browse</p>
-						<p class="text-xs opacity-50">PNG, JPG, WebP up to 10MB each</p>
-					</div>
-				</svelte:fragment>
+				{#snippet lead()}
+							
+						<div class="text-center">
+							<svg
+								class="mx-auto h-12 w-12 fill-token"
+								stroke="currentColor"
+								fill="none"
+								viewBox="0 0 48 48"
+							>
+								<path
+									d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								/>
+							</svg>
+							<p class="mt-2 text-sm">Drop wall photos here or click to browse</p>
+							<p class="text-xs opacity-50">PNG, JPG, WebP up to 10MB each</p>
+						</div>
+					
+							{/snippet}
 			</FileDropzone>
 
 			{#if files && files.length > 0}

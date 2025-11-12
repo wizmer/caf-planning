@@ -3,17 +3,26 @@
 	import type { Gym } from '@prisma/client';
 	import type { ActionData } from '@sveltejs/kit';
 
-	export let form: ActionData = null;
-	export let gym: Gym | null = null;
-	export let isEditing = false;
-	export let cancelUrl = '/pan/gym';
+	interface Props {
+		form?: ActionData;
+		gym?: Gym | null;
+		isEditing?: boolean;
+		cancelUrl?: string;
+	}
 
-	let gymName = gym?.name || '';
-	let gymDescription = gym?.description || '';
-	let isSubmitting = false;
+	let {
+		form = null,
+		gym = null,
+		isEditing = false,
+		cancelUrl = '/pan/gym'
+	}: Props = $props();
 
-	$: submitText = isEditing ? 'Update Gym' : 'Create Gym';
-	$: submittingText = isEditing ? 'Updating...' : 'Creating...';
+	let gymName = $state(gym?.name || '');
+	let gymDescription = $state(gym?.description || '');
+	let isSubmitting = $state(false);
+
+	let submitText = $derived(isEditing ? 'Update Gym' : 'Create Gym');
+	let submittingText = $derived(isEditing ? 'Updating...' : 'Creating...');
 </script>
 
 <form
@@ -47,7 +56,7 @@
 			bind:value={gymDescription}
 			placeholder="Optional description of the gym..."
 			rows="4"
-		/>
+		></textarea>
 	</label>
 
 	{#if form?.error}

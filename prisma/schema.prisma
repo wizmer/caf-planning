@@ -35,6 +35,7 @@ model Gym {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
   walls       Wall[]
+  routes      Route[]
 }
 
 model Wall {
@@ -58,4 +59,16 @@ model Photo {
   uploaded_at DateTime @default(now())
 
   wall Wall?
+}
+
+model Route {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  grade       String   @db.VarChar(10)
+  description String?  @db.Text
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  body        String   @db.Text
+  gym         Gym?     @relation(fields: [gymId], references: [id])
+  gymId       Int?
 }

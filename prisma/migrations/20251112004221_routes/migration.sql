@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Route" ADD COLUMN     "gymId" INTEGER;
+
+-- AddForeignKey
+ALTER TABLE "Route" ADD CONSTRAINT "Route_gymId_fkey" FOREIGN KEY ("gymId") REFERENCES "Gym"("id") ON DELETE SET NULL ON UPDATE CASCADE;

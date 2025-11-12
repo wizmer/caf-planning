@@ -28,11 +28,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		const walls = await prisma.wall.findMany({
 			where: { gym_id: gymId },
 			include: {
-				wall_photos: {
-					orderBy: {
-						uploaded_at: 'asc'
-					}
-				}
+				photo: true
 			},
 			orderBy: {
 				created_at: 'desc'

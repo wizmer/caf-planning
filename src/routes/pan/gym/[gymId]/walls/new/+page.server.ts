@@ -13,6 +13,10 @@ export const actions: Actions = {
 		const wallName = formData.get('wallName') as string;
 		const wallDescription = formData.get('wallDescription') as string;
 		const photos = formData.getAll('photos') as File[];
+		if (photos.length === 0) {
+			return fail(400, { error: 'At least one photo is required' });
+		}
+		const file = photos[0];
 
 		// Validate input
 		if (!wallName?.trim()) {
@@ -23,6 +27,16 @@ export const actions: Actions = {
 			return fail(400, { error: 'At least one photo is required' });
 		}
 
+			const uploadDir = join(process.cwd(), 'static', 'uploads', 'walls');
+			await mkdir(uploadDir, { recursive: true });
+
+							const fileExtension = file.name.split('.').pop();
+				const fileName = `${randomUUID()}.${fileExtension}`;
+				const filePath = join(uploadDir, fileName);
+
+				const buffer = Buffer.from(await file.arrayBuffer());
+				await writeFile(filePath, buffer);
+
 		try {
 			// Create wall in database
 			const wall = await prisma.wall.create({
@@ -30,33 +44,17 @@ export const actions: Actions = {
 					name: wallName.trim(),
 					description: wallDescription?.trim() || null,
 					gym_id: parseInt(params.gymId)
+					photo: {
+						create: {
+							file_path: `walls/${fileName}`,
+							file_name: file.name,
+							mime_type: file.type,
+							file_size: file.size
+						}
+					}
 				}
 			});
 
-			// Process and save photos
-			const uploadDir = join(process.cwd(), 'static', 'uploads', 'walls');
-			await mkdir(uploadDir, { recursive: true });
-
-			const photoPromises = photos.map(async (file) => {
-				const fileExtension = file.name.split('.').pop();
-				const fileName = `${randomUUID()}.${fileExtension}`;
-				const filePath = join(uploadDir, fileName);
-
-				const buffer = Buffer.from(await file.arrayBuffer());
-				await writeFile(filePath, buffer);
-
-				return prisma.wall_photos.create({
-					data: {
-						wall_id: wall.id,
-						file_path: `walls/${fileName}`,
-						file_name: file.name,
-						mime_type: file.type,
-						file_size: file.size
-					}
-				});
-			});
-
-			await Promise.all(photoPromises);
 
 			throw redirect(303, '/pan');
 		} catch (error) {

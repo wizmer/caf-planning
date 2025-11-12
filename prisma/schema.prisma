@@ -28,35 +28,34 @@ model slots {
   referents referents? @relation(fields: [ref_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model Gym  {
-  id          Int          @id @default(autoincrement())
-  name        String       @db.VarChar(100)
-  description String?      @db.Text
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt
+model Gym {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
   walls       Wall[]
 }
 
 model Wall {
-  id          Int          @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   gym_id      Int
-  gym         Gym          @relation(fields: [gym_id], references: [id], onDelete: Cascade)
-  name        String       @db.VarChar(100)
-  description String?      @db.Text
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt
-  wall_photos Wall_photos[]
+  gym         Gym      @relation(fields: [gym_id], references: [id], onDelete: Cascade)
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  photo_id    Int      @unique
+  photo       Photo    @relation(fields: [photo_id], references: [id])
 }
 
-model Wall_photos {
-  id         Int      @id @default(autoincrement())
-  wall_id    Int
-  file_path  String   @db.VarChar(500)
-  file_name  String   @db.VarChar(255)
-  mime_type  String   @db.VarChar(50)
-  file_size  Int
+model Photo {
+  id          Int      @id @default(autoincrement())
+  file_path   String   @db.VarChar(500)
+  file_name   String   @db.VarChar(255)
+  mime_type   String   @db.VarChar(50)
+  file_size   Int
   uploaded_at DateTime @default(now())
-  wall       Wall    @relation(fields: [wall_id], references: [id], onDelete: Cascade)
-  
-  @@index([wall_id])
+
+  wall Wall?
 }

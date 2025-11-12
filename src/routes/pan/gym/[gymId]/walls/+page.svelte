@@ -25,10 +25,11 @@
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			{#each data.walls as wall}
 				<div class="card">
-					{#if wall.wall_photos.length > 0}
+					{JSON.stringify(wall)}
+					{#if wall.photo}
 						<header class="card-header">
 							<img
-								src="/uploads/{wall.wall_photos[0].file_path}"
+								src="/uploads/{wall.photo.file_path}"
 								alt={wall.name}
 								class="w-full h-48 object-cover rounded-t-container-token"
 							/>
@@ -41,7 +42,6 @@
 							<p class="text-sm opacity-75 mb-2">{wall.description}</p>
 						{/if}
 						<div class="flex justify-between items-center text-xs opacity-50">
-							<span>{wall.wall_photos.length} photo(s)</span>
 							<span>Added {new Date(wall.created_at).toLocaleDateString()}</span>
 						</div>
 					</section>

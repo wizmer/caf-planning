@@ -1,6 +1,8 @@
 <!-- @migration-task Error while migrating Svelte code: `<th>` cannot be a child of `<thead>`. `<thead>` only allows these children: `<tr>`, `<style>`, `<script>`, `<template>`. The browser will 'repair' the HTML (by moving, removing, or inserting elements) which breaks Svelte's assumptions about the structure of your components.
 https://svelte.dev/e/node_invalid_placement -->
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { REFERENT, user } from '$lib/stores';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 
@@ -8,14 +10,18 @@ https://svelte.dev/e/node_invalid_placement -->
 	import type { PageData } from './$types';
 	import { capitalize, create_slots, timeslots } from './utils';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const toastStore = getToastStore();
 
 	const events = data.events;
 	const refs = data.slots;
 
-	let slots = create_slots(events);
+	let slots = $state(create_slots(events));
 
 	Object.entries(slots).forEach(([date, slot]) => {
 		const day = slot.day;
@@ -27,13 +33,13 @@ https://svelte.dev/e/node_invalid_placement -->
 		slot.refs = refs[slot.day] || {};
 	});
 
-	$: {
+	run(() => {
 		for (let slot of Object.values(slots)) {
 			if ($user && !($user in slot.refs)) {
 				slot.refs[$user] = { name: $user, start: '', end: '' };
 			}
 		}
-	}
+	});
 
 	function update_timeslot(ref, day) {
 		if ((!ref.start && !ref.end) || (ref.start && ref.end)) {
@@ -98,7 +104,7 @@ https://svelte.dev/e/node_invalid_placement -->
 							<button
 								type="button"
 								class="btn bg-primary-500 mb-4"
-								on:click={() => {
+								onclick={() => {
 									row.adding_slot = true;
 								}}
 							>
@@ -111,7 +117,7 @@ https://svelte.dev/e/node_invalid_placement -->
 									id="select-start-{i}"
 									class="select w-fit border rounded"
 									bind:value={row.refs[$user].start}
-									on:change={() => update_timeslot(row.refs[$user], row.day)}
+									onchange={() => update_timeslot(row.refs[$user], row.day)}
 								>
 									{#each timeslots.slice(0, -1) as time}
 										<option value={time}>{time}</option>
@@ -122,7 +128,7 @@ https://svelte.dev/e/node_invalid_placement -->
 									id="select-end-{i}"
 									class="select w-fit border rounded"
 									bind:value={row.refs[$user].end}
-									on:change={() => update_timeslot(row.refs[$user], row.day)}
+									onchange={() => update_timeslot(row.refs[$user], row.day)}
 								>
 									{#each timeslots.slice(1) as time}
 										{#if !row.refs[$user].start || row.refs[$user].start < time}
@@ -134,7 +140,7 @@ https://svelte.dev/e/node_invalid_placement -->
 								<button
 									type="button"
 									class="btn text-white bg-red-400 hover:bg-red-500"
-									on:click={() => {
+									onclick={() => {
 										if ($user in row.refs) {
 											row.refs[$user].start = '';
 											row.refs[$user].end = '';
@@ -186,7 +192,7 @@ https://svelte.dev/e/node_invalid_placement -->
 											</td>
 
 											{#each timeslots.slice(0, -1) as time}
-												<td class:present={ref.start <= time && ref.end > time} />
+												<td class:present={ref.start <= time && ref.end > time}></td>
 											{/each}
 										</tr>
 									{/if}

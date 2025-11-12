@@ -24,26 +24,28 @@
 					<section class="p-4">
 						<h3 class="h3 mb-2">{gym.name}</h3>
 
-						{#if gym.address}
-							<p class="text-sm opacity-75 mb-2">📍 {gym.address}</p>
-						{/if}
-
 						{#if gym.description}
 							<p class="text-sm opacity-75 mb-2">{gym.description}</p>
 						{/if}
 
 						<div class="flex justify-between items-center text-xs opacity-50">
-							<span>{gym.walls.length} wall(s)</span>
 							<span>Added {new Date(gym.created_at).toLocaleDateString()}</span>
 						</div>
 					</section>
 
 					<footer class="card-footer">
-						<div class="flex gap-2">
-							<a href="/pan/gym/{gym.id}/walls" class="btn variant-soft-primary flex-1">
-								View Walls
-							</a>
-							<a href="/pan/gym/{gym.id}/edit" class="btn variant-soft-secondary"> Edit </a>
+						<div class="flex flex-col gap-2">
+							<div class="flex gap-2">
+								<a href="/pan/gym/{gym.id}/walls" class="btn variant-soft-primary flex-1">
+									View Walls
+								</a>
+								<a href="/pan/gym/{gym.id}/edit" class="btn variant-soft-secondary"> Edit </a>
+							</div>
+							<div class="flex gap-2">
+								<a href="/pan/gym/{gym.id}/routes" class="btn variant-soft-primary flex-1">
+									View Routes
+								</a>
+							</div>
 						</div>
 					</footer>
 				</div>

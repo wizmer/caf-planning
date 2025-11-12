@@ -25,7 +25,6 @@
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			{#each data.walls as wall}
 				<div class="card">
-					{JSON.stringify(wall)}
 					{#if wall.photo}
 						<header class="card-header">
 							<img

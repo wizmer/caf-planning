@@ -27,34 +27,50 @@ export const actions: Actions = {
 			return fail(400, { error: 'At least one photo is required' });
 		}
 
-			const uploadDir = join(process.cwd(), 'static', 'uploads', 'walls');
-			await mkdir(uploadDir, { recursive: true });
+		const uploadDir = join(process.cwd(), 'static', 'uploads', 'walls');
+		await mkdir(uploadDir, { recursive: true });
 
-							const fileExtension = file.name.split('.').pop();
-				const fileName = `${randomUUID()}.${fileExtension}`;
-				const filePath = join(uploadDir, fileName);
+		const fileExtension = file.name.split('.').pop();
+		const fileName = `${randomUUID()}.${fileExtension}`;
+		const filePath = join(uploadDir, fileName);
 
-				const buffer = Buffer.from(await file.arrayBuffer());
-				await writeFile(filePath, buffer);
+		const buffer = Buffer.from(await file.arrayBuffer());
+		await writeFile(filePath, buffer);
 
 		try {
-			// Create wall in database
+			// Validate that the gym exists
+			const gymId = parseInt(params.gymId);
+			if (isNaN(gymId)) {
+				return fail(400, { error: 'Invalid gym ID' });
+			}
+
+			const gym = await prisma.gym.findUnique({
+				where: { id: gymId }
+			});
+
+			if (!gym) {
+				return fail(404, { error: 'Gym not found' });
+			}
+
+			// Create photo in database first
+			const photo = await prisma.photo.create({
+				data: {
+					file_path: `walls/${fileName}`,
+					file_name: file.name,
+					mime_type: file.type,
+					file_size: file.size
+				}
+			});
+
+			// Create wall with the photo_id
 			const wall = await prisma.wall.create({
 				data: {
 					name: wallName.trim(),
 					description: wallDescription?.trim() || null,
-					gym_id: parseInt(params.gymId)
-					photo: {
-						create: {
-							file_path: `walls/${fileName}`,
-							file_name: file.name,
-							mime_type: file.type,
-							file_size: file.size
-						}
-					}
+					gym_id: gymId,
+					photo_id: photo.id
 				}
 			});
-
 
 			throw redirect(303, '/pan');
 		} catch (error) {

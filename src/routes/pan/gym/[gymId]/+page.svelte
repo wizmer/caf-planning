@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { routes } from '../../routes';
+	import { routes } from '../../../routes';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -20,7 +20,7 @@
 	{:else}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			{#each data.gyms as gym}
-				<a class="card" href={`/pan/gym/${gym.id}`}>
+				<div class="card">
 					<section class="p-4">
 						<h3 class="h3 mb-2">{gym.name}</h3>
 
@@ -32,8 +32,25 @@
 							<span>Added {new Date(gym.created_at).toLocaleDateString()}</span>
 						</div>
 					</section>
-				</a>
+
+					<footer class="card-footer">
+						<div class="flex flex-col gap-2">
+							<div class="flex gap-2">
+								<a href="/pan/gym/{gym.id}/walls" class="btn variant-soft-primary flex-1">
+									View Walls
+								</a>
+								<a href="/pan/gym/{gym.id}/edit" class="btn variant-soft-secondary"> Edit </a>
+							</div>
+							<div class="flex gap-2">
+								<a href="/pan/gym/{gym.id}/routes" class="btn variant-soft-primary flex-1">
+									View Routes
+								</a>
+							</div>
+						</div>
+					</footer>
+				</div>
 			{/each}
 		</div>
 	{/if}
 </div>
+

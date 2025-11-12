@@ -36,10 +36,10 @@ export const actions: Actions = {
 
 		const buffer = Buffer.from(await file.arrayBuffer());
 		await writeFile(filePath, buffer);
+		// Validate that the gym exists
+		const gymId = parseInt(params.gymId);
 
 		try {
-			// Validate that the gym exists
-			const gymId = parseInt(params.gymId);
 			if (isNaN(gymId)) {
 				return fail(400, { error: 'Invalid gym ID' });
 			}
@@ -71,8 +71,6 @@ export const actions: Actions = {
 					photo_id: photo.id
 				}
 			});
-
-			throw redirect(303, '/pan');
 		} catch (error) {
 			console.error('Error creating wall:', error);
 
@@ -85,5 +83,7 @@ export const actions: Actions = {
 		} finally {
 			await prisma.$disconnect();
 		}
+
+		redirect(303, `/pan/gym/${gymId}/walls`);
 	}
 };

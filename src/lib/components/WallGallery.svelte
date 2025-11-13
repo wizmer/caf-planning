@@ -1,26 +1,19 @@
 <script lang="ts">
+	import type { Move } from '$lib/types';
 	import type { Wall } from '@prisma/client';
-
-	interface Move {
-		index: number;
-		wallId: number;
-		type: 'foothold' | 'handhold' | 'both' | 'start' | 'top';
-		x: number;
-		y: number;
-	}
 
 	let { walls, route = $bindable([]) as Move[], isEditing = false } = $props();
 
-	route = [
-		{ index: 0, wallId: 6, type: 'both', x: 55, y: 45 },
-		{ index: 1, wallId: 5, type: 'start', x: 20, y: 80 },
-		{ index: 2, wallId: 5, type: 'handhold', x: 30, y: 60 },
-		{ index: 3, wallId: 5, type: 'foothold', x: 40, y: 70 },
-		{ index: 4, wallId: 5, type: 'both', x: 50, y: 50 },
-		{ index: 5, wallId: 5, type: 'top', x: 60, y: 20 },
-		{ index: 6, wallId: 6, type: 'top', x: 60, y: 20 },
-		{ index: 7, wallId: 6, type: 'foothold', x: 45, y: 65 }
-	];
+	// route = [
+	// 	{ index: 0, wallId: 6, type: 'both', x: 55, y: 45 },
+	// 	{ index: 1, wallId: 5, type: 'start', x: 20, y: 80 },
+	// 	{ index: 2, wallId: 5, type: 'handhold', x: 30, y: 60 },
+	// 	{ index: 3, wallId: 5, type: 'foothold', x: 40, y: 70 },
+	// 	{ index: 4, wallId: 5, type: 'both', x: 50, y: 50 },
+	// 	{ index: 5, wallId: 5, type: 'top', x: 60, y: 20 },
+	// 	{ index: 6, wallId: 6, type: 'top', x: 60, y: 20 },
+	// 	{ index: 7, wallId: 6, type: 'foothold', x: 45, y: 65 }
+	// ];
 
 	let currentWallIndex = $state(0);
 	let currentMoveIndex = $state(route.length);

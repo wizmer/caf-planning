@@ -1,5 +1,4 @@
 <script lang="ts">
-	import WallGallery from '$lib/components/WallGallery.svelte';
 	import type { PageData } from './$types';
 
 	interface Props {
@@ -22,8 +21,6 @@
 			{gym.routes.length} route{gym.routes.length !== 1 ? 's' : ''} available
 		</p>
 	</div>
-
-	<WallGallery walls={gym.walls} />
 
 	{#if gym.routes.length === 0}
 		<div class="text-center py-12">

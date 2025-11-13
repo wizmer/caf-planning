@@ -68,7 +68,7 @@ model Route {
   description String?  @db.Text
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  body        String   @db.Text
+  body        Json  @db.JsonB
   gym         Gym?     @relation(fields: [gymId], references: [id])
   gymId       Int?
 }

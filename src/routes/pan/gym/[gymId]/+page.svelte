@@ -19,7 +19,7 @@
 
 	<div class="container mx-auto p-4">
 		<div class="mb-6">
-			<h1 class="text-3xl font-bold">{data.gym.name} - Routes</h1>
+			<h1 class="text-3xl font-bold">Routes</h1>
 			<p class="text-gray-600 mt-2">
 				{data.gym.routes.length} route{data.gym.routes.length !== 1 ? 's' : ''} available
 			</p>

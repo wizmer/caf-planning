@@ -16,9 +16,7 @@
 <div class="container mx-auto p-4">
 	<div class="mb-6">
 		<h1 class="text-3xl font-bold">Create New Route - {data.gym.name}</h1>
-		<a href="/pan/gym/{data.gym.id}/routes" class="text-blue-600 hover:text-blue-800">
-			← Back to Routes
-		</a>
+		<a href="/pan/gym/{data.gym.id}" class="text-blue-600 hover:text-blue-800"> ← Back to Gym </a>
 	</div>
 
 	{#if form?.error}

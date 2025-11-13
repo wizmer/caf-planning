@@ -321,36 +321,30 @@
 			</div>
 		{/if}
 
-		<div class="flex justify-center mt-4 space-x-2 pb-2 overflow-scroll">
-			{#each route as move}
+		{#if isEditing}
+			<div class="flex justify-center mt-4 space-x-2 pb-2 overflow-scroll">
+				{#each route as move}
+					<button
+						onclick={() => editMove(move)}
+						class="flex-shrink-0 w-20 h-16 rounded-md overflow-hidden border-2 transition-all {move.index ===
+						currentMoveIndex
+							? 'border-primary-500'
+							: 'border-surface-300 hover:border-surface-400'}"
+					>
+						Move {move.index}
+					</button>
+				{/each}
 				<button
-					onclick={() => editMove(move)}
-					class="flex-shrink-0 w-20 h-16 rounded-md overflow-hidden border-2 transition-all {move.index ===
-					currentMoveIndex
+					onclick={() => addMove()}
+					class="flex-shrink-0 w-20 h-16 rounded-md overflow-hidden border-2 transition-all {currentOperation ===
+					'adding'
 						? 'border-primary-500'
 						: 'border-surface-300 hover:border-surface-400'}"
 				>
-					Move {move.index}
+					➕ New Move
 				</button>
-			{/each}
-			<button
-				onclick={() => addMove()}
-				class="flex-shrink-0 w-20 h-16 rounded-md overflow-hidden border-2 transition-all {currentOperation ===
-				'adding'
-					? 'border-primary-500'
-					: 'border-surface-300 hover:border-surface-400'}"
-			>
-				➕ New Move
-			</button>
-		</div>
-
-		<!-- Wall Details -->
-		<div class="mt-6 text-center">
-			<h2 class="h2 mb-2">{currentWall.name}</h2>
-			{#if currentWall.description}
-				<p class="text-surface-600 max-w-2xl mx-auto">{currentWall.description}</p>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</div>
 {:else}
 	<div class="text-center py-12">

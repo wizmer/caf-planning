@@ -90,8 +90,6 @@ export const actions: Actions = {
 					gymId: gymId
 				}
 			});
-
-			throw redirect(303, `/pan/gym/${gymId}/routes`);
 		} catch (error) {
 			console.error('Error creating route:', error);
 
@@ -104,5 +102,6 @@ export const actions: Actions = {
 		} finally {
 			await prisma.$disconnect();
 		}
+		redirect(303, `/pan/gym/${gymId}`);
 	}
 };

@@ -3,9 +3,9 @@
 
 	let { data, form } = $props();
 
-	let route = {
+	let route = $state({
 		body: []
-	};
+	});
 </script>
 
 <svelte:head>

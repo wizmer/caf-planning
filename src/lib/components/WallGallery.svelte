@@ -1,13 +1,47 @@
 <script lang="ts">
 	import type { Move } from '$lib/types';
-	import type { Wall } from '@prisma/client';
 
 	let { walls, route = $bindable([]) as Move[], isEditing = false } = $props();
+
+	console.log('WallGallery loaded:', { walls: walls.length, isEditing, route: route.length });
 
 	let currentWallIndex = $state(0);
 	let selectedHoldType = $state<Move['type']>('hand');
 	let editingMove = $state<Move | null>(null);
 	let isDragging = $state(false);
+	let isFullscreen = $state(false);
+	let wallContainerRef: HTMLDivElement | null = $state(null);
+
+	function toggleFullscreen() {
+		if (!wallContainerRef) return;
+
+		if (!document.fullscreenElement) {
+			wallContainerRef
+				.requestFullscreen()
+				.then(() => {
+					isFullscreen = true;
+				})
+				.catch((err) => {
+					console.error('Error attempting to enable fullscreen:', err);
+				});
+		} else {
+			document.exitFullscreen().then(() => {
+				isFullscreen = false;
+			});
+		}
+	}
+
+	// Listen for fullscreen changes (e.g., ESC key)
+	$effect(() => {
+		const handleFullscreenChange = () => {
+			isFullscreen = !!document.fullscreenElement;
+		};
+
+		document.addEventListener('fullscreenchange', handleFullscreenChange);
+		return () => {
+			document.removeEventListener('fullscreenchange', handleFullscreenChange);
+		};
+	});
 
 	function nextWall() {
 		currentWallIndex = (currentWallIndex + 1) % walls.length;
@@ -21,13 +55,32 @@
 		currentWallIndex = index;
 	}
 
-	let currentWall = $derived(walls.find((wall: Wall) => wall.id === currentWallIndex) ?? walls[0]);
+	let currentWall = $derived(walls[currentWallIndex]);
+
+	// Use simple $derived instead of $derived.by for better reactivity with bindable props
 	let currentWallMoves = $derived(
-		route.filter((move) => move.wallId === currentWall?.id).sort((a, b) => a.index - b.index)
+		(() => {
+			const wallId = currentWall?.id;
+			const moves = route.filter((move) => move.wallId === wallId);
+			console.log('Current wall moves recalculating:', {
+				currentWallIndex,
+				wallId,
+				routeLength: route.length,
+				filteredMoves: moves.length,
+				allMoveWallIds: route.map((m) => m.wallId),
+				moves
+			});
+			return moves.sort((a, b) => a.index - b.index);
+		})()
 	);
 
 	function handleImageClick(event: MouseEvent) {
+		console.log('Image clicked', { isEditing, isDragging, currentWall });
 		if (!isEditing || isDragging) return;
+		if (!currentWall) {
+			console.error('No current wall');
+			return;
+		}
 
 		const img = event.currentTarget as HTMLElement;
 		const rect = img.getBoundingClientRect();
@@ -44,7 +97,9 @@
 			y: Math.round(y * 10) / 10
 		};
 
+		console.log('Adding new move:', newMove);
 		route = [...route, newMove];
+		console.log('Route after adding:', route.length, route);
 	}
 
 	function handleMoveClick(event: MouseEvent, move: Move) {
@@ -129,7 +184,7 @@
 </script>
 
 {#if walls.length > 0}
-	<div class="relative w-full max-w-4xl mx-auto">
+	<div class="relative">
 		{#if isEditing}
 			<div class="card p-4 mb-4">
 				<h4 class="h4 mb-3">Hold Type Selection</h4>
@@ -156,20 +211,66 @@
 		{/if}
 
 		<!-- Main Image Display -->
-		<div class="relative card overflow-hidden wall-image-container">
+		<div
+			bind:this={wallContainerRef}
+			class="relative card overflow-visible wall-image-container {isFullscreen
+				? 'bg-surface-900 flex items-center justify-center'
+				: ''}"
+		>
+			<!-- Fullscreen Button -->
+			<button
+				onclick={toggleFullscreen}
+				aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+				class="absolute top-4 left-4 z-50 btn variant-filled-surface rounded-full w-10 h-10 p-0 flex items-center justify-center hover:scale-110 transition-transform"
+			>
+				{#if isFullscreen}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-5 w-5"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
+					</svg>
+				{:else}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-5 w-5"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+						/>
+					</svg>
+				{/if}
+			</button>
+
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_click_events_have_key_keys -->
 			<img
 				src="/uploads/{currentWall.photo.file_path}"
 				alt={currentWall.name}
-				class="w-full h-auto object-contain max-h-96 {isEditing ? 'cursor-crosshair' : ''}"
+				class="w-full h-auto object-contain {isFullscreen ? 'max-h-screen' : 'max-h-96'} {isEditing
+					? 'cursor-crosshair'
+					: ''}"
 				onclick={handleImageClick}
 			/>
 
 			<!-- Render moves as overlays -->
 			{#each currentWallMoves as move, idx}
 				<div
-					class="absolute transition-all"
+					class="absolute"
 					style="left: {move.x}%; top: {move.y}%; transform: translate(-50%, -50%);"
 				>
 					<!-- Hold marker button -->
@@ -180,27 +281,26 @@
 						aria-label="Hold {idx + 1}"
 					>
 						<div
-							class="w-8 h-8 rounded-full {getMoveColor(
-								move.type
-							)} border-2 border-surface-50 shadow-lg flex items-center justify-center text-white text-xs font-bold {isEditing
-								? 'hover:scale-110'
-								: ''} {editingMove?.id === move.id ? 'ring-4 ring-primary-300' : ''}"
-						>
-							{idx + 1}
-						</div>
+							class="w-8 h-8 rounded-full border-4 {getMoveColor(move.type).replace(
+								'bg-',
+								'border-'
+							)} shadow-lg {isEditing ? 'hover:scale-110' : ''} {editingMove?.id === move.id
+								? 'ring-4 ring-primary-300'
+								: ''}"
+						></div>
 					</button>
 
 					<!-- Edit popup (outside button) -->
 					{#if isEditing && editingMove?.id === move.id}
 						<div
-							class="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-50"
+							class="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-[100]"
 							role="dialog"
 							tabindex="-1"
 							onclick={(e) => e.stopPropagation()}
 							onkeydown={(e) => e.key === 'Escape' && (editingMove = null)}
 						>
-							<div class="card p-3 shadow-xl min-w-[200px]">
-								<h5 class="text-sm font-bold mb-2">Edit Hold #{idx + 1}</h5>
+							<div class="card p-3 shadow-xl min-w-[200px] max-h-[400px] overflow-y-auto">
+								<h5 class="text-sm font-bold mb-2">Edit Hold</h5>
 								<div class="flex flex-col gap-1">
 									{#each ['hand_start', 'foot_start', 'hand', 'foot', 'both', 'finish'] as holdType}
 										<button
@@ -296,26 +396,6 @@
 				</div>
 			{/if}
 		</div>
-
-		<!-- Current Wall Holds (Editing Mode) -->
-		{#if isEditing && currentWallMoves.length > 0}
-			<div class="card p-4 mt-4">
-				<h4 class="h4 mb-2">Current Wall: {currentWallMoves.length} Holds</h4>
-				<div class="flex flex-wrap gap-2">
-					{#each currentWallMoves as move, idx}
-						<button
-							onclick={(e) => handleMoveClick(e, move)}
-							class="chip {editingMove?.id === move.id ? 'variant-filled-primary' : 'variant-soft'}"
-						>
-							<div class="flex items-center gap-1">
-								<div class="w-3 h-3 rounded-full {getMoveColor(move.type)}"></div>
-								<span>#{idx + 1}</span>
-							</div>
-						</button>
-					{/each}
-				</div>
-			</div>
-		{/if}
 
 		<!-- Move Legend (View Mode) -->
 		{#if !isEditing}

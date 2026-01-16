@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
 	import { FileDropzone } from '@skeletonlabs/skeleton';
 	import type { ActionData, PageData } from './$types';
-	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
 
 	interface Props {
 		data: PageData;

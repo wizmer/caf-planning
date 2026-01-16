@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { PageData } from './$types';
 	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
+	import type { PageData } from './$types';
 
 	interface Props {
 		data: PageData;

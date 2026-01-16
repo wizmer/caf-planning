@@ -47,7 +47,7 @@
 
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{#each gym.routes as route}
-				<div class="bg-white rounded-lg shadow-md p-6 border">
+				<div class="bg-white rounded-lg shadow-md p-6 border h-96 flex flex-col">
 					<div class="flex justify-between items-start mb-3">
 						<h3 class="text-xl font-semibold">{route.name}</h3>
 						<span class="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded">
@@ -61,7 +61,9 @@
 						<p class="text-gray-700 mb-4">{route.description}</p>
 					{/if}
 
-					<WallGallery id={gym.id} walls={gym.walls} route={route.body} legend={false} />
+					<div class="flex-1 min-h-0">
+						<WallGallery id={gym.id} walls={gym.walls} route={route.body} legend={false} />
+					</div>
 
 					<div class="mt-4 flex justify-between items-center text-sm text-gray-500">
 						<span>Created: {new Date(route.created_at).toLocaleDateString()}</span>

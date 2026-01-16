@@ -1,40 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { fail, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 
 const prisma = new PrismaClient();
-
-export const load: PageServerLoad = async ({ params }) => {
-	const gymId = parseInt(params.gymId);
-
-	if (isNaN(gymId)) {
-		throw error(400, 'Invalid gym ID');
-	}
-
-	try {
-		const gym = await prisma.gym.findUnique({
-			where: { id: gymId },
-			include: {
-				walls: {
-					include: {
-						photo: true
-					},
-					orderBy: {
-						created_at: 'asc'
-					}
-				}
-			}
-		});
-
-		if (!gym) {
-			throw error(404, 'Gym not found');
-		}
-
-		return { gym };
-	} finally {
-		await prisma.$disconnect();
-	}
-};
 
 export const actions: Actions = {
 	default: async ({ request, params }) => {
@@ -81,7 +49,7 @@ export const actions: Actions = {
 			}
 
 			// Create route in database
-			const route = await prisma.route.create({
+			await prisma.route.create({
 				data: {
 					name: name.trim(),
 					grade: grade.trim(),

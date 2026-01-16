@@ -2,14 +2,11 @@
 	import RouteEditor from '$lib/components/RouteEditor.svelte';
 
 	let { data, form } = $props();
-
-	let route = {
-		body: []
-	};
+	const route = $state(data.route);
 </script>
 
 <svelte:head>
-	<title>New Route - {data.gym.name}</title>
+	<title>Edition du bloc - {data.gym.name}</title>
 </svelte:head>
 
 <RouteEditor {data} {form} {route}></RouteEditor>

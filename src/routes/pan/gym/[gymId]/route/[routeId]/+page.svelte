@@ -3,10 +3,8 @@
 	import WallGallery from '$lib/components/WallGallery.svelte';
 
 	let { data } = $props();
-	console.log('data', data);
 
 	const route = data.gym.routes.find((r: any) => r.id === parseInt(page.params.routeId));
-	console.log('route', route);
 
 	if (!route) {
 		throw new Error('Route not found');
@@ -24,4 +22,6 @@
 	</div>
 
 	<WallGallery walls={data.gym.walls} route={route.body} />
+
+	<a href="/pan/gym/{data.gym.id}/route/{route.id}/edit">Modifier le bloc</a>
 </div>

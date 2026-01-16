@@ -4,19 +4,10 @@
 
 	let { walls, route = $bindable([]) as Move[], isEditing = false } = $props();
 
-	// route = [
-	// 	{ index: 0, wallId: 6, type: 'both', x: 55, y: 45 },
-	// 	{ index: 1, wallId: 5, type: 'start', x: 20, y: 80 },
-	// 	{ index: 2, wallId: 5, type: 'handhold', x: 30, y: 60 },
-	// 	{ index: 3, wallId: 5, type: 'foothold', x: 40, y: 70 },
-	// 	{ index: 4, wallId: 5, type: 'both', x: 50, y: 50 },
-	// 	{ index: 5, wallId: 5, type: 'top', x: 60, y: 20 },
-	// 	{ index: 6, wallId: 6, type: 'top', x: 60, y: 20 },
-	// 	{ index: 7, wallId: 6, type: 'foothold', x: 45, y: 65 }
-	// ];
-
 	let currentWallIndex = $state(0);
-	let currentMoveIndex = $state(route.length);
+	let selectedHoldType = $state<Move['type']>('hand');
+	let editingMove = $state<Move | null>(null);
+	let isDragging = $state(false);
 
 	function nextWall() {
 		currentWallIndex = (currentWallIndex + 1) % walls.length;
@@ -31,82 +22,109 @@
 	}
 
 	let currentWall = $derived(walls.find((wall: Wall) => wall.id === currentWallIndex) ?? walls[0]);
-	console.log('walls', walls);
-	let currentWallMoves = $derived(route.filter((move) => move.wallId === currentWall?.id));
-	let currentOperation = $state<'adding' | 'editing'>('adding');
+	let currentWallMoves = $derived(
+		route.filter((move) => move.wallId === currentWall?.id).sort((a, b) => a.index - b.index)
+	);
 
-	function getMoveColor(type: string) {
-		switch (type) {
-			case 'start':
-				return 'bg-green-500';
-			case 'top':
-				return 'bg-red-500';
-			case 'handhold':
-				return 'bg-blue-500';
-			case 'foothold':
-				return 'bg-yellow-500';
-			case 'both':
-				return 'bg-purple-500';
-			default:
-				return 'bg-gray-500';
-		}
-	}
-
-	let currentMoveType = $state<Move['type']>('handhold');
-
-	let tempMove = $state<Move | null>(null);
-	let tempRoute = $state<Move[]>([]);
 	function handleImageClick(event: MouseEvent) {
-		if (!isEditing) return;
+		if (!isEditing || isDragging) return;
 
 		const img = event.currentTarget as HTMLElement;
 		const rect = img.getBoundingClientRect();
 		const x = ((event.clientX - rect.left) / rect.width) * 100;
 		const y = ((event.clientY - rect.top) / rect.height) * 100;
 
-		tempMove = {
-			index: currentMoveIndex,
+		// Create new move
+		const newMove: Move = {
+			id: crypto.randomUUID(),
+			index: route.length,
 			wallId: currentWall.id,
-			type: currentMoveType,
+			type: selectedHoldType,
 			x: Math.round(x * 10) / 10,
 			y: Math.round(y * 10) / 10
 		};
 
-		if (currentOperation === 'adding') {
-			tempRoute = [...route, tempMove];
-		} else {
-			route[currentMoveIndex] = tempMove;
-			tempRoute = [...route];
+		route = [...route, newMove];
+	}
+
+	function handleMoveClick(event: MouseEvent, move: Move) {
+		event.stopPropagation();
+		if (!isEditing) return;
+
+		editingMove = editingMove?.id === move.id ? null : move;
+	}
+
+	function updateMoveType(move: Move, newType: Move['type']) {
+		const index = route.findIndex((m) => m.id === move.id);
+		if (index !== -1) {
+			route[index] = { ...route[index], type: newType };
+			route = [...route];
 		}
+		editingMove = null;
 	}
 
-	function submitMove() {
-		if (!tempMove) return;
-
-		route = [...tempRoute];
-
-		// Go back to adding move state
-		addMove();
+	function deleteMove(move: Move) {
+		route = route.filter((m) => m.id !== move.id).map((m, idx) => ({ ...m, index: idx }));
+		editingMove = null;
 	}
 
-	function addMove() {
-		tempMove = null;
-		currentOperation = 'adding';
-		currentMoveIndex = route.length;
-	}
-	function editMove(move: Move) {
-		tempMove = null;
-		currentOperation = 'editing';
-		goToWall(move.wallId);
-		currentMoveType = move.type;
-		currentMoveIndex = move.index;
-		currentWallIndex = move.wallId;
+	function handleMoveDragStart(event: MouseEvent, move: Move) {
+		if (!isEditing) return;
+		event.stopPropagation();
+		isDragging = true;
+		editingMove = null;
+
+		const img = (event.currentTarget as HTMLElement).closest('.wall-image-container');
+		if (!img) return;
+
+		const handleDrag = (e: MouseEvent) => {
+			const rect = img.getBoundingClientRect();
+			const x = ((e.clientX - rect.left) / rect.width) * 100;
+			const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+			const index = route.findIndex((m) => m.id === move.id);
+			if (index !== -1) {
+				route[index] = {
+					...route[index],
+					x: Math.max(0, Math.min(100, Math.round(x * 10) / 10)),
+					y: Math.max(0, Math.min(100, Math.round(y * 10) / 10))
+				};
+				route = [...route];
+			}
+		};
+
+		const handleDragEnd = () => {
+			isDragging = false;
+			document.removeEventListener('mousemove', handleDrag);
+			document.removeEventListener('mouseup', handleDragEnd);
+		};
+
+		document.addEventListener('mousemove', handleDrag);
+		document.addEventListener('mouseup', handleDragEnd);
 	}
 
-	function removeMove(moveIndex: number) {
-		route = route.filter((move) => move.index !== moveIndex);
-		// Reindex remaining moves
-		route = route.map((move, index) => ({ ...move, index: index + 1 }));
+	function getMoveColor(type: Move['type']) {
+		const colors = {
+			hand_start: 'bg-success-500',
+			foot_start: 'bg-success-400',
+			hand: 'bg-primary-500',
+			foot: 'bg-warning-500',
+			both: 'bg-secondary-500',
+			finish: 'bg-error-500'
+		};
+		return colors[type];
+	}
+
+	function getMoveLabel(type: Move['type']) {
+		const labels = {
+			hand_start: 'Hand Start',
+			foot_start: 'Foot Start',
+			hand: 'Hand',
+			foot: 'Foot',
+			both: 'Both',
+			finish: 'Finish'
+		};
+		return labels[type];
 	}
 </script>
 
@@ -114,56 +132,33 @@
 	<div class="relative w-full max-w-4xl mx-auto">
 		{#if isEditing}
 			<div class="card p-4 mb-4">
-				{#if currentOperation === 'adding'}
-					<h4 class="h5 mb-2">Adding Move: {currentMoveIndex}</h4>
-				{:else}
-					<h4 class="h5 mb-2">Editing Move: {currentMoveIndex}</h4>
-				{/if}
-				<div class="flex gap-2 flex-wrap">
-					<button
-						class="chip {currentMoveType === 'start' ? 'variant-filled-success' : 'variant-soft'}"
-						onclick={() => (currentMoveType = 'start')}
-					>
-						Start
-					</button>
-					<button
-						class="chip {currentMoveType === 'handhold'
-							? 'variant-filled-primary'
-							: 'variant-soft'}"
-						onclick={() => (currentMoveType = 'handhold')}
-					>
-						Handhold
-					</button>
-					<button
-						class="chip {currentMoveType === 'foothold'
-							? 'variant-filled-warning'
-							: 'variant-soft'}"
-						onclick={() => (currentMoveType = 'foothold')}
-					>
-						Foothold
-					</button>
-					<button
-						class="chip {currentMoveType === 'both' ? 'variant-filled-secondary' : 'variant-soft'}"
-						onclick={() => (currentMoveType = 'both')}
-					>
-						Both
-					</button>
-					<button
-						class="chip {currentMoveType === 'top' ? 'variant-filled-error' : 'variant-soft'}"
-						onclick={() => (currentMoveType = 'top')}
-					>
-						Top
-					</button>
-					<button class="btn variant-filled-secondary" onclick={submitMove} disabled={!tempMove}
-						>Add Move</button
-					>
+				<h4 class="h4 mb-3">Hold Type Selection</h4>
+				<div class="flex flex-wrap gap-2">
+					{#each ['hand_start', 'foot_start', 'hand', 'foot', 'both', 'finish'] as holdType}
+						<button
+							onclick={() => (selectedHoldType = holdType as Move['type'])}
+							class="btn px-4 py-2 {selectedHoldType === holdType
+								? 'variant-filled-primary'
+								: 'variant-soft'}"
+						>
+							<div class="flex items-center gap-2">
+								<div class="w-3 h-3 rounded-full {getMoveColor(holdType as Move['type'])}"></div>
+								{getMoveLabel(holdType as Move['type'])}
+							</div>
+						</button>
+					{/each}
 				</div>
-				<p class="text-sm text-surface-600 mt-2">Click on the wall image to add moves'</p>
+				<p class="text-sm text-surface-600 mt-2">
+					Click on the wall image to add a {getMoveLabel(selectedHoldType).toLowerCase()} hold. Click
+					holds to edit or drag to reposition.
+				</p>
 			</div>
 		{/if}
 
 		<!-- Main Image Display -->
-		<div class="relative card overflow-hidden">
+		<div class="relative card overflow-hidden wall-image-container">
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<img
 				src="/uploads/{currentWall.photo.file_path}"
 				alt={currentWall.name}
@@ -171,51 +166,82 @@
 				onclick={handleImageClick}
 			/>
 
-			<!-- Move Circles Overlay -->
-			{#each currentWallMoves as move}
+			<!-- Render moves as overlays -->
+			{#each currentWallMoves as move, idx}
 				<div
-					class="absolute w-6 h-6 rounded-full border-2 border-surface-50 shadow-lg flex items-center justify-center text-on-primary-token text-xs font-bold transform -translate-x-1/2 -translate-y-1/2 {getMoveColor(
-						move.type
-					)} {isEditing ? 'hover:scale-125 cursor-pointer' : ''}"
-					style="left: {move.x}%; top: {move.y}%;"
-					title="{move.type} - Move {move.index}"
-					onclick={isEditing
-						? (e) => {
-								e.stopPropagation();
-								removeMove(move.index);
-							}
-						: undefined}
+					class="absolute transition-all"
+					style="left: {move.x}%; top: {move.y}%; transform: translate(-50%, -50%);"
 				>
-					{move.index}
+					<!-- Hold marker button -->
+					<button
+						class={isEditing ? 'cursor-move' : 'cursor-pointer'}
+						onclick={(e) => handleMoveClick(e, move)}
+						onmousedown={(e) => isEditing && handleMoveDragStart(e, move)}
+						aria-label="Hold {idx + 1}"
+					>
+						<div
+							class="w-8 h-8 rounded-full {getMoveColor(
+								move.type
+							)} border-2 border-surface-50 shadow-lg flex items-center justify-center text-white text-xs font-bold {isEditing
+								? 'hover:scale-110'
+								: ''} {editingMove?.id === move.id ? 'ring-4 ring-primary-300' : ''}"
+						>
+							{idx + 1}
+						</div>
+					</button>
+
+					<!-- Edit popup (outside button) -->
+					{#if isEditing && editingMove?.id === move.id}
+						<div
+							class="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-50"
+							role="dialog"
+							tabindex="-1"
+							onclick={(e) => e.stopPropagation()}
+							onkeydown={(e) => e.key === 'Escape' && (editingMove = null)}
+						>
+							<div class="card p-3 shadow-xl min-w-[200px]">
+								<h5 class="text-sm font-bold mb-2">Edit Hold #{idx + 1}</h5>
+								<div class="flex flex-col gap-1">
+									{#each ['hand_start', 'foot_start', 'hand', 'foot', 'both', 'finish'] as holdType}
+										<button
+											onclick={() => updateMoveType(move, holdType as Move['type'])}
+											class="btn btn-sm {move.type === holdType
+												? 'variant-filled'
+												: 'variant-ghost'} justify-start"
+										>
+											<div class="flex items-center gap-2">
+												<div
+													class="w-3 h-3 rounded-full {getMoveColor(holdType as Move['type'])}"
+												></div>
+												{getMoveLabel(holdType as Move['type'])}
+											</div>
+										</button>
+									{/each}
+									<hr class="my-1" />
+									<button onclick={() => deleteMove(move)} class="btn btn-sm variant-filled-error">
+										Delete Hold
+									</button>
+								</div>
+							</div>
+						</div>
+					{/if}
 				</div>
 			{/each}
-
-			{#if tempMove}
-				<div
-					class="absolute w-6 h-6 rounded-full border-2 border-surface-50 shadow-lg flex items-center justify-center text-on-primary-token text-xs font-bold transform -translate-x-1/2 -translate-y-1/2 {getMoveColor(
-						tempMove.type
-					)} {isEditing ? 'hover:scale-125 cursor-pointer' : ''}"
-					style="left: {tempMove.x}%; top: {tempMove.y}%;"
-					title="{tempMove.type} - Move {tempMove.index}"
-					onclick={isEditing
-						? (e) => {
-								e.stopPropagation();
-								removeMove(tempMove.index);
-							}
-						: undefined}
-				>
-					{tempMove.index}
-				</div>
-			{/if}
 
 			<!-- Navigation Arrows -->
 			{#if walls.length > 1}
 				<button
 					onclick={prevWall}
-					class="btn-icon variant-filled-surface absolute left-4 top-1/2 transform -translate-y-1/2"
 					aria-label="Previous wall"
+					class="absolute left-4 top-1/2 -translate-y-1/2 btn variant-filled-surface rounded-full w-12 h-12 p-0 flex items-center justify-center hover:scale-110 transition-transform"
 				>
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -224,13 +250,18 @@
 						/>
 					</svg>
 				</button>
-
 				<button
 					onclick={nextWall}
-					class="btn-icon variant-filled-surface absolute right-4 top-1/2 transform -translate-y-1/2"
 					aria-label="Next wall"
+					class="absolute right-4 top-1/2 -translate-y-1/2 btn variant-filled-surface rounded-full w-12 h-12 p-0 flex items-center justify-center hover:scale-110 transition-transform"
 				>
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -255,11 +286,6 @@
 							{currentWallMoves.length} move{currentWallMoves.length !== 1 ? 's' : ''}
 						</p>
 					{/if}
-					{#if isEditing}
-						<p class="text-surface-300 text-xs mt-1">
-							Editing mode • Click to add {currentMoveType}
-						</p>
-					{/if}
 				</div>
 			{/if}
 
@@ -271,22 +297,46 @@
 			{/if}
 		</div>
 
-		<!-- Move Legend -->
-		{#if route && !isEditing}
+		<!-- Current Wall Holds (Editing Mode) -->
+		{#if isEditing && currentWallMoves.length > 0}
+			<div class="card p-4 mt-4">
+				<h4 class="h4 mb-2">Current Wall: {currentWallMoves.length} Holds</h4>
+				<div class="flex flex-wrap gap-2">
+					{#each currentWallMoves as move, idx}
+						<button
+							onclick={(e) => handleMoveClick(e, move)}
+							class="chip {editingMove?.id === move.id ? 'variant-filled-primary' : 'variant-soft'}"
+						>
+							<div class="flex items-center gap-1">
+								<div class="w-3 h-3 rounded-full {getMoveColor(move.type)}"></div>
+								<span>#{idx + 1}</span>
+							</div>
+						</button>
+					{/each}
+				</div>
+			</div>
+		{/if}
+
+		<!-- Move Legend (View Mode) -->
+		{#if !isEditing}
 			<div class="card p-4 mt-4">
 				<h4 class="h4 mb-2">Move Legend</h4>
 				<div class="flex flex-wrap gap-4 text-sm">
 					<div class="flex items-center gap-2">
 						<div class="w-4 h-4 rounded-full bg-success-500 border border-surface-50"></div>
-						<span>Start</span>
+						<span>Hand Start</span>
+					</div>
+					<div class="flex items-center gap-2">
+						<div class="w-4 h-4 rounded-full bg-success-400 border border-surface-50"></div>
+						<span>Foot Start</span>
 					</div>
 					<div class="flex items-center gap-2">
 						<div class="w-4 h-4 rounded-full bg-primary-500 border border-surface-50"></div>
-						<span>Handhold</span>
+						<span>Hand</span>
 					</div>
 					<div class="flex items-center gap-2">
 						<div class="w-4 h-4 rounded-full bg-warning-500 border border-surface-50"></div>
-						<span>Foothold</span>
+						<span>Foot</span>
 					</div>
 					<div class="flex items-center gap-2">
 						<div class="w-4 h-4 rounded-full bg-secondary-500 border border-surface-50"></div>
@@ -294,7 +344,7 @@
 					</div>
 					<div class="flex items-center gap-2">
 						<div class="w-4 h-4 rounded-full bg-error-500 border border-surface-50"></div>
-						<span>Top</span>
+						<span>Finish</span>
 					</div>
 				</div>
 			</div>
@@ -320,52 +370,9 @@
 				{/each}
 			</div>
 		{/if}
-
-		{#if isEditing}
-			<div class="flex justify-center mt-4 space-x-2 pb-2 overflow-scroll">
-				{#each route as move}
-					<button
-						onclick={() => editMove(move)}
-						class="flex-shrink-0 w-20 h-16 rounded-md overflow-hidden border-2 transition-all {move.index ===
-						currentMoveIndex
-							? 'border-primary-500'
-							: 'border-surface-300 hover:border-surface-400'}"
-					>
-						Move {move.index}
-					</button>
-				{/each}
-				<button
-					onclick={() => addMove()}
-					class="flex-shrink-0 w-20 h-16 rounded-md overflow-hidden border-2 transition-all {currentOperation ===
-					'adding'
-						? 'border-primary-500'
-						: 'border-surface-300 hover:border-surface-400'}"
-				>
-					➕ New Move
-				</button>
-			</div>
-		{/if}
 	</div>
 {:else}
 	<div class="text-center py-12">
 		<p class="text-surface-500 text-lg">No walls found for this gym.</p>
 	</div>
 {/if}
-
-<style>
-	/* Smooth transitions */
-	img {
-		transition: opacity 0.3s ease-in-out;
-	}
-
-	/* Move circles hover effect */
-	.absolute.w-6.h-6 {
-		cursor: pointer;
-		transition: all 0.2s ease-in-out;
-	}
-
-	.absolute.w-6.h-6:hover {
-		transform: translate(-50%, -50%) scale(1.2);
-		z-index: 10;
-	}
-</style>

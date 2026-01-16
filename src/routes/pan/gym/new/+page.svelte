@@ -1,19 +1,73 @@
 <script lang="ts">
-	import GymForm from '$lib/components/GymForm.svelte';
-	import type { ActionData } from './$types';
+	import { goto } from '$app/navigation';
+	import { gymSchema } from '$lib/schemas/gym';
+	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	interface Props {
-		form: ActionData;
-	}
+	let { data } = $props();
 
-	let { form }: Props = $props();
+	const toastStore = getToastStore();
+
+	const { form, errors, enhance, submitting } = superForm(data.form, {
+		validators: zodClient(gymSchema),
+		onResult: async ({ result }) => {
+			if (result.type === 'success') {
+				toastStore.trigger({
+					message: 'Gym successfully created',
+					background: 'variant-filled-success'
+				});
+				await goto('/pan/gym');
+			}
+		}
+	});
 </script>
 
-<div class="container mx-auto p-4 space-y-4 max-w-2xl">
-	<div class="flex items-center gap-4 mb-6">
-		<a href="/pan/gym" class="btn variant-soft">← Back to Gyms</a>
-		<h1 class="h1">Add New Gym</h1>
+<svelte:head>
+	<title>Create New Gym</title>
+</svelte:head>
+
+<div class="container mx-auto p-4">
+	<div class="mb-6">
+		<h1 class="text-3xl font-bold">Create New Gym</h1>
+		<a href="/pan/gym" class="text-blue-600 hover:text-blue-800"> ← Back to Gyms </a>
 	</div>
 
-	<GymForm {form} />
+	<form method="POST" use:enhance class="card p-6 max-w-md">
+		<div class="mb-4">
+			<label for="name" class="label">
+				<span>Gym Name</span>
+				<input
+					type="text"
+					name="name"
+					bind:value={$form.name}
+					class="input"
+					class:input-error={$errors.name}
+				/>
+				{#if $errors.name}
+					<span class="text-error-500 text-sm">{$errors.name}</span>
+				{/if}
+			</label>
+		</div>
+
+		<div class="mb-6">
+			<label for="location" class="label">
+				<span>Location</span>
+				<input
+					type="text"
+					name="location"
+					bind:value={$form.location}
+					class="input"
+					class:input-error={$errors.location}
+				/>
+				{#if $errors.location}
+					<span class="text-error-500 text-sm">{$errors.location}</span>
+				{/if}
+			</label>
+		</div>
+
+		<button type="submit" class="btn variant-filled-primary" disabled={$submitting}>
+			{$submitting ? 'Creating...' : 'Create Gym'}
+		</button>
+	</form>
 </div>

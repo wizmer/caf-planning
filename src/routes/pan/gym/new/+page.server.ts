@@ -1,40 +1,38 @@
+import { gymSchema } from '$lib/schemas/gym';
 import { PrismaClient } from '@prisma/client';
 import { fail } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 
 const prisma = new PrismaClient();
 
-export const actions: Actions = {
-	default: async ({ request }) => {
-		const formData = await request.formData();
-		const gymName = formData.get('gymName') as string;
-		const gymDescription = formData.get('gymDescription') as string;
+export const load = async () => {
+	const form = await superValidate(zod(gymSchema));
+	return { form };
+};
 
-		// Validate input
-		if (!gymName?.trim()) {
-			return fail(400, { error: 'Gym name is required' });
+export const actions = {
+	default: async ({ request }) => {
+		const form = await superValidate(request, zod(gymSchema));
+
+		if (!form.valid) {
+			return fail(400, { form });
 		}
+
+		const { name, description } = form.data;
 
 		try {
 			await prisma.gym.create({
 				data: {
-					name: gymName.trim(),
-					description: gymDescription?.trim() || null
+					name: name.trim(),
+					description: description?.trim() || null
 				}
 			});
 
-			return { success: true };
+			return { form };
 		} catch (error) {
 			console.error('Error creating gym:', error);
-
-			// If it's a redirect, re-throw it
-			if (error instanceof Response && error.status === 303) {
-				throw error;
-			}
-
-			return fail(500, { error: 'Failed to create gym. Please try again.' });
-		} finally {
-			await prisma.$disconnect();
+			return fail(500, { form, error: 'An error occurred while creating the gym.' });
 		}
 	}
 };

@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict vnJNpf9eD8Af4OuBQhXPNAhdvPsmWtxQ1AOXChZ3Y7VlDoa3zasdk9IVKf4Yljn
+\restrict gIeO1h5NHHPSMzaVEep2gQOdVevrdHbXjLH2Qi7L3dMh1O9FyEsOY7U8BFHedBr
 
 -- Dumped from database version 17.6 (Debian 17.6-2.pgdg13+1)
--- Dumped by pg_dump version 17.6 (Ubuntu 17.6-2.pgdg22.04+1)
+-- Dumped by pg_dump version 17.7 (Ubuntu 17.7-3.pgdg22.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -125,8 +125,8 @@ CREATE TABLE public."Route" (
     description text,
     created_at timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(3) without time zone NOT NULL,
-    body text NOT NULL,
-    "gymId" integer
+    "gymId" integer,
+    body jsonb NOT NULL
 );
 
 
@@ -386,7 +386,7 @@ COPY public."Photo" (id, file_path, file_name, mime_type, file_size, uploaded_at
 -- Data for Name: Route; Type: TABLE DATA; Schema: public; Owner: bcoste
 --
 
-COPY public."Route" (id, name, grade, description, created_at, updated_at, body, "gymId") FROM stdin;
+COPY public."Route" (id, name, grade, description, created_at, updated_at, "gymId", body) FROM stdin;
 \.
 
 
@@ -403,13 +403,14 @@ COPY public."Wall" (id, gym_id, name, description, created_at, updated_at, photo
 --
 
 COPY public._prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count) FROM stdin;
-211c2c0f-433c-43d8-9d94-187d1097893f	d889dd9c3eaeaebc7a0d56956c86c8e414a4a47ba6b32d1e07895aa739236110	2025-11-12 22:06:47.122135+00	0_init	\N	\N	2025-11-12 22:06:47.118648+00	1
-6102ff2f-9554-45b3-9db1-4354f2c0f44d	119c0dfc8d65d91ab505cedda4ef312e67f3f38a4712182c7331998bcabfaf18	2025-11-12 22:06:47.1251+00	20251111225852_walls	\N	\N	2025-11-12 22:06:47.12233+00	1
-47f14a58-073e-4938-9b7b-e09269907972	902e71fabdf00eec5575e1929e0308147cbd7075f1df5b9b1f2ff04654ca3e65	2025-11-12 22:06:47.129648+00	20251111231218_camel	\N	\N	2025-11-12 22:06:47.125271+00	1
-36afbd90-dcff-4237-a351-a53d8fd6c6bf	6d54113df50ef981922bfcfe2bf076e1f0e1069326cbaeac785689423221936b	2025-11-12 22:06:47.131878+00	20251111235107_photo	\N	\N	2025-11-12 22:06:47.129831+00	1
-366868b9-4290-4df0-97d1-771123a0425e	73fa5f252c12dc303b77fbb25cc24c9a25eb5d9987eefa1dc040e7a0cee95c29	2025-11-12 22:06:47.13329+00	20251112001542_walloptionaal	\N	\N	2025-11-12 22:06:47.132059+00	1
-647c9655-ccd1-4316-8adc-cac02221ec2b	323cf8bc438e909846706b2c83a04f493b7e100dc6ef44f30527b488916337b7	2025-11-12 22:06:47.134629+00	20251112003915_routes	\N	\N	2025-11-12 22:06:47.133442+00	1
-0cbf5885-33e0-45e1-a956-ab72519aa63f	e039575ab9b5c640d239e5de43bd8fbd56d71fbd47b9018f706f5cd3b1f14d34	2025-11-12 22:06:47.135731+00	20251112004221_routes	\N	\N	2025-11-12 22:06:47.134778+00	1
+6973d755-85d5-43eb-bd35-1ef013280255	d889dd9c3eaeaebc7a0d56956c86c8e414a4a47ba6b32d1e07895aa739236110	2026-01-16 19:32:07.602318+00	0_init	\N	\N	2026-01-16 19:32:07.599403+00	1
+d7345c6a-9a2a-41be-9b36-070a69583d7f	119c0dfc8d65d91ab505cedda4ef312e67f3f38a4712182c7331998bcabfaf18	2026-01-16 19:32:07.605321+00	20251111225852_walls	\N	\N	2026-01-16 19:32:07.602509+00	1
+648d4120-7a34-4820-895c-92510b038690	902e71fabdf00eec5575e1929e0308147cbd7075f1df5b9b1f2ff04654ca3e65	2026-01-16 19:32:07.609945+00	20251111231218_camel	\N	\N	2026-01-16 19:32:07.605489+00	1
+8f7fbcde-4a82-4182-ac9b-9241fa190977	6d54113df50ef981922bfcfe2bf076e1f0e1069326cbaeac785689423221936b	2026-01-16 19:32:07.612394+00	20251111235107_photo	\N	\N	2026-01-16 19:32:07.610118+00	1
+da977341-8905-43a2-ba2b-474eea9cfbf0	73fa5f252c12dc303b77fbb25cc24c9a25eb5d9987eefa1dc040e7a0cee95c29	2026-01-16 19:32:07.613896+00	20251112001542_walloptionaal	\N	\N	2026-01-16 19:32:07.612569+00	1
+6e1eb79f-d093-4974-a86a-e8bfc50e814d	323cf8bc438e909846706b2c83a04f493b7e100dc6ef44f30527b488916337b7	2026-01-16 19:32:07.61514+00	20251112003915_routes	\N	\N	2026-01-16 19:32:07.614094+00	1
+779f6e9c-459f-4528-a5af-76a100bc0da6	e039575ab9b5c640d239e5de43bd8fbd56d71fbd47b9018f706f5cd3b1f14d34	2026-01-16 19:32:07.616067+00	20251112004221_routes	\N	\N	2026-01-16 19:32:07.615295+00	1
+30a52118-e62b-4d67-aaf1-5c6fb3d56ec2	2dd17832f576c78512270137479e0aeb58487c7478cbcba207566118f34236f2	2026-01-16 19:32:07.616698+00	20251113002411_jjson	\N	\N	2026-01-16 19:32:07.616205+00	1
 \.
 
 
@@ -614,5 +615,5 @@ REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict vnJNpf9eD8Af4OuBQhXPNAhdvPsmWtxQ1AOXChZ3Y7VlDoa3zasdk9IVKf4Yljn
+\unrestrict gIeO1h5NHHPSMzaVEep2gQOdVevrdHbXjLH2Qi7L3dMh1O9FyEsOY7U8BFHedBr
 

@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import { error, fail } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 
 const prisma = new PrismaClient();
 
@@ -47,5 +47,45 @@ export const load: PageServerLoad = async ({ params }) => {
 		throw error(500, 'Failed to load walls');
 	} finally {
 		await prisma.$disconnect();
+	}
+};
+
+export const actions: Actions = {
+	delete: async ({ params, request }) => {
+		const data = await request.formData();
+		const wallId = parseInt(data.get('wallId') as string);
+		const gymId = parseInt(params.gymId);
+
+		if (isNaN(wallId)) {
+			return fail(400, { error: 'Invalid wall ID' });
+		}
+
+		try {
+			// First check if the wall belongs to this gym
+			const wall = await prisma.wall.findUnique({
+				where: { id: wallId },
+				select: { gym_id: true }
+			});
+
+			if (!wall) {
+				return fail(404, { error: 'Wall not found' });
+			}
+
+			if (wall.gym_id !== gymId) {
+				return fail(403, { error: 'Wall does not belong to this gym' });
+			}
+
+			// Delete the wall (photo will cascade delete if set up in schema)
+			await prisma.wall.delete({
+				where: { id: wallId }
+			});
+
+			return { success: true };
+		} catch (err) {
+			console.error('Error deleting wall:', err);
+			return fail(500, { error: 'Failed to delete wall' });
+		} finally {
+			await prisma.$disconnect();
+		}
 	}
 };

@@ -1,7 +1,6 @@
 <script lang="ts">
-	import type { Move } from '$lib/types';
-
-	let { walls, route = $bindable([]) as Move[], isEditing = false } = $props();
+	import type { Move } from '$lib/types';	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
+	let { walls, route = $bindable([]) as Move[], isEditing = false, legend = true } = $props();
 
 	console.log('WallGallery loaded:', { walls: walls.length, isEditing, route: route.length });
 
@@ -259,7 +258,7 @@
 			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<!-- svelte-ignore a11y_click_events_have_key_keys -->
 			<img
-				src="/uploads/{currentWall.photo.file_path}"
+				src="{PUBLIC_UPLOAD_URL}/{currentWall.photo.file_path}"
 				alt={currentWall.name}
 				class="w-full h-auto object-contain {isFullscreen ? 'max-h-screen' : 'max-h-96'} {isEditing
 					? 'cursor-crosshair'
@@ -398,7 +397,7 @@
 		</div>
 
 		<!-- Move Legend (View Mode) -->
-		{#if !isEditing}
+		{#if !isEditing && legend}
 			<div class="card p-4 mt-4">
 				<h4 class="h4 mb-2">Move Legend</h4>
 				<div class="flex flex-wrap gap-4 text-sm">
@@ -442,7 +441,7 @@
 							: 'border-surface-300 hover:border-surface-400'}"
 					>
 						<img
-							src="/uploads/{wall.photo.file_path}"
+							src="{PUBLIC_UPLOAD_URL}/{wall.photo.file_path}"
 							alt={wall.name}
 							class="w-full h-full object-cover"
 						/>

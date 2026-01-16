@@ -1,3 +1,4 @@
+import { UPLOAD_DIR } from '$env/static/private';
 import { PrismaClient } from '@prisma/client';
 import { fail, redirect } from '@sveltejs/kit';
 import { randomUUID } from 'crypto';
@@ -27,7 +28,7 @@ export const actions: Actions = {
 			return fail(400, { error: 'At least one photo is required' });
 		}
 
-		const uploadDir = join(process.cwd(), 'static', 'uploads', 'walls');
+		const uploadDir = join(UPLOAD_DIR, 'walls');
 		await mkdir(uploadDir, { recursive: true });
 
 		const fileExtension = file.name.split('.').pop();

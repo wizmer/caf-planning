@@ -1,17 +1,29 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import type { PageData } from './$types';
+	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
 
 	interface Props {
 		data: PageData;
 	}
 
 	let { data }: Props = $props();
+
+	let deletingWallId = $state<number | null>(null);
+
+	function confirmDelete(wallId: number, wallName: string) {
+		if (confirm(`Are you sure you want to delete "${wallName}"? This action cannot be undone.`)) {
+			deletingWallId = wallId;
+			return true;
+		}
+		return false;
+	}
 </script>
 
 <div class="container mx-auto p-4 space-y-4">
 	<div class="flex items-center justify-between">
 		<div class="flex items-center gap-4">
-			<a href="/pan/gym" class="btn variant-soft">← Back to Gyms</a>
+			<a href="/pan/gym/{data.gym.id}" class="btn variant-soft">← Back to Gym</a>
 			<div>
 				<h1 class="h1">{data.gym.name} - Walls</h1>
 			</div>
@@ -32,7 +44,7 @@
 					{#if wall.photo}
 						<header class="card-header">
 							<img
-								src="/uploads/{wall.photo.file_path}"
+								src="{PUBLIC_UPLOAD_URL}/{wall.photo.file_path}"
 								alt={wall.name}
 								class="w-full h-48 object-cover rounded-t-container-token"
 							/>
@@ -63,6 +75,29 @@
 							>
 								Edit
 							</a>
+							<form
+								method="POST"
+								action="?/delete"
+								use:enhance={() => {
+									if (!confirmDelete(wall.id, wall.name)) {
+										return ({ cancel }) => cancel();
+									}
+									deletingWallId = wall.id;
+									return async ({ update }) => {
+										await update();
+										deletingWallId = null;
+									};
+								}}
+							>
+								<input type="hidden" name="wallId" value={wall.id} />
+								<button
+									type="submit"
+									class="btn variant-soft-error"
+									disabled={deletingWallId === wall.id}
+								>
+									{deletingWallId === wall.id ? 'Deleting...' : 'Delete'}
+								</button>
+							</form>
 						</div>
 					</footer>
 				</div>

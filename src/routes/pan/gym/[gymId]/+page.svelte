@@ -61,7 +61,7 @@
 						<p class="text-gray-700 mb-4">{route.description}</p>
 					{/if}
 
-					<WallGallery id={gym.id} walls={gym.walls} route={route.body} showLegend={false} />
+					<WallGallery id={gym.id} walls={gym.walls} route={route.body} legend={false} />
 
 					<div class="mt-4 flex justify-between items-center text-sm text-gray-500">
 						<span>Created: {new Date(route.created_at).toLocaleDateString()}</span>
@@ -74,8 +74,24 @@
 		</div>
 	{/if}
 
-	<h2 class="h2">Murs</h2>
-	<WallGallery id={gym.id} walls={gym.walls} />
+	<h2 class="h2 mt-8">Gallerie des murs</h2>
+	<!-- add wall button -->
+	<a
+		href="/pan/gym/{gym.id}/walls/new"
+		class="mb-4 inline-block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+	>
+		Ajouter un mur
+	</a>
+
+	<!-- Edit walls butto -->
+	<a
+		href="/pan/gym/{gym.id}/walls"
+		class="mb-4 ml-4 inline-block bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+	>
+		Éditer les murs
+	</a>
+
+	<WallGallery id={gym.id} walls={gym.walls} legend={false} />
 </div>
 
 <style>

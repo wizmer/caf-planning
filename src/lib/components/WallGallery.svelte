@@ -6,7 +6,9 @@
 	console.log('WallGallery loaded:', { walls: walls.length, isEditing, route: route.length });
 
 	let currentWallIndex = $state(0);
-	let selectedHoldType = $state<Move['type']>('hand');
+	let selectedHoldType = $state<Move['type']>(
+		route.length > 0 ? route[route.length - 1].type : 'hand'
+	);
 	let editingMove = $state<Move | null>(null);
 	let isDragging = $state(false);
 	let isFullscreen = $state(false);
@@ -100,6 +102,9 @@
 		console.log('Adding new move:', newMove);
 		route = [...route, newMove];
 		console.log('Route after adding:', route.length, route);
+
+		// Set selectedHoldType to the type of the newly added hold
+		selectedHoldType = newMove.type;
 	}
 
 	function handleMoveClick(event: MouseEvent, move: Move) {
@@ -160,12 +165,24 @@
 
 	function getMoveColor(type: Move['type']) {
 		const colors = {
-			hand_start: 'bg-success-500',
-			foot_start: 'bg-success-400',
-			hand: 'bg-primary-500',
-			foot: 'bg-warning-500',
-			both: 'bg-secondary-500',
-			finish: 'bg-error-500'
+			hand_start: 'bg-green-500',
+			foot_start: 'bg-amber-400',
+			hand: 'bg-blue-500',
+			foot: 'bg-orange-500',
+			both: 'bg-purple-500',
+			finish: 'bg-pink-500'
+		};
+		return colors[type];
+	}
+
+	function getMoveBorderColor(type: Move['type']) {
+		const colors = {
+			hand_start: 'border-green-500',
+			foot_start: 'border-amber-400',
+			hand: 'border-blue-500',
+			foot: 'border-orange-500',
+			both: 'border-purple-500',
+			finish: 'border-pink-500'
 		};
 		return colors[type];
 	}
@@ -279,9 +296,8 @@
 						aria-label="Hold {idx + 1}"
 					>
 						<div
-							class="w-8 h-8 rounded-full border-4 {getMoveColor(move.type).replace(
-								'bg-',
-								'border-'
+							class="w-8 h-8 rounded-full border-4 {getMoveBorderColor(
+								move.type
 							)} shadow-lg {isEditing ? 'hover:scale-110' : ''} {editingMove?.id === move.id
 								? 'ring-4 ring-primary-300'
 								: ''}"

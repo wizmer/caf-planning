@@ -93,7 +93,9 @@
 		Éditer les murs
 	</a>
 
-	<WallGallery id={gym.id} walls={gym.walls} legend={false} />
+	<div class="h-96">
+		<WallGallery id={gym.id} walls={gym.walls} legend={false} />
+	</div>
 </div>
 
 <style>

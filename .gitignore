@@ -26,3 +26,4 @@ vite.config.ts.timestamp-*
 /../generated/prisma
 .env
 /static/
+/caf-planning-uploads

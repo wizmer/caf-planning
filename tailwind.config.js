@@ -1,4 +1,5 @@
 // @ts-check
+import tailwindcss from '@tailwindcss/vite';
 import { join } from 'path';
 
 /** @type {import('tailwindcss').Config} */
@@ -13,8 +14,5 @@ export default {
 	theme: {
 		extend: {}
 	},
-	plugins: [
-		// 4. Append the Skeleton plugin (after other plugins)
-		require('@tailwindcss/forms')
-	]
+	plugins: [tailwindcss()]
 };

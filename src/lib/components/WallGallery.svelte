@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
+	import { getMoveBorderColor, getMoveColor, getMoveLabel } from '$lib/move-utils';
 	import type { Move } from '$lib/types';
+	import { Slider } from '@skeletonlabs/skeleton-svelte';
 	let { walls, route = $bindable([]) as Move[], isEditing = false, legend = true } = $props();
 
 	console.log('WallGallery loaded:', { walls: walls.length, isEditing, route: route.length });
@@ -161,42 +163,6 @@
 
 		document.addEventListener('mousemove', handleDrag);
 		document.addEventListener('mouseup', handleDragEnd);
-	}
-
-	function getMoveColor(type: Move['type']) {
-		const colors = {
-			hand_start: 'bg-green-500',
-			foot_start: 'bg-amber-400',
-			hand: 'bg-blue-500',
-			foot: 'bg-orange-500',
-			both: 'bg-purple-500',
-			finish: 'bg-pink-500'
-		};
-		return colors[type];
-	}
-
-	function getMoveBorderColor(type: Move['type']) {
-		const colors = {
-			hand_start: 'border-green-500',
-			foot_start: 'border-amber-400',
-			hand: 'border-blue-500',
-			foot: 'border-orange-500',
-			both: 'border-purple-500',
-			finish: 'border-pink-500'
-		};
-		return colors[type];
-	}
-
-	function getMoveLabel(type: Move['type']) {
-		const labels = {
-			hand_start: 'Hand Start',
-			foot_start: 'Foot Start',
-			hand: 'Hand',
-			foot: 'Foot',
-			both: 'Both',
-			finish: 'Finish'
-		};
-		return labels[type];
 	}
 </script>
 
@@ -470,3 +436,19 @@
 		<p class="text-surface-500 text-lg">No walls found for this gym.</p>
 	</div>
 {/if}
+<Slider defaultValue={[50]}>
+	<Slider.Label>Label</Slider.Label>
+	<Slider.Control>
+		<Slider.Track>
+			<Slider.Range />
+		</Slider.Track>
+		<Slider.Thumb index={0}>
+			<Slider.HiddenInput />
+		</Slider.Thumb>
+	</Slider.Control>
+	<Slider.MarkerGroup>
+		<Slider.Marker value={25} />
+		<Slider.Marker value={50} />
+		<Slider.Marker value={75} />
+	</Slider.MarkerGroup>
+</Slider>

@@ -12,7 +12,7 @@
 		storePopup,
 		type ModalComponent
 	} from '@skeletonlabs/skeleton';
-	import '../app.postcss';
+	import '../app.css';
 
 	import { user } from '$lib/stores';
 	import ModalLogin from './ModalLogin.svelte';
@@ -70,15 +70,13 @@
 
 	{@render children?.()}
 	{#snippet pageFooter()}
-	
-			<div class="flex flex-row justify-center">
-				<div>
-					Vous cherchez <a
-						href="/admin"
-						class="font-medium text-blue-600 dark:text-blue-500 hover:underline">l'espace admin ?</a
-					>
-				</div>
+		<div class="flex flex-row justify-center">
+			<div>
+				Vous cherchez <a
+					href="/admin"
+					class="font-medium text-blue-600 dark:text-blue-500 hover:underline">l'espace admin ?</a
+				>
 			</div>
-		
+		</div>
 	{/snippet}
 </AppShell>

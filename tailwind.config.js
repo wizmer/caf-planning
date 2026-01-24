@@ -1,10 +1,6 @@
 // @ts-check
 import { join } from 'path';
 
-// 1. Import the Skeleton plugin
-import { skeleton } from '@skeletonlabs/tw-plugin';
-import { cafTheme } from './caf-theme.js';
-
 /** @type {import('tailwindcss').Config} */
 export default {
 	// 2. Opt for dark mode to be handled via the class method
@@ -19,12 +15,6 @@ export default {
 	},
 	plugins: [
 		// 4. Append the Skeleton plugin (after other plugins)
-		require('@tailwindcss/forms'),
-		skeleton({
-			themes: {
-				preset: ['skeleton', 'modern', 'crimson'],
-				custom: [cafTheme]
-			}
-		})
+		require('@tailwindcss/forms')
 	]
 };

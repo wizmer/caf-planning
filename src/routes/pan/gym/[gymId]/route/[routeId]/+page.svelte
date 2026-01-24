@@ -9,6 +9,7 @@
 	if (!route) {
 		throw new Error('Route not found');
 	}
+	$inspect(route);
 </script>
 
 <svelte:head>
@@ -18,6 +19,7 @@
 <div class="container mx-auto p-4">
 	<div class="mb-6">
 		<h1 class="text-3xl font-bold">{route.name}</h1>
+		<h2 class="text-xl text-gray-600 mb-2">Grade: {route.grade}</h2>
 		<a href="/pan/gym/{data.gym.id}" class="text-blue-600 hover:text-blue-800"> ← Back to Gym </a>
 	</div>
 

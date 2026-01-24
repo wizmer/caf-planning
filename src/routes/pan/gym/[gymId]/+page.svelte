@@ -1,4 +1,5 @@
 <script lang="ts">
+	import RouteThumbnail from '$lib/components/RouteThumbnail.svelte';
 	import WallGallery from '$lib/components/WallGallery.svelte';
 	import { type PageData } from '../$types';
 
@@ -62,7 +63,7 @@
 					{/if}
 
 					<div class="flex-1 min-h-0">
-						<WallGallery id={gym.id} walls={gym.walls} route={route.body} legend={false} />
+						<RouteThumbnail walls={gym.walls} route={route.body} legend={false} />
 					</div>
 
 					<div class="mt-4 flex justify-between items-center text-sm text-gray-500">

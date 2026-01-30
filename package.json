@@ -20,7 +20,7 @@
 		"db:pgdump:dev": "PGPASSWORD=postgres pg_dump -U bcoste --host 127.0.0.1 --port 5432 -d caf -f sql/init.sql",
 		"db:reset": "DATABASE_URL=\"postgresql://bcoste:postgres@127.0.0.1:5432/caf\" npx prisma migrate reset",
 		"db:seed": "DATABASE_URL=\"postgresql://bcoste:postgres@127.0.0.1:5432/caf\" npx prisma db seed",
-		"db:regenerate": "npm run db:reset -- -f && npm run db:seed && npm run db:pgdump:dev"
+		"db:regenerate": "npm run db:reset -- -f && npm run db:pgdump:dev"
 	},
 	"devDependencies": {
 		"@floating-ui/dom": "^1.7.5",
@@ -52,6 +52,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@lucide/svelte": "^0.563.1",
 		"@popperjs/core": "^2.11.8",
 		"@prisma/client": "^6.19.2",
 		"@tailwindcss/vite": "^4.1.18",

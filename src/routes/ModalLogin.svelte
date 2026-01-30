@@ -2,7 +2,7 @@
 	import type { SvelteComponent } from 'svelte';
 	// Stores
 	import { last_user, user } from '$lib/stores';
-	import { Segment } from '@skeletonlabs/skeleton-svelte';
+	import { SegmentedControl } from '@skeletonlabs/skeleton-svelte';
 	import { base } from '$app/paths';
 
 	let new_user = $state('');
@@ -84,10 +84,10 @@
 		last_user: {$last_user}
 		<header class={cHeader}>Referent</header>
 
-		<Segment active="preset-filled-primary-500" hover="hover:preset-tonal-primary">
+		<SegmentedControl active="preset-filled-primary-500" hover="hover:preset-tonal-primary">
 			<Segment.Item bind:group={radio} name="justify" value="existing">Utilisateur existant</Segment.Item>
 			<Segment.Item bind:group={radio} name="justify" value="new">Nouvel utilisateur</Segment.Item>
-		</Segment>
+		</SegmentedControl>
 
 		<form id="login-form" class="modal-form {cForm}">
 			{#if radio === 'existing'}

@@ -3,6 +3,7 @@
 
 	import { base } from '$app/paths';
 	import { REFERENT, user } from '$lib/stores';
+	import { Trash } from '@lucide/svelte';
 	import { createToaster } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
 	import { capitalize, create_slots, timeslots } from './utils';
@@ -46,18 +47,6 @@
 				headers: {
 					'content-type': 'application/json'
 				}
-			}).then((response) => {
-				if (!response.ok) {
-					toastStore.trigger({
-						message: 'Une erreur est survenue. La page va être rechargée.',
-						classes: 'bg-error-500',
-						timeout: 10000
-					});
-
-					setTimeout(function () {
-						window.location.reload(true);
-					}, 4000);
-				}
 			});
 		}
 	}
@@ -66,14 +55,14 @@
 <div>
 	{#each Object.values(slots) as row, i (row.id)}
 		{#if i === 0 || Object.values(slots)[i - 1].month != row.month}
-			<div class="h2 p-4">
+			<div class="h2 p-4 text-secondary-500">
 				{capitalize(row.date.toLocaleString('fr-FR', { month: 'long', year: 'numeric' }))}
 			</div>
 		{/if}
 
-		<div class="card">
+		<div class="card m-auto max-w-xl preset-filled-surface-100-900 p-4 text-center">
 			<header class="card-header">
-				<div class="h3">
+				<div class="h3 text-tertiary-500">
 					<span
 						>{row.date.toLocaleString('fr-FR', {
 							weekday: 'long',
@@ -95,87 +84,79 @@
 			</header>
 
 			<section class="p-4">
-				{#if row.status != 'cancelled'}
-					{#if $user}
-						{#if !row.refs[$user]?.start && !row.refs[$user]?.end && !row.adding_slot}
+				{#if row.status == 'cancelled'}
+					<div class="h3 text-error-500">Session annulée</div>
+				{:else if $user}
+					{#if !row.refs[$user]?.start && !row.refs[$user]?.end && !row.adding_slot}
+						<button
+							type="button"
+							class="btn bg-primary-500 mb-4"
+							onclick={() => {
+								row.adding_slot = true;
+							}}
+						>
+							Ajouter mon créneau
+						</button>
+					{:else}
+						<div class="flex flex-row flex-wrap justify-center items-center gap-2 mb-4">
+							<label for="select-start-{i}">Mon créneau: </label>
+							<select
+								id="select-start-{i}"
+								class="select w-fit preset-outlined"
+								bind:value={row.refs[$user].start}
+								onchange={() => update_timeslot(row.refs[$user], row.day)}
+							>
+								{#each timeslots.slice(0, -1) as time}
+									<option value={time}>{time}</option>
+								{/each}
+							</select>
+
+							<select
+								id="select-end-{i}"
+								class="select w-fit preset-outlined"
+								bind:value={row.refs[$user].end}
+								onchange={() => update_timeslot(row.refs[$user], row.day)}
+							>
+								{#each timeslots.slice(1) as time}
+									{#if !row.refs[$user].start || row.refs[$user].start < time}
+										<option value={time}>{time}</option>
+									{/if}
+								{/each}
+							</select>
+
 							<button
 								type="button"
-								class="btn bg-primary-500 mb-4"
+								class="btn text-white bg-red-400 hover:bg-red-500"
 								onclick={() => {
-									row.adding_slot = true;
+									if ($user in row.refs) {
+										row.refs[$user].start = '';
+										row.refs[$user].end = '';
+										update_timeslot(row.refs[$user], row.day);
+									}
+									row.adding_slot = false;
 								}}
 							>
-								Ajouter mon creneau
+								<Trash />
 							</button>
-						{:else}
-							<div class="flex flex-row flex-wrap justify-center items-center gap-2 mb-4">
-								<label for="select-start-{i}">Mon créneau: </label>
-								<select
-									id="select-start-{i}"
-									class="select w-fit border rounded"
-									bind:value={row.refs[$user].start}
-									onchange={() => update_timeslot(row.refs[$user], row.day)}
-								>
-									{#each timeslots.slice(0, -1) as time}
-										<option value={time}>{time}</option>
-									{/each}
-								</select>
-
-								<select
-									id="select-end-{i}"
-									class="select w-fit border rounded"
-									bind:value={row.refs[$user].end}
-									onchange={() => update_timeslot(row.refs[$user], row.day)}
-								>
-									{#each timeslots.slice(1) as time}
-										{#if !row.refs[$user].start || row.refs[$user].start < time}
-											<option value={time}>{time}</option>
-										{/if}
-									{/each}
-								</select>
-
-								<button
-									type="button"
-									class="btn text-white bg-red-400 hover:bg-red-500"
-									onclick={() => {
-										if ($user in row.refs) {
-											row.refs[$user].start = '';
-											row.refs[$user].end = '';
-											update_timeslot(row.refs[$user], row.day);
-										}
-										row.adding_slot = false;
-									}}
-								>
-									Enlever mon creneau
-								</button>
-							</div>
-						{/if}
+						</div>
 					{/if}
-				{/if}
 
-				<div class="table-container">
-					<table class="table table-auto max-w-prose">
-						<thead class="divider-x">
-							<tr>
-								<th>Nom</th>
-								<th colspan="2">18:00</th>
-								<th colspan="2">19:00</th>
-								<th colspan="2">20:00</th>
-								<th colspan="2">21:00</th>
-							</tr>
-						</thead>
-
-						<tbody>
-							{#if row.status == 'cancelled'}
+					<div class="table-container">
+						<table class="table table-auto max-w-prose">
+							<thead class="divider-x">
 								<tr>
-									<td class="cancelled" colspan="100%">
-										<div class="h3">Session annulee</div>
-									</td>
+									<th>Nom</th>
+									<th colspan="2">18:00</th>
+									<th colspan="2">19:00</th>
+									<th colspan="2">20:00</th>
+									<th colspan="2">21:00</th>
 								</tr>
-							{:else}
+							</thead>
+
+							<tbody>
 								{#if Object.values(row.refs).filter((ref) => ref.start && ref.end).length == 0}
 									<tr>
-										<td class="no_referrent" colspan="100%">
+										<td colspan="100%">
 											<div class="h3">Pas de {REFERENT} pour le moment</div>
 										</td>
 									</tr>
@@ -194,10 +175,10 @@
 										</tr>
 									{/if}
 								{/each}
-							{/if}
-						</tbody>
-					</table>
-				</div>
+							</tbody>
+						</table>
+					</div>
+				{/if}
 			</section>
 		</div>
 	{/each}
@@ -231,14 +212,6 @@
 
 	.present {
 		background-color: green;
-	}
-
-	.no_referrent {
-		color: rgba(var(--color-warning-500) / 1);
-	}
-
-	.cancelled {
-		color: rgba(var(--color-error-500) / 1);
 	}
 
 	.card {

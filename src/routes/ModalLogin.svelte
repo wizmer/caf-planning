@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { SvelteComponent } from 'svelte';
 	// Stores
 	import { base } from '$app/paths';
 	import { last_user, user } from '$lib/stores';
@@ -15,17 +14,13 @@
 
 	let { referents, parent }: Props = $props();
 
-	interface Props {
-		referents: any;
-		parent: SvelteComponent;
-	}
+	$inspect(referents);
 
-	// Do not preselect $last_user if it no longer exists
-	let current_user = $state(
-		referents.map((item) => item[1]).includes($last_user) ? $last_user : ''
-	);
+	let preselected_user = referents.find((item) => item[1] === $last_user) ? $last_user : '';
 
-	let open = $state(true);
+	let selected_user = $state(preselected_user);
+
+	let open = $state(false);
 
 	let failed_login_text = $state('');
 
@@ -34,10 +29,10 @@
 	let radio = $state('existing');
 	let toastStore = createToaster();
 
-	let login_enabled = $derived(radio === 'existing' ? current_user !== '' : new_user !== '');
+	let login_enabled = $derived(radio === 'existing' ? selected_user !== '' : new_user !== '');
 	let connection_string = $derived(
 		'Se connecter' +
-			(login_enabled ? ' en tant que: ' + (radio == 'existing' ? current_user : new_user) : '')
+			(login_enabled ? ' en tant que: ' + (radio == 'existing' ? selected_user : new_user) : '')
 	);
 
 	// We've created a custom submit function to pass the response and close the modal.
@@ -52,12 +47,15 @@
 		if (radio === 'new') {
 			create_ref(new_user);
 		}
-		$user = radio === 'existing' ? current_user : new_user;
+		$user = radio === 'existing' ? selected_user : new_user;
 		open = false;
 	}
 
 	const collection = useListCollection({
-		items: referents,
+		items: referents.map((ref) => ({
+			label: ref[1],
+			value: ref[1]
+		})),
 		itemToString: (item) => item.label,
 		itemToValue: (item) => item.value
 	});
@@ -90,7 +88,6 @@
 	const cForm = 'p-2 space-y-4 rounded-container';
 </script>
 
-<!-- @component This example creates a simple form modal. -->
 <Dialog {open} onOpenChange={(e) => (open = e.open)}>
 	<Dialog.Trigger class="btn preset-filled">Espace Staff</Dialog.Trigger>
 
@@ -99,29 +96,45 @@
 		<Dialog.Positioner class="fixed inset-0 z-50 flex justify-center items-center p-4">
 			<Dialog.Content class="card bg-surface-100-900 w-full max-w-xl p-4 space-y-4 shadow-xl ">
 				<div class={cBase}>
-					user: {$user}
-					last_user: {$last_user}
 					<header class={cHeader}>Referent</header>
 
-					<SegmentedControl active="preset-filled-primary-500" hover="hover:preset-tonal-primary">
-						<SegmentedControl.Item bind:group={radio} name="justify" value="existing"
-							>Utilisateur existant</SegmentedControl.Item
-						>
-						<SegmentedControl.Item bind:group={radio} name="justify" value="new"
-							>Nouvel utilisateur</SegmentedControl.Item
-						>
+					prese: {preselected_user}
+					last user: {$last_user}
+					referents: {referents}
+					<SegmentedControl
+						defaultValue="existing"
+						value={radio}
+						onValueChange={(e) => (radio = e.value)}
+					>
+						<SegmentedControl.Control>
+							<SegmentedControl.Indicator />
+							<SegmentedControl.Item value="existing" title="existing" aria-label="existing">
+								<SegmentedControl.ItemText>Utilisateur existant</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+							<SegmentedControl.Item value="new" title="new" aria-label="new">
+								<SegmentedControl.ItemText>Utilisateur nouveau</SegmentedControl.ItemText>
+								<SegmentedControl.ItemHiddenInput />
+							</SegmentedControl.Item>
+						</SegmentedControl.Control>
 					</SegmentedControl>
 
 					<form id="login-form" class="modal-form {cForm}">
 						{#if radio === 'existing'}
-							<Listbox class="border rounded-container">
+							<Listbox
+								class="w-full max-w-md"
+								{collection}
+								defaultValue={[preselected_user]}
+								onValueChange={(e) => {
+									selected_user = e.value[0];
+								}}
+							>
 								<Listbox.Content>
 									{#each collection.items as item (item.value)}
-										<Listbox.ItemText>{item.label}</Listbox.ItemText>
-										<Listbox.ItemIndicator />
-										<Listbox.item bind:group={current_user} name={item[0]} value={item[1]}
-											>{item[1]}
-										</Listbox.item>
+										<Listbox.Item {item}>
+											<Listbox.ItemText>{item.label}</Listbox.ItemText>
+											<Listbox.ItemIndicator />
+										</Listbox.Item>
 									{/each}
 								</Listbox.Content>
 							</Listbox>

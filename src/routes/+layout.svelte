@@ -4,6 +4,7 @@
 	import { createToaster, Toast } from '@skeletonlabs/skeleton-svelte';
 	import '../app.css';
 
+	import LightSwitch from '$lib/components/LightSwitch.svelte';
 	import { user } from '$lib/stores';
 	import ModalLogin from './ModalLogin.svelte';
 
@@ -11,7 +12,7 @@
 	const toaster = createToaster();
 </script>
 
-<nav class="bg-primary border-gray-200 dark:bg-gray-900">
+<nav class="bg-primary-100-900">
 	<div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
 		<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
 			<img src={icon} class="h-8" alt="CAF Logo" />
@@ -33,21 +34,17 @@
 			{:else}
 				<ModalLogin referents={data.referents} />
 			{/if}
+			<LightSwitch />
 		</div>
 	</div>
 </nav>
 
 {@render children?.()}
-{#snippet pageFooter()}
-	<div class="flex flex-row justify-center">
-		<div>
-			Vous cherchez <a
-				href="/admin"
-				class="font-medium text-blue-600 dark:text-blue-500 hover:underline">l'espace admin ?</a
-			>
-		</div>
+<div class="flex flex-row justify-center">
+	<div>
+		Vous cherchez <a href="/admin" class="font-medium hover:underline">l'espace admin ?</a>
 	</div>
-{/snippet}
+</div>
 
 <Toast.Group {toaster}>
 	{#snippet children(toast)}

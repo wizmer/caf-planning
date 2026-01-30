@@ -9,7 +9,6 @@
 	if (!route) {
 		throw new Error('Route not found');
 	}
-	$inspect(route);
 </script>
 
 <svelte:head>

@@ -7,7 +7,6 @@
 	console.log('WallGallery loaded:', { walls: walls.length, isEditing, route: route.length });
 
 	let currentWall = $derived(walls.find((wall) => wall.id === route[0]?.wallId) || walls[0]);
-	$inspect(currentWall);
 	let currentWallMoves = $derived(route.filter((move) => move.wallId === currentWall?.id) || []);
 </script>
 

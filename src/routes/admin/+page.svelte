@@ -1,9 +1,17 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { admin, REFERENT } from '$lib/stores';
 
 	import { dev } from '$app/environment';
 	import { base } from '$app/paths';
+	import { XIcon } from '@lucide/svelte';
+	import {
+		createToaster,
+		Dialog,
+		Listbox,
+		Portal,
+		useListCollection
+	} from '@skeletonlabs/skeleton-svelte';
 	import { DateTime } from 'luxon';
 	import type { PageData } from '../$types';
 	import { create_slots } from '../utils';
@@ -19,13 +27,14 @@
 		$admin = true;
 	}
 
+	let dialogOpen = $state(false);
+
 	const slots = create_slots({});
 	let events = $state(data.events);
 	let type = $state('cancelled');
 	let date = $state(Object.values(slots)[0].day);
 
 	let referents_to_remove = $state([]);
-	const modalStore = getModalStore();
 	const toastStore = createToaster();
 
 	let referents = $state(data.referents);
@@ -36,20 +45,16 @@
 		}
 	}
 
-	function trigger_modal() {
-		const modal = {
-			type: 'confirm',
-			// Data
-			title: `Suppression des ${REFERENT}s`,
-			body: `Ceci supprimera tous les creneaux des ${REFERENT}s. Cette action ne peut pas etre annulee.`,
-			response: (is_confirmed: boolean) => {
-				if (is_confirmed) {
-					delete_users();
-				}
-			}
-		};
-		modalStore.trigger(modal);
-	}
+	const collection = $derived(
+		useListCollection({
+			items: referents.map((ref) => ({
+				label: ref[1],
+				value: ref[1]
+			})),
+			itemToString: (item) => item.label,
+			itemToValue: (item) => item.value
+		})
+	);
 
 	function delete_event(day) {
 		for (const key of Object.keys(events)) {
@@ -64,7 +69,7 @@
 				'content-type': 'application/json'
 			}
 		});
-		events = events;
+		invalidateAll();
 	}
 
 	function add_event(day, type) {
@@ -77,10 +82,11 @@
 		});
 
 		events[day] = [-1, day, type];
-		events = events;
+		invalidateAll();
 	}
 
 	function delete_users() {
+		console.log('clicked');
 		for (let user of referents_to_remove) {
 			for (let i = 0; i < referents.length; i++) {
 				if (referents[i][1] === user) {
@@ -92,22 +98,14 @@
 						}
 					}).then((response) => {
 						if (!response.ok) {
-							toastStore.trigger({
-								message: 'Une erreur est survenue. La page va être rechargée.',
-								classes: 'bg-error-500',
-								timeout: 10000
-							});
-
-							setTimeout(function () {
-								window.location.reload(true);
-							}, 4000);
+							referents = referents.filter((item) => !referents_to_remove.includes(item[1]));
 						}
 					});
-					break;
 				}
 			}
 		}
 		referents = referents.filter((item) => !referents_to_remove.includes(item[1]));
+		dialogOpen = false;
 	}
 </script>
 
@@ -179,18 +177,56 @@
 
 		<div class="card flex flex-col m-4 p-4 gap-4">
 			<h2 class="h2">Suppression des {REFERENT}s</h2>
-			<ListBox name="list" class="border rounded-container" multiple>
-				{#each referents as item}
-					<ListBoxItem bind:group={referents_to_remove} name={item[0]} value={item[1]}
-						>{item[1]}
-					</ListBoxItem>
-				{/each}
-			</ListBox>
-			<button
-				onclick={trigger_modal}
-				class="btn bg-secondary-500"
-				disabled={!referents_to_remove.length}>Supprimer {REFERENT}s</button
+
+			<Listbox
+				class="w-full max-w-md"
+				{collection}
+				onValueChange={(e) => {
+					referents_to_remove = e.value;
+				}}
+				selectionMode="multiple"
 			>
+				<Listbox.Content>
+					{#each collection.items as item (item.value)}
+						<Listbox.Item {item}>
+							<Listbox.ItemText>{item.label}</Listbox.ItemText>
+							<Listbox.ItemIndicator />
+						</Listbox.Item>
+					{/each}
+				</Listbox.Content>
+			</Listbox>
+
+			<Dialog open={dialogOpen} onOpenChange={(e) => (dialogOpen = e.open)}>
+				<Dialog.Trigger class="btn preset-filled">Supprimer {REFERENT}s</Dialog.Trigger>
+				<Portal>
+					<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+					<Dialog.Positioner class="fixed inset-0 z-50 flex justify-center items-center p-4">
+						<Dialog.Content
+							class="card bg-surface-100-900 w-full max-w-xl p-4 space-y-4 shadow-xl transition transition-discrete opacity-0 translate-y-[100px] starting:data-[state=open]:opacity-0 starting:data-[state=open]:translate-y-[100px] data-[state=open]:opacity-100 data-[state=open]:translate-y-0"
+						>
+							<header class="flex justify-between items-center">
+								<Dialog.Title class="text-lg font-bold">Suppression des {REFERENT}s</Dialog.Title>
+								<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+									<XIcon class="size-4" />
+								</Dialog.CloseTrigger>
+							</header>
+							<Dialog.Description>
+								Ceci supprimera tous les creneaux des {REFERENT}s suivant.es. Cette action ne peut
+								pas etre annulee.
+								<ul class="list">
+									{#each referents_to_remove as ref}
+										<li>{ref}</li>
+									{/each}
+								</ul>
+							</Dialog.Description>
+							<footer class="flex justify-end gap-2">
+								<Dialog.CloseTrigger class="btn preset-tonal">Cancel</Dialog.CloseTrigger>
+								<button onclick={delete_users} type="button" class="btn preset-filled">Save</button>
+							</footer>
+						</Dialog.Content>
+					</Dialog.Positioner>
+				</Portal>
+			</Dialog>
 		</div>
 	</div>
 {/if}

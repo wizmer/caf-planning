@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
-	import { getMoveBorderColor, getMoveColor, getMoveLabel } from '$lib/move-utils';
+	import { getMoveBorderColor, getMoveLabel } from '$lib/move-utils';
 	import type { Move } from '$lib/types';
-	import { Slider } from '@skeletonlabs/skeleton-svelte';
+	import HoldEditor from './HoldEditor.svelte';
 	let { walls, route = $bindable([]) as Move[], isEditing = false, legend = true } = $props();
-
-	console.log('WallGallery loaded:', { walls: walls.length, isEditing, route: route.length });
 
 	let currentWallIndex = $state(0);
 	let selectedHoldType = $state<Move['type']>(
@@ -98,7 +96,8 @@
 			wallId: currentWall.id,
 			type: selectedHoldType,
 			x: Math.round(x * 10) / 10,
-			y: Math.round(y * 10) / 10
+			y: Math.round(y * 10) / 10,
+			radius: 16
 		};
 
 		console.log('Adding new move:', newMove);
@@ -107,6 +106,7 @@
 
 		// Set selectedHoldType to the type of the newly added hold
 		selectedHoldType = newMove.type;
+		handleMoveClick(event, newMove);
 	}
 
 	function handleMoveClick(event: MouseEvent, move: Move) {
@@ -122,7 +122,14 @@
 			route[index] = { ...route[index], type: newType };
 			route = [...route];
 		}
-		editingMove = null;
+	}
+
+	function updateMoveRadius(move: Move, radius: number) {
+		const index = route.findIndex((m) => m.id === move.id);
+		if (index !== -1) {
+			route[index] = { ...route[index], radius };
+			route = [...route];
+		}
 	}
 
 	function deleteMove(move: Move) {
@@ -170,22 +177,6 @@
 	<div class="relative h-full flex flex-col">
 		{#if isEditing}
 			<div class="card p-4 mb-4">
-				<h4 class="h4 mb-3">Hold Type Selection</h4>
-				<div class="flex flex-wrap gap-2">
-					{#each ['hand_start', 'foot_start', 'hand', 'foot', 'both', 'finish'] as holdType}
-						<button
-							onclick={() => (selectedHoldType = holdType as Move['type'])}
-							class="btn px-4 py-2 {selectedHoldType === holdType
-								? 'preset-filled-primary-500'
-								: 'preset-tonal'}"
-						>
-							<div class="flex items-center gap-2">
-								<div class="w-3 h-3 rounded-full {getMoveColor(holdType as Move['type'])}"></div>
-								{getMoveLabel(holdType as Move['type'])}
-							</div>
-						</button>
-					{/each}
-				</div>
 				<p class="text-sm text-surface-600 mt-2">
 					Click on the wall image to add a {getMoveLabel(selectedHoldType).toLowerCase()} hold. Click
 					holds to edit or drag to reposition.
@@ -250,6 +241,7 @@
 
 			<!-- Render moves as overlays -->
 			{#each currentWallMoves as move, idx}
+				{@const holdRadius = move.radius || 16}
 				<div
 					class="absolute"
 					style="left: {move.x}%; top: {move.y}%; transform: translate(-50%, -50%);"
@@ -262,47 +254,24 @@
 						aria-label="Hold {idx + 1}"
 					>
 						<div
-							class="w-8 h-8 rounded-full border-4 {getMoveBorderColor(
-								move.type
-							)} shadow-lg {isEditing ? 'hover:scale-110' : ''} {editingMove?.id === move.id
-								? 'ring-4 ring-primary-300'
-								: ''}"
+							class="rounded-full border-4 {getMoveBorderColor(move.type)} shadow-lg {isEditing
+								? 'hover:scale-110'
+								: ''} {editingMove?.id === move.id ? 'ring-4 ring-primary-300' : ''}"
+							style="width: {holdRadius * 2}px; height: {holdRadius * 2}px;"
 						></div>
 					</button>
 
 					<!-- Edit popup (outside button) -->
 					{#if isEditing && editingMove?.id === move.id}
-						<div
-							class="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-[100]"
-							role="dialog"
-							tabindex="-1"
-							onclick={(e) => e.stopPropagation()}
-							onkeydown={(e) => e.key === 'Escape' && (editingMove = null)}
-						>
-							<div class="card p-3 shadow-xl min-w-[200px] max-h-[400px] overflow-y-auto">
-								<h5 class="text-sm font-bold mb-2">Edit Hold</h5>
-								<div class="flex flex-col gap-1">
-									{#each ['hand_start', 'foot_start', 'hand', 'foot', 'both', 'finish'] as holdType}
-										<button
-											onclick={() => updateMoveType(move, holdType as Move['type'])}
-											class="btn btn-sm {move.type === holdType
-												? 'preset-filled'
-												: 'preset-tonal border border-surface-500'} justify-start"
-										>
-											<div class="flex items-center gap-2">
-												<div
-													class="w-3 h-3 rounded-full {getMoveColor(holdType as Move['type'])}"
-												></div>
-												{getMoveLabel(holdType as Move['type'])}
-											</div>
-										</button>
-									{/each}
-									<hr class="my-1" />
-									<button onclick={() => deleteMove(move)} class="btn btn-sm preset-filled-error-500">
-										Delete Hold
-									</button>
-								</div>
-							</div>
+						move type: {move.radius}
+						<div class="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-[100]">
+							<HoldEditor
+								bind:move={currentWallMoves[idx]}
+								onUpdateType={(type) => updateMoveType(move, type)}
+								onUpdateRadius={(radius) => updateMoveRadius(move, radius)}
+								onDelete={() => deleteMove(move)}
+								onClose={() => (editingMove = null)}
+							/>
 						</div>
 					{/if}
 				</div>
@@ -436,19 +405,3 @@
 		<p class="text-surface-500 text-lg">No walls found for this gym.</p>
 	</div>
 {/if}
-<Slider defaultValue={[50]}>
-	<Slider.Label>Label</Slider.Label>
-	<Slider.Control>
-		<Slider.Track>
-			<Slider.Range />
-		</Slider.Track>
-		<Slider.Thumb index={0}>
-			<Slider.HiddenInput />
-		</Slider.Thumb>
-	</Slider.Control>
-	<Slider.MarkerGroup>
-		<Slider.Marker value={25} />
-		<Slider.Marker value={50} />
-		<Slider.Marker value={75} />
-	</Slider.MarkerGroup>
-</Slider>

@@ -13,9 +13,8 @@
 		validators: zodClient(gymSchema),
 		onResult: async ({ result }) => {
 			if (result.type === 'success') {
-				toastStore.trigger({
-					message: 'Gym successfully created',
-					background: 'preset-filled-success-500'
+				toastStore.success({
+					description: 'Gym successfully created'
 				});
 				await goto('/pan/gym');
 			}

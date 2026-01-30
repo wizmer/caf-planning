@@ -68,7 +68,7 @@ model Route {
   description String?  @db.Text
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  body        Json  @db.JsonB
+  body        Json     @db.JsonB // This already stores the moves array with all properties including radius
   gym         Gym?     @relation(fields: [gymId], references: [id])
   gymId       Int?
 }

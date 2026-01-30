@@ -102,7 +102,7 @@
 							<label for="select-start-{i}">Mon créneau: </label>
 							<select
 								id="select-start-{i}"
-								class="select w-fit preset-outlined"
+								class="select w-fit p-2 preset-outlined"
 								bind:value={row.refs[$user].start}
 								onchange={() => update_timeslot(row.refs[$user], row.day)}
 							>
@@ -113,7 +113,7 @@
 
 							<select
 								id="select-end-{i}"
-								class="select w-fit preset-outlined"
+								class="select w-fit p-2 preset-outlined"
 								bind:value={row.refs[$user].end}
 								onchange={() => update_timeslot(row.refs[$user], row.day)}
 							>
@@ -126,7 +126,7 @@
 
 							<button
 								type="button"
-								class="btn text-white bg-red-400 hover:bg-red-500"
+								class="btn text-white bg-red-400 hover:bg-red-500 p-2"
 								onclick={() => {
 									if ($user in row.refs) {
 										row.refs[$user].start = '';

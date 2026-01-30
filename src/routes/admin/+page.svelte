@@ -1,9 +1,5 @@
 <script lang="ts">
 	import { admin, REFERENT } from '$lib/stores';
-	import { getModalStore, getToastStore } from '@skeletonlabs/skeleton';
-
-	import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
-
 	import { goto } from '$app/navigation';
 
 	import { dev } from '$app/environment';
@@ -183,7 +179,7 @@
 
 		<div class="card flex flex-col m-4 p-4 gap-4">
 			<h2 class="h2">Suppression des {REFERENT}s</h2>
-			<ListBox name="list" class="border rounded-container-token" multiple>
+			<ListBox name="list" class="border rounded-container" multiple>
 				{#each referents as item}
 					<ListBoxItem bind:group={referents_to_remove} name={item[0]} value={item[1]}
 						>{item[1]}

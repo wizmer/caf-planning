@@ -3,15 +3,7 @@
 	import icon from '$lib/assets/big-icon.png';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import {
-		AppShell,
-		LightSwitch,
-		Modal,
-		Toast,
-		getModalStore,
-		initializeStores,
-		storePopup,
-		type ModalComponent
-	} from '@skeletonlabs/skeleton';
+		type ModalComponent, ToastProvider } from '@skeletonlabs/skeleton-svelte';
 	import '../app.css';
 
 	import { user } from '$lib/stores';
@@ -28,7 +20,7 @@
 	};
 </script>
 
-<Toast />
+<ToastProvider />
 <Modal components={modalRegistry} />
 
 <AppShell>

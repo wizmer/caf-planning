@@ -1,11 +1,8 @@
 <script lang="ts">
 	import type { SvelteComponent } from 'svelte';
-	import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
 	// Stores
 	import { last_user, user } from '$lib/stores';
-	import { getToastStore } from '@skeletonlabs/skeleton';
-	import { getModalStore } from '@skeletonlabs/skeleton';
-	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+	import { Segment } from '@skeletonlabs/skeleton-svelte';
 	import { base } from '$app/paths';
 
 	let new_user = $state('');
@@ -76,7 +73,7 @@
 	// Base Classes
 	const cBase = 'card p-4 w-modal shadow-xl space-y-4';
 	const cHeader = 'text-2xl font-bold';
-	const cForm = 'p-2 space-y-4 rounded-container-token';
+	const cForm = 'p-2 space-y-4 rounded-container';
 </script>
 
 <!-- @component This example creates a simple form modal. -->
@@ -87,14 +84,14 @@
 		last_user: {$last_user}
 		<header class={cHeader}>Referent</header>
 
-		<RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-			<RadioItem bind:group={radio} name="justify" value="existing">Utilisateur existant</RadioItem>
-			<RadioItem bind:group={radio} name="justify" value="new">Nouvel utilisateur</RadioItem>
-		</RadioGroup>
+		<Segment active="preset-filled-primary-500" hover="hover:preset-tonal-primary">
+			<Segment.Item bind:group={radio} name="justify" value="existing">Utilisateur existant</Segment.Item>
+			<Segment.Item bind:group={radio} name="justify" value="new">Nouvel utilisateur</Segment.Item>
+		</Segment>
 
 		<form id="login-form" class="modal-form {cForm}">
 			{#if radio === 'existing'}
-				<ListBox class="border rounded-container-token">
+				<ListBox class="border rounded-container">
 					{#each referents as item}
 						<ListBoxItem bind:group={current_user} name={item[0]} value={item[1]}
 							>{item[1]}

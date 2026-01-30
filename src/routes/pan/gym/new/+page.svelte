@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { gymSchema } from '$lib/schemas/gym';
-	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
@@ -15,7 +14,7 @@
 			if (result.type === 'success') {
 				toastStore.trigger({
 					message: 'Gym successfully created',
-					background: 'variant-filled-success'
+					background: 'preset-filled-success-500'
 				});
 				await goto('/pan/gym');
 			}
@@ -66,7 +65,7 @@
 			</label>
 		</div>
 
-		<button type="submit" class="btn variant-filled-primary" disabled={$submitting}>
+		<button type="submit" class="btn preset-filled-primary-500" disabled={$submitting}>
 			{$submitting ? 'Creating...' : 'Create Gym'}
 		</button>
 	</form>

@@ -4,8 +4,6 @@ https://svelte.dev/e/node_invalid_placement -->
 	import { run } from 'svelte/legacy';
 
 	import { REFERENT, user } from '$lib/stores';
-	import { getToastStore } from '@skeletonlabs/skeleton';
-
 	import { base } from '$app/paths';
 	import type { PageData } from './$types';
 	import { capitalize, create_slots, timeslots } from './utils';
@@ -88,7 +86,7 @@ https://svelte.dev/e/node_invalid_placement -->
 					{#if row.status == 'new-slot'}
 						<span class="p-1 w-fit bg-success-500 rounded-md">
 							<span
-								class="text-center text-xs text-on-success-token font-medium font-['General Sans']"
+								class="text-center text-xs text-success-contrast-500 font-medium font-['General Sans']"
 							>
 								créneau additionnel
 							</span>
@@ -157,7 +155,7 @@ https://svelte.dev/e/node_invalid_placement -->
 				{/if}
 
 				<div class="table-container">
-					<table class="table table-auto table-hover max-w-prose">
+					<table class="table table-auto  max-w-prose">
 						<thead class="divider-x">
 							<tr>
 								<th>Nom</th>

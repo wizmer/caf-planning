@@ -23,19 +23,19 @@
 <div class="container mx-auto p-4 space-y-4">
 	<div class="flex items-center justify-between">
 		<div class="flex items-center gap-4">
-			<a href="/pan/gym/{data.gym.id}" class="btn variant-soft">← Back to Gym</a>
+			<a href="/pan/gym/{data.gym.id}" class="btn preset-tonal">← Back to Gym</a>
 			<div>
 				<h1 class="h1">{data.gym.name} - Walls</h1>
 			</div>
 		</div>
-		<a href="/pan/gym/{data.gym.id}/walls/new" class="btn variant-filled-primary"> Add New Wall </a>
+		<a href="/pan/gym/{data.gym.id}/walls/new" class="btn preset-filled-primary-500"> Add New Wall </a>
 	</div>
 
 	{#if data.walls.length === 0}
 		<div class="card p-8 text-center">
 			<h2 class="h2 mb-4">No walls found</h2>
 			<p class="mb-4">Start by adding your first climbing wall for {data.gym.name}.</p>
-			<a href="/pan/gym/{data.gym.id}/walls/new" class="btn variant-filled-primary"> Add Wall </a>
+			<a href="/pan/gym/{data.gym.id}/walls/new" class="btn preset-filled-primary-500"> Add Wall </a>
 		</div>
 	{:else}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -65,13 +65,13 @@
 						<div class="flex gap-2">
 							<a
 								href="/pan/gym/{data.gym.id}/walls/{wall.id}"
-								class="btn variant-soft-primary flex-1"
+								class="btn preset-tonal-primary flex-1"
 							>
 								View Details
 							</a>
 							<a
 								href="/pan/gym/{data.gym.id}/walls/{wall.id}/edit"
-								class="btn variant-soft-secondary"
+								class="btn preset-tonal-secondary"
 							>
 								Edit
 							</a>
@@ -92,7 +92,7 @@
 								<input type="hidden" name="wallId" value={wall.id} />
 								<button
 									type="submit"
-									class="btn variant-soft-error"
+									class="btn preset-tonal-error"
 									disabled={deletingWallId === wall.id}
 								>
 									{deletingWallId === wall.id ? 'Deleting...' : 'Delete'}

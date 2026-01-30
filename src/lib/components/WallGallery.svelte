@@ -176,8 +176,8 @@
 						<button
 							onclick={() => (selectedHoldType = holdType as Move['type'])}
 							class="btn px-4 py-2 {selectedHoldType === holdType
-								? 'variant-filled-primary'
-								: 'variant-soft'}"
+								? 'preset-filled-primary-500'
+								: 'preset-tonal'}"
 						>
 							<div class="flex items-center gap-2">
 								<div class="w-3 h-3 rounded-full {getMoveColor(holdType as Move['type'])}"></div>
@@ -204,7 +204,7 @@
 			<button
 				onclick={toggleFullscreen}
 				aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-				class="absolute top-4 left-4 z-50 btn variant-filled-surface rounded-full w-10 h-10 p-0 flex items-center justify-center hover:scale-110 transition-transform"
+				class="absolute top-4 left-4 z-50 btn preset-filled-surface-500 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:scale-110 transition-transform"
 			>
 				{#if isFullscreen}
 					<svg
@@ -286,8 +286,8 @@
 										<button
 											onclick={() => updateMoveType(move, holdType as Move['type'])}
 											class="btn btn-sm {move.type === holdType
-												? 'variant-filled'
-												: 'variant-ghost'} justify-start"
+												? 'preset-filled'
+												: 'preset-tonal border border-surface-500'} justify-start"
 										>
 											<div class="flex items-center gap-2">
 												<div
@@ -298,7 +298,7 @@
 										</button>
 									{/each}
 									<hr class="my-1" />
-									<button onclick={() => deleteMove(move)} class="btn btn-sm variant-filled-error">
+									<button onclick={() => deleteMove(move)} class="btn btn-sm preset-filled-error-500">
 										Delete Hold
 									</button>
 								</div>
@@ -313,7 +313,7 @@
 				<button
 					onclick={prevWall}
 					aria-label="Previous wall"
-					class="absolute left-4 top-1/2 -translate-y-1/2 btn variant-filled-surface rounded-full w-12 h-12 p-0 flex items-center justify-center hover:scale-110 transition-transform"
+					class="absolute left-4 top-1/2 -translate-y-1/2 btn preset-filled-surface-500 rounded-full w-12 h-12 p-0 flex items-center justify-center hover:scale-110 transition-transform"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -333,7 +333,7 @@
 				<button
 					onclick={nextWall}
 					aria-label="Next wall"
-					class="absolute right-4 top-1/2 -translate-y-1/2 btn variant-filled-surface rounded-full w-12 h-12 p-0 flex items-center justify-center hover:scale-110 transition-transform"
+					class="absolute right-4 top-1/2 -translate-y-1/2 btn preset-filled-surface-500 rounded-full w-12 h-12 p-0 flex items-center justify-center hover:scale-110 transition-transform"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -371,7 +371,7 @@
 
 			<!-- Counter -->
 			{#if walls.length > 1}
-				<div class="badge variant-filled-surface absolute top-4 right-4">
+				<div class="badge preset-filled-surface-500 absolute top-4 right-4">
 					{currentWallIndex + 1} / {walls.length}
 				</div>
 			{/if}

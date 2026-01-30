@@ -12,14 +12,14 @@
 <div class="container mx-auto p-4 space-y-4">
 	<div class="flex justify-between items-center">
 		<h1 class="h1">Bouldering Gyms</h1>
-		<a href={routes.newGym} class="btn variant-filled-primary"> Add New Gym </a>
+		<a href={routes.newGym} class="btn preset-filled-primary-500"> Add New Gym </a>
 	</div>
 
 	{#if data.gyms.length === 0}
 		<div class="card p-8 text-center">
 			<h2 class="h2 mb-4">No gyms found</h2>
 			<p class="mb-4">Start by adding your first bouldering gym.</p>
-			<a href={routes.newGym} class="btn variant-filled-primary"> Add Gym </a>
+			<a href={routes.newGym} class="btn preset-filled-primary-500"> Add Gym </a>
 		</div>
 	{:else}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

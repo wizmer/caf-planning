@@ -14,7 +14,7 @@
 		<a href="/pan/gym/{data.gym.id}" class="text-blue-600 hover:text-blue-800"> ← Back to Gym </a>
 	</div>
 	{#if form?.error}
-		<div class="alert variant-filled-error mb-4">
+		<div class="alert preset-filled-error-500 mb-4">
 			<span>{form.error}</span>
 		</div>
 	{/if}
@@ -64,13 +64,13 @@
 			<input type="hidden" name="body" value={JSON.stringify(route.body)} />
 
 			<div class="flex gap-4">
-				<button type="submit" class="btn variant-filled-primary" disabled={route.body.length === 0}>
+				<button type="submit" class="btn preset-filled-primary-500" disabled={route.body.length === 0}>
 					Save Route ({route.body.length} moves)
 				</button>
 
 				<button
 					type="button"
-					class="btn variant-soft"
+					class="btn preset-tonal"
 					onclick={() => {
 						route.body = [];
 					}}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
-	import { FileDropzone } from '@skeletonlabs/skeleton';
+	import { FileUpload } from '@skeletonlabs/skeleton-svelte';
 	import type { ActionData, PageData } from './$types';
 
 	interface Props {
@@ -40,7 +40,7 @@
 
 <div class="container mx-auto p-4 space-y-4 max-w-2xl">
 	<!-- Go back link -->
-	<a href={`/pan/gym/${data.gym.id}/walls`} class="btn variant-soft">← Back to Walls</a>
+	<a href={`/pan/gym/${data.gym.id}/walls`} class="btn preset-tonal">← Back to Walls</a>
 
 	<h1 class="h1">Edit Wall: {data.wall.name}</h1>
 
@@ -102,11 +102,11 @@
 
 		<label class="label">
 			<span>Replace Photo (optional)</span>
-			<FileDropzone
+			<FileUpload
 				bind:files
 				name="photos"
 				accept="image/*"
-				classes="border-2 border-dashed border-primary-500 p-6 rounded-container-token bg-primary-50-900-token"
+				classes="border-2 border-dashed border-primary-500 p-6 rounded-container bg-primary-50-950"
 			>
 				{#snippet lead()}
 					<div class="text-center">
@@ -127,7 +127,7 @@
 						<p class="text-xs opacity-50">PNG, JPG, WebP up to 10MB</p>
 					</div>
 				{/snippet}
-			</FileDropzone>
+			</FileUpload>
 
 			{#if files && files.length > 0}
 				<div class="mt-2">
@@ -142,7 +142,7 @@
 		</label>
 
 		{#if form?.error}
-			<aside class="alert variant-filled-error">
+			<aside class="alert preset-filled-error-500">
 				<div class="alert-message">
 					<p>{form.error}</p>
 				</div>
@@ -150,10 +150,10 @@
 		{/if}
 
 		<div class="flex gap-2">
-			<button type="submit" disabled={isUploading} class="btn variant-filled-primary flex-1">
+			<button type="submit" disabled={isUploading} class="btn preset-filled-primary-500 flex-1">
 				{isUploading ? 'Updating...' : 'Update Wall'}
 			</button>
-			<a href={`/pan/gym/${data.gym.id}/walls`} class="btn variant-soft">Cancel</a>
+			<a href={`/pan/gym/${data.gym.id}/walls`} class="btn preset-tonal">Cancel</a>
 		</div>
 	</form>
 </div>

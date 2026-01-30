@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
-	import { FileDropzone } from '@skeletonlabs/skeleton';
+	import { FileUpload } from '@skeletonlabs/skeleton-svelte';
 	import type { ActionData } from './$types';
 
 	interface Props {
@@ -44,7 +44,7 @@
 <div class="container mx-auto p-4 space-y-4 max-w-2xl">
 	<!-- Go back link -->
 
-	<a href={`/pan/gym/${page.params.gymId}/walls`} class="btn variant-soft">← Back to Gyms</a>
+	<a href={`/pan/gym/${page.params.gymId}/walls`} class="btn preset-tonal">← Back to Gyms</a>
 
 	<h1 class="h1">Upload Wall Photos</h1>
 
@@ -91,12 +91,12 @@
 
 		<label class="label">
 			<span>Photos *</span>
-			<FileDropzone
+			<FileUpload
 				bind:files
 				name="photos"
 				accept="image/*"
 				multiple
-				classes="border-2 border-dashed border-primary-500 p-6 rounded-container-token bg-primary-50-900-token"
+				classes="border-2 border-dashed border-primary-500 p-6 rounded-container bg-primary-50-950"
 			>
 				{#snippet lead()}
 							
@@ -119,7 +119,7 @@
 						</div>
 					
 							{/snippet}
-			</FileDropzone>
+			</FileUpload>
 
 			{#if files && files.length > 0}
 				<div class="mt-2">
@@ -134,14 +134,14 @@
 		</label>
 
 		{#if form?.error}
-			<aside class="alert variant-filled-error">
+			<aside class="alert preset-filled-error-500">
 				<div class="alert-message">
 					<p>{form.error}</p>
 				</div>
 			</aside>
 		{/if}
 
-		<button type="submit" disabled={isUploading} class="btn variant-filled-primary w-full">
+		<button type="submit" disabled={isUploading} class="btn preset-filled-primary-500 w-full">
 			{isUploading ? 'Uploading...' : 'Upload Wall'}
 		</button>
 	</form>

@@ -60,7 +60,7 @@
 	</label>
 
 	{#if form?.error}
-		<aside class="alert variant-filled-error">
+		<aside class="alert preset-filled-error-500">
 			<div class="alert-message">
 				<p>{form.error}</p>
 			</div>
@@ -68,9 +68,9 @@
 	{/if}
 
 	<div class="flex gap-4">
-		<button type="submit" disabled={isSubmitting} class="btn variant-filled-primary flex-1">
+		<button type="submit" disabled={isSubmitting} class="btn preset-filled-primary-500 flex-1">
 			{isSubmitting ? submittingText : submitText}
 		</button>
-		<a href={cancelUrl} class="btn variant-soft-surface">Cancel</a>
+		<a href={cancelUrl} class="btn preset-tonal-surface">Cancel</a>
 	</div>
 </form>

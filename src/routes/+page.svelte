@@ -1,10 +1,9 @@
-<!-- @migration-task Error while migrating Svelte code: `<th>` cannot be a child of `<thead>`. `<thead>` only allows these children: `<tr>`, `<style>`, `<script>`, `<template>`. The browser will 'repair' the HTML (by moving, removing, or inserting elements) which breaks Svelte's assumptions about the structure of your components.
-https://svelte.dev/e/node_invalid_placement -->
 <script lang="ts">
 	import { run } from 'svelte/legacy';
 
-	import { REFERENT, user } from '$lib/stores';
 	import { base } from '$app/paths';
+	import { REFERENT, user } from '$lib/stores';
+	import { createToaster } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
 	import { capitalize, create_slots, timeslots } from './utils';
 
@@ -14,7 +13,7 @@ https://svelte.dev/e/node_invalid_placement -->
 
 	let { data }: Props = $props();
 
-	const toastStore = getToastStore();
+	const toastStore = createToaster();
 
 	const events = data.events;
 	const refs = data.slots;
@@ -155,7 +154,7 @@ https://svelte.dev/e/node_invalid_placement -->
 				{/if}
 
 				<div class="table-container">
-					<table class="table table-auto  max-w-prose">
+					<table class="table table-auto max-w-prose">
 						<thead class="divider-x">
 							<tr>
 								<th>Nom</th>

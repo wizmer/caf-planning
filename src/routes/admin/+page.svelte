@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { admin, REFERENT } from '$lib/stores';
 	import { goto } from '$app/navigation';
+	import { admin, REFERENT } from '$lib/stores';
 
 	import { dev } from '$app/environment';
 	import { base } from '$app/paths';
@@ -26,7 +26,7 @@
 
 	let referents_to_remove = $state([]);
 	const modalStore = getModalStore();
-	const toastStore = getToastStore();
+	const toastStore = createToaster();
 
 	let referents = $state(data.referents);
 	function enter_admin() {

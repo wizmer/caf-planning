@@ -1,7 +1,8 @@
 @import 'tailwindcss';
-@import "@skeletonlabs/skeleton";
+@import '@skeletonlabs/skeleton';
 /* Add your theme import for your theme: "cerberus" here */
 
 @import '@skeletonlabs/skeleton';
 @import '@skeletonlabs/skeleton-svelte';
-@import '@skeletonlabs/skeleton/themes/cerberus';
+
+@import '../caf-theme';

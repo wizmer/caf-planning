@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { gymSchema } from '$lib/schemas/gym';
+	import { createToaster } from '@skeletonlabs/skeleton-svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
 	let { data } = $props();
 
-	const toastStore = getToastStore();
+	const toastStore = createToaster();
 
 	const { form, errors, enhance, submitting } = superForm(data.form, {
 		validators: zodClient(gymSchema),

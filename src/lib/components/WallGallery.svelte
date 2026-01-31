@@ -150,7 +150,6 @@
 					x: Math.max(0, Math.min(100, Math.round(x * 10) / 10)),
 					y: Math.max(0, Math.min(100, Math.round(y * 10) / 10))
 				};
-				route = [...route];
 			}
 		};
 

@@ -32,39 +32,49 @@
 		)});"
 	></div>
 
-	<Popover>
-		<Popover.Trigger
-			class="btn {isEditing ? 'cursor-move' : 'cursor-pointer'}"
-			onmousedown={(e) => isEditing && handleMoveDragStart(e, move)}
-			style="pointer-events: auto;"
-		>
-			<div
-				class="rounded-full border-4 {move.type} shadow-lg move-circle-inner {isEditing
-					? 'hover:scale-110'
-					: 'hover:scale-125'}  transition-transform duration-300"
-				style="width: {holdRadius * 2}px; height: {holdRadius * 2}px;"
-			></div>
-		</Popover.Trigger>
-		<Portal>
-			<Popover.Positioner>
-				<Popover.Content class="card w-96 bg-surface-500 p-3 shadow-xl min-w-[250px] max-h-[500px]">
-					<HoldEditor
-						bind:move
-						onUpdateType={(type) => updateMoveType(move, type)}
-						onUpdateRadius={(radius) => updateMoveRadius(move, radius)}
-						onDelete={() => deleteMove(move)}
-						onClose={() => (editingMove = null)}
-					/>
+	{#snippet circle()}
+		<div
+			class="rounded-full border-4 {move.type} shadow-lg move-circle-inner {isEditing
+				? 'hover:scale-110'
+				: 'hover:scale-125'}  transition-transform duration-300"
+			style="width: {holdRadius * 2}px; height: {holdRadius * 2}px;"
+		></div>
+	{/snippet}
 
-					<Popover.Arrow
-						class="[--arrow-size:--spacing(4)] [--arrow-background:var(--color-surface-500)]"
+	{#if !isEditing}
+		{@render circle()}
+	{:else}
+		<Popover>
+			<Popover.Trigger
+				class="btn {isEditing ? 'cursor-move' : 'cursor-pointer'}"
+				onmousedown={(e) => isEditing && handleMoveDragStart(e, move)}
+				style="pointer-events: auto;"
+			>
+				{@render circle()}
+			</Popover.Trigger>
+			<Portal>
+				<Popover.Positioner>
+					<Popover.Content
+						class="card w-96 bg-surface-500 p-3 shadow-xl min-w-[250px] max-h-[500px]"
 					>
-						<Popover.ArrowTip />
-					</Popover.Arrow>
-				</Popover.Content>
-			</Popover.Positioner>
-		</Portal>
-	</Popover>
+						<HoldEditor
+							bind:move
+							onUpdateType={(type) => updateMoveType(move, type)}
+							onUpdateRadius={(radius) => updateMoveRadius(move, radius)}
+							onDelete={() => deleteMove(move)}
+							onClose={() => (editingMove = null)}
+						/>
+
+						<Popover.Arrow
+							class="[--arrow-size:--spacing(4)] [--arrow-background:var(--color-surface-500)]"
+						>
+							<Popover.ArrowTip />
+						</Popover.Arrow>
+					</Popover.Content>
+				</Popover.Positioner>
+			</Portal>
+		</Popover>
+	{/if}
 </div>
 
 <style>

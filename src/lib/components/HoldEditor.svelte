@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Slider } from '$lib/components/ui/slider/index.js';
-	import { getMoveColor, getMoveLabel } from '$lib/move-utils';
+	import { getMoveLabel } from '$lib/move-utils';
 	import type { Move } from '$lib/types';
 
 	interface Props {
@@ -27,7 +27,7 @@
 					: 'preset-tonal border border-surface-500'} justify-start"
 			>
 				<div class="flex items-center gap-2">
-					<div class="w-3 h-3 rounded-full {getMoveColor(holdType as Move['type'])}"></div>
+					<div class="w-3 h-3 rounded-full {holdType}"></div>
 					{getMoveLabel(holdType as Move['type'])}
 				</div>
 			</button>

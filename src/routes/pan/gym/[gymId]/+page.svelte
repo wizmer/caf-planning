@@ -82,7 +82,9 @@
 						{/if}
 
 						<div class="flex-1 min-h-0">
-							<RouteThumbnail walls={gym.walls} route={route.body} legend={false} />
+							<a href="/pan/gym/{gym.id}/route/{route.id}" class="block h-full">
+								<RouteThumbnail walls={gym.walls} route={route.body} legend={false} />
+							</a>
 						</div>
 
 						<div class="mt-4 flex justify-between items-center text-sm text-gray-500">

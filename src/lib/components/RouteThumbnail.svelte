@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
-	import { getMoveBorderColor } from '$lib/move-utils';
 	import type { Move } from '$lib/types';
 	let { walls, route = $bindable([]) as Move[], isEditing = false, legend = true } = $props();
 
@@ -28,9 +27,7 @@
 					class="absolute"
 					style="left: {move.x}%; top: {move.y}%; transform: translate(-50%, -50%);"
 				>
-					<div
-						class="w-8 h-8 rounded-full border-4 {getMoveBorderColor(move.type)} shadow-lg"
-					></div>
+					<div class="w-8 h-8 rounded-full border-4 {move.type} shadow-lg"></div>
 				</div>
 			{/each}
 		</div>

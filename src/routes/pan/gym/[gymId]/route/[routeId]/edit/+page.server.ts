@@ -6,15 +6,15 @@ export const actions: Actions = {
 	default: async ({ request, params }) => {
 		const formData = await request.formData();
 		const gymId = parseInt(params.gymId);
+		const routeId = parseInt(params.routeId);
 
-		const result = await saveRoute(formData, gymId);
+		const result = await saveRoute(formData, gymId, routeId);
 
 		// If there's an error, return it
 		if (result && 'status' in result) {
 			return result;
 		}
 
-		// Success - redirect to gym page
-		redirect(303, `/pan/gym/${gymId}`);
+		redirect(303, `/pan/gym/${gymId}/route/${routeId}`);
 	}
 };

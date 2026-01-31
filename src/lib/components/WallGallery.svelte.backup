@@ -29,7 +29,7 @@
 	let editingMoveId = $state<string | null>(null);
 	let selectedMoveForEdit = $state<Move | null>(null);
 
-	function getMoveColor(type: string) {
+	function getMoveRgbColor(type: string) {
 		switch (type) {
 			case 'hand_start':
 				return 'bg-green-500';
@@ -175,7 +175,7 @@
 		}
 		selectedMoveForEdit = nu.sort((a, b) => a.index - b.index) as move}
 				<button
-					class="absolute w-8 h-8 rounded-full border-2 border-surface-50 shadow-lg flex items-center justify-center text-surface-50 text-xs font-bold transform -translate-x-1/2 -translate-y-1/2 {getMoveColor(
+					class="absolute w-8 h-8 rounded-full border-2 border-surface-50 shadow-lg flex items-center justify-center text-surface-50 text-xs font-bold transform -translate-x-1/2 -translate-y-1/2 {getMoveRgbColor(
 						move.type
 					)} {isEditing ? 'hover:scale-125 cursor-pointer' : ''} transition-transform"
 					style="left: {move.x}%; top: {move.y}%;"

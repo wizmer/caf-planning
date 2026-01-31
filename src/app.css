@@ -10,3 +10,44 @@
 /* @import '../caf-theme'; */
 
 @custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
+
+/* Hold Type Colors */
+:root {
+	--hold-hand-start: 34, 197, 94; /* green-500 */
+	--hold-foot-start: 74, 222, 128; /* green-400 */
+	--hold-hand: 59, 130, 246; /* blue-500 */
+	--hold-foot: 245, 158, 11; /* amber-500 */
+	--hold-both: 168, 85, 247; /* purple-500 */
+	--hold-finish: 239, 68, 68; /* red-500 */
+}
+
+/* Hold Type Utility Classes */
+.hand_start {
+	background-color: rgb(var(--hold-hand-start));
+	border-color: rgb(var(--hold-hand-start));
+}
+
+.foot_start {
+	background-color: rgb(var(--hold-foot-start));
+	border-color: rgb(var(--hold-foot-start));
+}
+
+.hand {
+	background-color: rgb(var(--hold-hand));
+	border-color: rgb(var(--hold-hand));
+}
+
+.foot {
+	background-color: rgb(var(--hold-foot));
+	border-color: rgb(var(--hold-foot));
+}
+
+.both {
+	background-color: rgb(var(--hold-both));
+	border-color: rgb(var(--hold-both));
+}
+
+.finish {
+	background-color: rgb(var(--hold-finish));
+	border-color: rgb(var(--hold-finish));
+}

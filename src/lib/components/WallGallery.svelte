@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
-	import { getMoveBorderColor, getMoveLabel } from '$lib/move-utils';
+	import { getMoveLabel } from '$lib/move-utils';
 	import type { Move } from '$lib/types';
-	import { Popover, Portal } from '@skeletonlabs/skeleton-svelte';
-	import HoldEditor from './HoldEditor.svelte';
+	import Hold from './Hold.svelte';
 	let { walls, route = $bindable([]) as Move[], isEditing = false, legend = true } = $props();
 
 	let currentWallIndex = $state(0);
@@ -234,46 +233,17 @@
 
 			<!-- Render moves as overlays -->
 			{#each currentWallMoves as move, idx}
-				{@const holdRadius = move.radius || 16}
-				<div
-					class="absolute"
-					style="left: {move.x}%; top: {move.y}%; transform: translate(-50%, -50%);"
-				>
-					<Popover>
-						<Popover.Trigger
-							class="btn {isEditing ? 'cursor-move' : 'cursor-pointer'}"
-							onmousedown={(e) => isEditing && handleMoveDragStart(e, move)}
-						>
-							<div
-								class="rounded-full border-4 {getMoveBorderColor(move.type)} shadow-lg {isEditing
-									? 'hover:scale-110'
-									: ''} {editingMove?.id === move.id ? 'ring-4 ring-primary-300' : ''}"
-								style="width: {holdRadius * 2}px; height: {holdRadius * 2}px;"
-							></div>
-						</Popover.Trigger>
-						<Portal>
-							<Popover.Positioner>
-								<Popover.Content
-									class="card w-96 bg-surface-500 p-3 shadow-xl min-w-[250px] max-h-[500px]"
-								>
-									<HoldEditor
-										bind:move={currentWallMoves[idx]}
-										onUpdateType={(type) => updateMoveType(move, type)}
-										onUpdateRadius={(radius) => updateMoveRadius(move, radius)}
-										onDelete={() => deleteMove(move)}
-										onClose={() => (editingMove = null)}
-									/>
-
-									<Popover.Arrow
-										class="[--arrow-size:--spacing(4)] [--arrow-background:var(--color-surface-500)]"
-									>
-										<Popover.ArrowTip />
-									</Popover.Arrow>
-								</Popover.Content>
-							</Popover.Positioner>
-						</Portal>
-					</Popover>
-				</div>
+				<Hold
+					{move}
+					{idx}
+					{isEditing}
+					bind:editingMove
+					bind:currentWallMoves
+					{updateMoveType}
+					{updateMoveRadius}
+					{deleteMove}
+					{handleMoveDragStart}
+				/>
 			{/each}
 
 			<!-- Navigation Arrows -->
@@ -351,27 +321,27 @@
 				<h4 class="h4 mb-2">Move Legend</h4>
 				<div class="flex flex-wrap gap-4 text-sm">
 					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full bg-success-500 border border-surface-50"></div>
+						<div class="w-4 h-4 rounded-full hand_start border border-surface-50"></div>
 						<span>Hand Start</span>
 					</div>
 					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full bg-success-400 border border-surface-50"></div>
+						<div class="w-4 h-4 rounded-full foot_start border border-surface-50"></div>
 						<span>Foot Start</span>
 					</div>
 					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full bg-primary-500 border border-surface-50"></div>
+						<div class="w-4 h-4 rounded-full hand border border-surface-50"></div>
 						<span>Hand</span>
 					</div>
 					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full bg-warning-500 border border-surface-50"></div>
+						<div class="w-4 h-4 rounded-full foot border border-surface-50"></div>
 						<span>Foot</span>
 					</div>
 					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full bg-secondary-500 border border-surface-50"></div>
+						<div class="w-4 h-4 rounded-full both border border-surface-50"></div>
 						<span>Both</span>
 					</div>
 					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full bg-error-500 border border-surface-50"></div>
+						<div class="w-4 h-4 rounded-full finish border border-surface-50"></div>
 						<span>Finish</span>
 					</div>
 				</div>

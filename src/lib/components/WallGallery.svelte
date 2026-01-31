@@ -2,6 +2,7 @@
 	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
 	import { getMoveBorderColor, getMoveLabel } from '$lib/move-utils';
 	import type { Move } from '$lib/types';
+	import { Popover, Portal } from '@skeletonlabs/skeleton-svelte';
 	import HoldEditor from './HoldEditor.svelte';
 	let { walls, route = $bindable([]) as Move[], isEditing = false, legend = true } = $props();
 
@@ -95,8 +96,8 @@
 			index: route.length,
 			wallId: currentWall.id,
 			type: selectedHoldType,
-			x: Math.round(x * 10) / 10,
-			y: Math.round(y * 10) / 10,
+			x,
+			y,
 			radius: 16
 		};
 
@@ -106,14 +107,6 @@
 
 		// Set selectedHoldType to the type of the newly added hold
 		selectedHoldType = newMove.type;
-		handleMoveClick(event, newMove);
-	}
-
-	function handleMoveClick(event: MouseEvent, move: Move) {
-		event.stopPropagation();
-		if (!isEditing) return;
-
-		editingMove = editingMove?.id === move.id ? null : move;
 	}
 
 	function updateMoveType(move: Move, newType: Move['type']) {
@@ -246,34 +239,40 @@
 					class="absolute"
 					style="left: {move.x}%; top: {move.y}%; transform: translate(-50%, -50%);"
 				>
-					<!-- Hold marker button -->
-					<button
-						class={isEditing ? 'cursor-move' : 'cursor-pointer'}
-						onclick={(e) => handleMoveClick(e, move)}
-						onmousedown={(e) => isEditing && handleMoveDragStart(e, move)}
-						aria-label="Hold {idx + 1}"
-					>
-						<div
-							class="rounded-full border-4 {getMoveBorderColor(move.type)} shadow-lg {isEditing
-								? 'hover:scale-110'
-								: ''} {editingMove?.id === move.id ? 'ring-4 ring-primary-300' : ''}"
-							style="width: {holdRadius * 2}px; height: {holdRadius * 2}px;"
-						></div>
-					</button>
+					<Popover>
+						<Popover.Trigger
+							class="btn {isEditing ? 'cursor-move' : 'cursor-pointer'}"
+							onmousedown={(e) => isEditing && handleMoveDragStart(e, move)}
+						>
+							<div
+								class="rounded-full border-4 {getMoveBorderColor(move.type)} shadow-lg {isEditing
+									? 'hover:scale-110'
+									: ''} {editingMove?.id === move.id ? 'ring-4 ring-primary-300' : ''}"
+								style="width: {holdRadius * 2}px; height: {holdRadius * 2}px;"
+							></div>
+						</Popover.Trigger>
+						<Portal>
+							<Popover.Positioner>
+								<Popover.Content
+									class="card w-96 bg-surface-500 p-3 shadow-xl min-w-[250px] max-h-[500px]"
+								>
+									<HoldEditor
+										bind:move={currentWallMoves[idx]}
+										onUpdateType={(type) => updateMoveType(move, type)}
+										onUpdateRadius={(radius) => updateMoveRadius(move, radius)}
+										onDelete={() => deleteMove(move)}
+										onClose={() => (editingMove = null)}
+									/>
 
-					<!-- Edit popup (outside button) -->
-					{#if isEditing && editingMove?.id === move.id}
-						move type: {move.radius}
-						<div class="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-[100]">
-							<HoldEditor
-								bind:move={currentWallMoves[idx]}
-								onUpdateType={(type) => updateMoveType(move, type)}
-								onUpdateRadius={(radius) => updateMoveRadius(move, radius)}
-								onDelete={() => deleteMove(move)}
-								onClose={() => (editingMove = null)}
-							/>
-						</div>
-					{/if}
+									<Popover.Arrow
+										class="[--arrow-size:--spacing(4)] [--arrow-background:var(--color-surface-500)]"
+									>
+										<Popover.ArrowTip />
+									</Popover.Arrow>
+								</Popover.Content>
+							</Popover.Positioner>
+						</Portal>
+					</Popover>
 				</div>
 			{/each}
 

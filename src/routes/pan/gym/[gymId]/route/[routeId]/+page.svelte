@@ -1,4 +1,5 @@
 <script lang="ts">
+	import GradeChip from '$lib/components/GradeChip.svelte';
 	import RouteViewer from '$lib/components/RouteViewer.svelte';
 
 	let { data } = $props();
@@ -12,10 +13,10 @@
 
 <div class="container mx-auto p-4">
 	<div class="mb-6">
-		<h1 class="text-3xl font-bold">{route.name}</h1>
-		<h2 class="text-xl text-gray-600 mb-2">{route.grade}</h2>
-		<div class="flex justify-between">
-			<a href="/pan/gym/{data.gym.id}" class="text-blue-600 hover:text-blue-800"> ← Back to Gym </a>
+		<h1 class="text-3xl font-bold mb-2">{route.name}</h1>
+		<GradeChip grade={route.grade} />
+		<div class="mt-5 flex justify-between items-center">
+			<a href="/pan/gym/{data.gym.id}" class="text-blue-600 hover:text-blue-800"> ← Retour </a>
 			<a href="/pan/gym/{data.gym.id}/route/{route.id}/edit" class="btn preset-tonal-secondary"
 				>Modifier le bloc</a
 			>

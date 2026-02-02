@@ -3,8 +3,6 @@
 	import type { Move } from '$lib/types';
 	let { walls, route = $bindable([]) as Move[], isEditing = false, legend = true } = $props();
 
-	console.log('RouteViewer loaded:', { walls: walls.length, isEditing, route: route.length });
-
 	let currentWall = $derived(walls.find((wall) => wall.id === route[0]?.wallId) || walls[0]);
 	let currentWallMoves = $derived(route.filter((move) => move.wallId === currentWall?.id) || []);
 </script>

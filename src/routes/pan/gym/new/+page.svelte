@@ -29,7 +29,7 @@
 <div class="container mx-auto p-4">
 	<div class="mb-6">
 		<h1 class="text-3xl font-bold">Create New Gym</h1>
-		<a href="/pan/gym" class="text-blue-600 hover:text-blue-800"> ← Back to Gyms </a>
+		<a href="/pan/gym" class="text-blue-600 hover:text-blue-800"> ← Retours </a>
 	</div>
 
 	<form method="POST" use:enhance class="card p-6 max-w-md">

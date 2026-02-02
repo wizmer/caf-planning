@@ -14,8 +14,6 @@
 
 	let { referents, parent }: Props = $props();
 
-	$inspect(referents);
-
 	let preselected_user = referents.find((item) => item[1] === $last_user) ? $last_user : '';
 
 	let selected_user = $state(preselected_user);

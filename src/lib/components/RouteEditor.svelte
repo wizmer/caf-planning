@@ -40,7 +40,7 @@
 	<h1 class="text-3xl font-bold">
 		{isNewRoute ? "Création d'un nouveau bloc" : 'Édition du bloc'}
 	</h1>
-	<a href="/pan/gym/{data.gym.id}" class="text-blue-600 hover:text-blue-800"> ← Back to Gym </a>
+	<a href="/pan/gym/{data.gym.id}" class="text-blue-600 hover:text-blue-800"> ← Retour </a>
 </div>
 {#if form?.error}
 	<div class="alert preset-filled-error-500 mb-4">

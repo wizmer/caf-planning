@@ -22,7 +22,6 @@ export const actions: Actions = {
 	delete: async ({ params }) => {
 		const gymId = parseInt(params.gymId);
 		const routeId = parseInt(params.routeId);
-		console.log('routeId', routeId);
 		const prisma = new PrismaClient();
 
 		try {

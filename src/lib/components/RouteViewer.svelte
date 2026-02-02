@@ -5,7 +5,17 @@
 	import Hold from './Hold.svelte';
 	let { walls, route = $bindable([]) as Move[], isEditing = false, legend = true } = $props();
 
-	let currentWallIndex = $state(0);
+	let initCurrentWallIndex = 0;
+
+	if (route.length > 0) {
+		const wallIdsWithMoves = new Set(route.map((move) => move.wallId));
+		const firstWallIndex = walls.findIndex((wall) => wallIdsWithMoves.has(wall.id));
+		if (firstWallIndex !== -1) {
+			initCurrentWallIndex = firstWallIndex;
+		}
+	}
+
+	let currentWallIndex = $state(initCurrentWallIndex);
 	let selectedHoldType = $state<Move['type']>(
 		route.length > 0 ? route[route.length - 1].type : 'hand'
 	);
@@ -64,20 +74,11 @@
 		(() => {
 			const wallId = currentWall?.id;
 			const moves = route.filter((move) => move.wallId === wallId);
-			console.log('Current wall moves recalculating:', {
-				currentWallIndex,
-				wallId,
-				routeLength: route.length,
-				filteredMoves: moves.length,
-				allMoveWallIds: route.map((m) => m.wallId),
-				moves
-			});
 			return moves.sort((a, b) => a.index - b.index);
 		})()
 	);
 
 	function handleImageClick(event: MouseEvent) {
-		console.log('Image clicked', { isEditing, isDragging, currentWall });
 		if (!isEditing || isDragging) return;
 		if (!currentWall) {
 			console.error('No current wall');
@@ -100,9 +101,7 @@
 			radius: 16
 		};
 
-		console.log('Adding new move:', newMove);
 		route = [...route, newMove];
-		console.log('Route after adding:', route.length, route);
 
 		// Set selectedHoldType to the type of the newly added hold
 		selectedHoldType = newMove.type;

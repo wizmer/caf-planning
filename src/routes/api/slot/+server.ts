@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 
 export const POST: RequestHandler = async ({ request }) => {
 	const { day, ref } = await request.json();
-	console.log('ref', ref);
 
 	try {
 		// Find the referent by name

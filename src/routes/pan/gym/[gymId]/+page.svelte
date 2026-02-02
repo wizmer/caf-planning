@@ -1,6 +1,6 @@
 <script lang="ts">
 	import RouteThumbnail from '$lib/components/RouteThumbnail.svelte';
-	import RouteViewer from '$lib/components/RouteViewer.svelte';
+	import WallGalery from '$lib/components/WallGalery.svelte';
 	import { type PageData } from '../$types';
 
 	interface Props {
@@ -67,6 +67,9 @@
 
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 				{#each gym.routes as route}
+					{@const walls = gym.walls.filter((wall) =>
+						route.body.some((move) => move.wallId === wall.id)
+					)}
 					<div class="bg-white rounded-lg shadow-md p-6 border h-96 flex flex-col">
 						<div class="flex justify-between items-start mb-3">
 							<h3 class="text-xl font-semibold">{route.name}</h3>
@@ -75,7 +78,9 @@
 							</span>
 						</div>
 
-						<p class="text-sm text-gray-500 mb-2">Secteur: {route.name}</p>
+						<p class="text-sm text-gray-500 mb-2">
+							Secteur: {walls.map((wall) => wall.name).join(', ')}
+						</p>
 
 						{#if route.description}
 							<p class="text-gray-700 mb-4">{route.description}</p>
@@ -120,7 +125,7 @@
 		</a>
 
 		<div class="h-70">
-			<RouteViewer id={gym.id} walls={gym.walls} legend={false} />
+			<WallGalery walls={gym.walls} />
 		</div>
 	{/if}
 </div>

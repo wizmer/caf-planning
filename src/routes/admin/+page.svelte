@@ -86,7 +86,6 @@
 	}
 
 	function delete_users() {
-		console.log('clicked');
 		for (let user of referents_to_remove) {
 			for (let i = 0; i < referents.length; i++) {
 				if (referents[i][1] === user) {

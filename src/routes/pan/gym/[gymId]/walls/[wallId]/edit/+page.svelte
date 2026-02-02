@@ -40,7 +40,7 @@
 
 <div class="container mx-auto p-4 space-y-4 max-w-2xl">
 	<!-- Go back link -->
-	<a href={`/pan/gym/${data.gym.id}/walls`} class="btn preset-tonal">← Back to Walls</a>
+	<a href={`/pan/gym/${data.gym.id}/walls`} class="btn preset-tonal">← Gestions des murs</a>
 
 	<h1 class="h1">Editer le mur: {data.wall.name}</h1>
 

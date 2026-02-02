@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { MoonIcon, SunIcon } from '@lucide/svelte';
 	import { Switch } from '@skeletonlabs/skeleton-svelte';
 
 	let checked = $state(false);
@@ -24,7 +25,17 @@
 
 <Switch {checked} {onCheckedChange}>
 	<Switch.Control>
-		<Switch.Thumb />
+		<Switch.Thumb>
+			<Switch.Context>
+				{#snippet children(switch_)}
+					{#if switch_().checked}
+						<MoonIcon class="size-3" />
+					{:else}
+						<SunIcon class="size-3" />
+					{/if}
+				{/snippet}
+			</Switch.Context>
+		</Switch.Thumb>
 	</Switch.Control>
 	<Switch.HiddenInput />
 </Switch>

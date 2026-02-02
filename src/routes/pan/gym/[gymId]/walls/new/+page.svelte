@@ -45,7 +45,7 @@
 <div class="container mx-auto p-4 space-y-4 max-w-2xl">
 	<!-- Go back link -->
 
-	<a href={`/pan/gym/${page.params.gymId}/walls`} class="btn preset-tonal">← Back to Gyms</a>
+	<a href={`/pan/gym/${page.params.gymId}/walls`} class="btn preset-tonal">← Retours</a>
 
 	<h1 class="h1">Upload Wall Photos</h1>
 

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 5eyKSS07zH4kCTboo8bBtEpQ8ZDpgvIguRIY2XtQEVbjEwYCx7IKXCD8VekTRqM
+\restrict NQpwQIuJa27kHmZpdlEbLBnSCyVq1biLExbdkAkYnTpIsAxVOVSqJMiJUKOMBjJ
 
 -- Dumped from database version 17.6 (Debian 17.6-2.pgdg13+1)
 -- Dumped by pg_dump version 17.7 (Ubuntu 17.7-3.pgdg22.04+1)
@@ -371,8 +371,8 @@ ALTER TABLE ONLY public.slots ALTER COLUMN id SET DEFAULT nextval('public.slots_
 --
 
 COPY public."Gym" (id, name, description, created_at, updated_at) FROM stdin;
-0	Gym A	\N	2026-02-02 09:54:52.637	2026-02-02 09:54:52.637
-1	Gym B	\N	2026-02-02 09:54:52.637	2026-02-02 09:54:52.637
+0	Gym A	\N	2026-02-02 11:09:01.447	2026-02-02 11:09:01.447
+1	Gym B	\N	2026-02-02 11:09:01.447	2026-02-02 11:09:01.447
 \.
 
 
@@ -381,7 +381,8 @@ COPY public."Gym" (id, name, description, created_at, updated_at) FROM stdin;
 --
 
 COPY public."Photo" (id, file_path, file_name, mime_type, file_size, uploaded_at) FROM stdin;
-0	walls/sample.jpeg	sample.jpeg	image/jpeg	123456	2026-02-02 09:54:52.638
+0	walls/sample.jpeg	sample.jpeg	image/jpeg	123456	2026-02-02 11:09:01.448
+1	walls/sample2.jpeg	sample2.jpeg	image/jpeg	123456	2026-02-02 11:09:01.448
 \.
 
 
@@ -390,6 +391,7 @@ COPY public."Photo" (id, file_path, file_name, mime_type, file_size, uploaded_at
 --
 
 COPY public."Route" (id, name, grade, description, created_at, updated_at, "gymId", body) FROM stdin;
+1	Route 1	5a	\N	2026-02-02 11:09:01.451	2026-02-02 11:09:01.451	0	[{"x": 16.86643835616438, "y": 40.43949771689498, "id": "17d8c7fa-cfb4-43ed-90a8-20428c1c7d00", "type": "finish", "index": 0, "radius": 16, "wallId": 1}, {"x": 57.61986301369863, "y": 42.83675799086758, "id": "5208827e-b716-449f-bbae-f24636c20b03", "type": "finish", "index": 1, "radius": 16, "wallId": 1}, {"x": 71.4041095890411, "y": 34.16095890410959, "id": "f2476d0d-3eca-497a-8ea5-a9275e3bc135", "type": "finish", "index": 2, "radius": 16, "wallId": 1}, {"x": 34.41780821917808, "y": 74.57191780821918, "id": "e80fd826-f6ef-41fc-b304-a3fcca16f390", "type": "finish", "index": 3, "radius": 16, "wallId": 1}, {"x": 73.03082191780823, "y": 84.96004566210046, "id": "d13705eb-54e9-41b5-8202-ec9b44843d13", "type": "finish", "index": 4, "radius": 16, "wallId": 1}]
 \.
 
 
@@ -398,7 +400,8 @@ COPY public."Route" (id, name, grade, description, created_at, updated_at, "gymI
 --
 
 COPY public."Wall" (id, gym_id, name, description, created_at, updated_at, photo_id) FROM stdin;
-1	0	Mur 1	\N	2026-02-02 09:54:52.638	2026-02-02 09:54:52.638	0
+0	0	Mur 1	\N	2026-02-01 10:47:45.371	2026-02-01 10:47:45.371	0
+1	0	Mur 2	\N	2026-02-02 10:47:45.381	2026-02-02 10:47:45.381	1
 \.
 
 
@@ -407,14 +410,14 @@ COPY public."Wall" (id, gym_id, name, description, created_at, updated_at, photo
 --
 
 COPY public._prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count) FROM stdin;
-c9e3513b-7652-4fc0-83e8-19c3301f8d4e	d889dd9c3eaeaebc7a0d56956c86c8e414a4a47ba6b32d1e07895aa739236110	2026-02-02 09:54:51.419596+00	0_init	\N	\N	2026-02-02 09:54:51.4169+00	1
-d6f1db38-3594-41f6-a9e7-0130c48f6421	119c0dfc8d65d91ab505cedda4ef312e67f3f38a4712182c7331998bcabfaf18	2026-02-02 09:54:51.422398+00	20251111225852_walls	\N	\N	2026-02-02 09:54:51.419755+00	1
-232ec073-4f91-4c66-88c2-4f3cb5476079	902e71fabdf00eec5575e1929e0308147cbd7075f1df5b9b1f2ff04654ca3e65	2026-02-02 09:54:51.426367+00	20251111231218_camel	\N	\N	2026-02-02 09:54:51.42256+00	1
-33d560c3-d9f6-4739-b7ac-ea157d4c8df6	6d54113df50ef981922bfcfe2bf076e1f0e1069326cbaeac785689423221936b	2026-02-02 09:54:51.428508+00	20251111235107_photo	\N	\N	2026-02-02 09:54:51.426517+00	1
-07c71e54-3da7-4aba-856f-186f6ad7ea79	73fa5f252c12dc303b77fbb25cc24c9a25eb5d9987eefa1dc040e7a0cee95c29	2026-02-02 09:54:51.429857+00	20251112001542_walloptionaal	\N	\N	2026-02-02 09:54:51.428674+00	1
-95d1e393-eeda-4c5d-a1f6-e4da8ad3aa35	323cf8bc438e909846706b2c83a04f493b7e100dc6ef44f30527b488916337b7	2026-02-02 09:54:51.430984+00	20251112003915_routes	\N	\N	2026-02-02 09:54:51.430029+00	1
-b74c2f16-c5c2-4ede-be3b-3c4f583ef47f	e039575ab9b5c640d239e5de43bd8fbd56d71fbd47b9018f706f5cd3b1f14d34	2026-02-02 09:54:51.431949+00	20251112004221_routes	\N	\N	2026-02-02 09:54:51.431127+00	1
-8debaef5-55fe-47a5-bc53-4330feab2959	2dd17832f576c78512270137479e0aeb58487c7478cbcba207566118f34236f2	2026-02-02 09:54:51.43265+00	20251113002411_jjson	\N	\N	2026-02-02 09:54:51.43211+00	1
+9c89bd5c-a3da-42fe-b43e-f0db207260a6	d889dd9c3eaeaebc7a0d56956c86c8e414a4a47ba6b32d1e07895aa739236110	2026-02-02 11:09:00.111095+00	0_init	\N	\N	2026-02-02 11:09:00.108288+00	1
+5464914f-9bb8-44ea-9989-901df90a908d	119c0dfc8d65d91ab505cedda4ef312e67f3f38a4712182c7331998bcabfaf18	2026-02-02 11:09:00.114278+00	20251111225852_walls	\N	\N	2026-02-02 11:09:00.111384+00	1
+e5d25208-194d-40c4-9eaa-b51a65c3dc27	902e71fabdf00eec5575e1929e0308147cbd7075f1df5b9b1f2ff04654ca3e65	2026-02-02 11:09:00.118463+00	20251111231218_camel	\N	\N	2026-02-02 11:09:00.114459+00	1
+6dada241-823b-4a60-9310-40d45130d1e8	6d54113df50ef981922bfcfe2bf076e1f0e1069326cbaeac785689423221936b	2026-02-02 11:09:00.120681+00	20251111235107_photo	\N	\N	2026-02-02 11:09:00.118644+00	1
+9e6936b2-25b1-4f7f-bd80-d7e179faffd1	73fa5f252c12dc303b77fbb25cc24c9a25eb5d9987eefa1dc040e7a0cee95c29	2026-02-02 11:09:00.122176+00	20251112001542_walloptionaal	\N	\N	2026-02-02 11:09:00.120896+00	1
+94966787-211c-46cc-a1bf-88eee9662bb8	323cf8bc438e909846706b2c83a04f493b7e100dc6ef44f30527b488916337b7	2026-02-02 11:09:00.123415+00	20251112003915_routes	\N	\N	2026-02-02 11:09:00.122354+00	1
+9c931983-b46b-4808-bee4-ad1034607a01	e039575ab9b5c640d239e5de43bd8fbd56d71fbd47b9018f706f5cd3b1f14d34	2026-02-02 11:09:00.124508+00	20251112004221_routes	\N	\N	2026-02-02 11:09:00.123607+00	1
+e8304552-fe04-4f20-950e-236fcbb6c0b3	2dd17832f576c78512270137479e0aeb58487c7478cbcba207566118f34236f2	2026-02-02 11:09:00.125149+00	20251113002411_jjson	\N	\N	2026-02-02 11:09:00.124674+00	1
 \.
 
 
@@ -462,14 +465,14 @@ SELECT pg_catalog.setval('public."Photo_id_seq"', 1, false);
 -- Name: Route_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bcoste
 --
 
-SELECT pg_catalog.setval('public."Route_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."Route_id_seq"', 1, true);
 
 
 --
 -- Name: Wall_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bcoste
 --
 
-SELECT pg_catalog.setval('public."Wall_id_seq"', 1, true);
+SELECT pg_catalog.setval('public."Wall_id_seq"', 1, false);
 
 
 --
@@ -621,5 +624,5 @@ REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 5eyKSS07zH4kCTboo8bBtEpQ8ZDpgvIguRIY2XtQEVbjEwYCx7IKXCD8VekTRqM
+\unrestrict NQpwQIuJa27kHmZpdlEbLBnSCyVq1biLExbdkAkYnTpIsAxVOVSqJMiJUKOMBjJ
 

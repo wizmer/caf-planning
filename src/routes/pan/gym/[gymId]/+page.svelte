@@ -1,6 +1,6 @@
 <script lang="ts">
 	import RouteThumbnail from '$lib/components/RouteThumbnail.svelte';
-	import WallGallery from '$lib/components/WallGallery.svelte';
+	import RouteViewer from '$lib/components/RouteViewer.svelte';
 	import { type PageData } from '../$types';
 
 	interface Props {
@@ -75,7 +75,7 @@
 							</span>
 						</div>
 
-						<p class="text-sm text-gray-500 mb-2">Wall: {route.name}</p>
+						<p class="text-sm text-gray-500 mb-2">Secteur: {route.name}</p>
 
 						{#if route.description}
 							<p class="text-gray-700 mb-4">{route.description}</p>
@@ -102,6 +102,13 @@
 		{/if}
 
 		<h2 class="h2 mt-8">Gallerie des murs</h2>
+		<div class="mb-4">
+			<p class="text-gray-600">
+				{gym.walls.length} mur{gym.walls.length !== 1 ? 's' : ''} défini{gym.walls.length !== 1
+					? 's'
+					: ''}
+			</p>
+		</div>
 		{@render AddWallButton()}
 
 		<!-- Edit walls butto -->
@@ -112,8 +119,8 @@
 			Éditer les murs
 		</a>
 
-		<div class="h-96">
-			<WallGallery id={gym.id} walls={gym.walls} legend={false} />
+		<div class="h-70">
+			<RouteViewer id={gym.id} walls={gym.walls} legend={false} />
 		</div>
 	{/if}
 </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WallGallery from '$lib/components/WallGallery.svelte';
+	import RouteViewer from '$lib/components/RouteViewer.svelte';
 
 	let { data } = $props();
 
@@ -22,5 +22,5 @@
 		</div>
 	</div>
 
-	<WallGallery walls={data.gym.walls} route={route.body} />
+	<RouteViewer walls={data.gym.walls} route={route.body} />
 </div>

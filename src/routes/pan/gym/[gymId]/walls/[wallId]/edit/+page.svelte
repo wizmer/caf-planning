@@ -42,7 +42,7 @@
 	<!-- Go back link -->
 	<a href={`/pan/gym/${data.gym.id}/walls`} class="btn preset-tonal">← Back to Walls</a>
 
-	<h1 class="h1">Edit Wall: {data.wall.name}</h1>
+	<h1 class="h1">Editer le mur: {data.wall.name}</h1>
 
 	{#if data.wall.photo}
 		<div class="card">

@@ -3,7 +3,7 @@ import { redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 
 export const actions: Actions = {
-	default: async ({ request, params }) => {
+	save: async ({ request, params }) => {
 		const formData = await request.formData();
 		const gymId = parseInt(params.gymId);
 

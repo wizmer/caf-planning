@@ -44,7 +44,7 @@
 	{#if !isEditing}
 		{@render circle()}
 	{:else}
-		<Popover>
+		<Popover defaultOpen={true}>
 			<Popover.Trigger
 				class="btn {isEditing ? 'cursor-move' : 'cursor-pointer'}"
 				onmousedown={(e) => isEditing && handleMoveDragStart(e, move)}

@@ -40,7 +40,10 @@
 	</div>
 </nav>
 
-{@render children?.()}
+<div class="container">
+	{@render children?.()}
+</div>
+
 <div class="flex flex-row justify-center">
 	<div>
 		Vous cherchez <a href="/admin" class="font-medium hover:underline">l'espace admin ?</a>
@@ -58,3 +61,11 @@
 		</Toast>
 	{/snippet}
 </Toast.Group>
+
+<style>
+	.container {
+		max-width: 1200px;
+		margin: 2rem auto;
+		padding: 0 1rem;
+	}
+</style>

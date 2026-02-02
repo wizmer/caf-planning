@@ -11,7 +11,8 @@ export async function load({ params }) {
 
 	try {
 		const route = await prisma.route.findUnique({
-			where: { id: routeId }
+			where: { id: routeId },
+			include: { moves: true }
 		});
 
 		if (!route) {

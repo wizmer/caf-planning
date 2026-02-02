@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
 	import { getMoveLabel } from '$lib/move-utils';
-	import type { Move } from '$lib/types';
+	import type { Move } from '@prisma/client';
 	import Hold from './Hold.svelte';
-	let { walls, route = $bindable([]) as Move[], isEditing = false, legend = true } = $props();
+	let { walls, moves = $bindable([]) as Move[], isEditing = false, legend = true } = $props();
 
 	let initCurrentWallIndex = 0;
 
-	if (route.length > 0) {
-		const wallIdsWithMoves = new Set(route.map((move) => move.wallId));
+	if (moves.length > 0) {
+		const wallIdsWithMoves = new Set(moves.map((move) => move.wallId));
 		const firstWallIndex = walls.findIndex((wall) => wallIdsWithMoves.has(wall.id));
 		if (firstWallIndex !== -1) {
 			initCurrentWallIndex = firstWallIndex;
@@ -17,12 +17,21 @@
 
 	let currentWallIndex = $state(initCurrentWallIndex);
 	let selectedHoldType = $state<Move['type']>(
-		route.length > 0 ? route[route.length - 1].type : 'hand'
+		moves.length > 0 ? moves[moves.length - 1].type : 'hand'
 	);
 	let editingMove = $state<Move | null>(null);
 	let isDragging = $state(false);
 	let isFullscreen = $state(false);
 	let wallContainerRef: HTMLDivElement | null = $state(null);
+	let imageWidth = $state(0);
+
+	export const resizeObserver = (node, callback) => {
+		const ro = new ResizeObserver(([entry]) => callback(entry));
+		ro.observe(node);
+		return {
+			destroy: () => ro.disconnect()
+		};
+	};
 
 	function toggleFullscreen() {
 		if (!wallContainerRef) return;
@@ -73,8 +82,7 @@
 	let currentWallMoves = $derived(
 		(() => {
 			const wallId = currentWall?.id;
-			const moves = route.filter((move) => move.wallId === wallId);
-			return moves.sort((a, b) => a.index - b.index);
+			return moves.filter((move) => move.wallId === wallId).sort((a, b) => a.index - b.index);
 		})()
 	);
 
@@ -93,38 +101,38 @@
 		// Create new move
 		const newMove: Move = {
 			id: crypto.randomUUID(),
-			index: route.length,
+			index: moves.length,
 			wallId: currentWall.id,
 			type: selectedHoldType,
 			x,
 			y,
-			radius: 16
+			radius: 1.6
 		};
 
-		route = [...route, newMove];
+		moves = [...moves, newMove];
 
 		// Set selectedHoldType to the type of the newly added hold
 		selectedHoldType = newMove.type;
 	}
 
 	function updateMoveType(move: Move, newType: Move['type']) {
-		const index = route.findIndex((m) => m.id === move.id);
+		const index = moves.findIndex((m) => m.id === move.id);
 		if (index !== -1) {
-			route[index] = { ...route[index], type: newType };
-			route = [...route];
+			moves[index] = { ...moves[index], type: newType };
+			moves = [...moves];
 		}
 	}
 
 	function updateMoveRadius(move: Move, radius: number) {
-		const index = route.findIndex((m) => m.id === move.id);
+		const index = moves.findIndex((m) => m.id === move.id);
 		if (index !== -1) {
-			route[index] = { ...route[index], radius };
-			route = [...route];
+			moves[index] = { ...moves[index], radius };
+			moves = [...moves];
 		}
 	}
 
 	function deleteMove(move: Move) {
-		route = route.filter((m) => m.id !== move.id).map((m, idx) => ({ ...m, index: idx }));
+		moves = moves.filter((m) => m.id !== move.id).map((m, idx) => ({ ...m, index: idx }));
 		editingMove = null;
 	}
 
@@ -142,10 +150,10 @@
 			const x = ((e.clientX - rect.left) / rect.width) * 100;
 			const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-			const index = route.findIndex((m) => m.id === move.id);
+			const index = moves.findIndex((m) => m.id === move.id);
 			if (index !== -1) {
-				route[index] = {
-					...route[index],
+				moves[index] = {
+					...moves[index],
 					x: Math.max(0, Math.min(100, Math.round(x * 10) / 10)),
 					y: Math.max(0, Math.min(100, Math.round(y * 10) / 10))
 				};
@@ -227,9 +235,10 @@
 				alt={currentWall.name}
 				class="max-w-full max-h-full object-contain block {isEditing ? 'cursor-crosshair' : ''}"
 				onclick={handleImageClick}
+				use:resizeObserver={({ contentRect }) => {
+					imageWidth = contentRect.width;
+				}}
 			/>
-
-			<!-- Render moves as overlays -->
 			{#each currentWallMoves as move, idx}
 				<Hold
 					{move}
@@ -241,6 +250,7 @@
 					{updateMoveRadius}
 					{deleteMove}
 					{handleMoveDragStart}
+					{imageWidth}
 				/>
 			{/each}
 

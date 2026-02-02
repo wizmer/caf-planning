@@ -21,7 +21,7 @@
 			>
 		</a>
 
-		<div class="flex flex-row items-center gap-4">
+		<div class="flex flex-row items-center gap-4 flex-wrap">
 			<a href="/pan/gym" class="hover:underline border rounded p-2">Espace Pan</a>
 			{#if $user}
 				<button

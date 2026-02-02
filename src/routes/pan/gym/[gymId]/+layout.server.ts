@@ -12,7 +12,9 @@ export const load: PageServerLoad = async ({ params }) => {
 			walls: {
 				include: { photo: true }
 			},
-			routes: true
+			routes: {
+				include: { moves: true }
+			}
 		}
 	});
 

@@ -23,5 +23,5 @@
 		</div>
 	</div>
 
-	<RouteViewer walls={data.gym.walls} route={route.body} />
+	<RouteViewer walls={data.gym.walls} moves={route.moves} />
 </div>

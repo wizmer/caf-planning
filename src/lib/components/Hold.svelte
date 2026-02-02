@@ -11,10 +11,12 @@
 		updateMoveRadius,
 		deleteMove,
 		handleMoveDragStart,
-		currentWallMoves = $bindable()
+		currentWallMoves = $bindable(),
+		imageWidth = 0
 	} = $props();
 
-	let holdRadius = $derived(move.radius || 16);
+	// Calculate pixel radius from percentage of image width
+	let holdRadius = $derived(imageWidth > 0 ? (move.radius * imageWidth) / 100 : 16);
 </script>
 
 <div
@@ -22,7 +24,6 @@
 	style="left: {move.x}%; top: {move.y}%; transform: translate(-50%, -50%); animation-delay: {idx *
 		0.15}s; pointer-events: none;"
 >
-	<!-- Spinning ring around the circle -->
 	<div
 		class="spinner-ring"
 		style="width: {holdRadius * 2 + 16}px; height: {holdRadius * 2 +

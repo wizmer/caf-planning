@@ -48,6 +48,7 @@ model Wall {
   updated_at  DateTime @updatedAt
   photo_id    Int      @unique
   photo       Photo    @relation(fields: [photo_id], references: [id])
+  moves       Move[]
 }
 
 model Photo {
@@ -69,6 +70,30 @@ model Route {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
   body        Json     @db.JsonB // This already stores the moves array with all properties including radius
+  moves       Move[]
   gym         Gym?     @relation(fields: [gymId], references: [id])
   gymId       Int?
+}
+
+model Move {
+  id      Int            @id @default(autoincrement())
+  routeId Int            @map("route_id")
+  x       Float
+  y       Float
+  type    enum_move_type
+  radius  Float
+  wallId  Int            @map("wall_id")
+  route   Route          @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  wall    Wall           @relation(fields: [wallId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("moves")
+}
+
+enum enum_move_type {
+  hand_start
+  foot_start
+  hand
+  foot
+  both
+  finish
 }

@@ -10,6 +10,7 @@
 	let { data }: Props = $props();
 
 	const { gym } = data;
+	$inspect(gym);
 </script>
 
 <svelte:head>
@@ -68,7 +69,7 @@
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 				{#each gym.routes as route}
 					{@const walls = gym.walls.filter((wall) =>
-						route.body.some((move) => move.wallId === wall.id)
+						route.moves.some((move) => move.wallId === wall.id)
 					)}
 					<div class="bg-white rounded-lg shadow-md p-6 border h-96 flex flex-col">
 						<div class="flex justify-between items-start mb-3">
@@ -88,7 +89,7 @@
 
 						<div class="flex-1 min-h-0">
 							<a href="/pan/gym/{gym.id}/route/{route.id}" class="block h-full">
-								<RouteThumbnail walls={gym.walls} route={route.body} legend={false} />
+								<RouteThumbnail walls={gym.walls} route={route.moves} legend={false} />
 							</a>
 						</div>
 

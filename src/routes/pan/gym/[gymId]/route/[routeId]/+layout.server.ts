@@ -7,7 +7,8 @@ export const load: PageServerLoad = async ({ params }) => {
 	const route = await prisma.route.findUniqueOrThrow({
 		where: {
 			id: parseInt(params.routeId)
-		}
+		},
+		include: { moves: true }
 	});
 
 	return {

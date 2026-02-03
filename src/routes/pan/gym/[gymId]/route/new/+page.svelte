@@ -1,10 +1,16 @@
 <script lang="ts">
 	import RouteEditor from '$lib/components/RouteEditor.svelte';
+	import type { Move, Prisma } from '@prisma/client';
 
 	let { data, form } = $props();
 
-	let route = $state({
-		body: []
+	let route: Prisma.RouteUncheckedCreateInput & { moves: Move[] } = $state({
+		id: 0,
+		name: '',
+		grade: '',
+		color: '',
+		wallId: 0,
+		moves: []
 	});
 </script>
 
@@ -12,4 +18,4 @@
 	<title>New Route - {data.gym.name}</title>
 </svelte:head>
 
-<RouteEditor {data} {form} {route}></RouteEditor>
+<RouteEditor {data} {form} bind:route></RouteEditor>

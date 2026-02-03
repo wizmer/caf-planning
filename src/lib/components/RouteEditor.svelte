@@ -2,8 +2,8 @@
 	import { enhance } from '$app/forms';
 	import RouteViewer from '$lib/components/RouteViewer.svelte';
 
-	let { data, form, moves = $bindable([]) } = $props();
-	const isNewRoute = moves.length === 0;
+	let { data, form, route = $bindable() } = $props();
+	const isNewRoute = route.moves.length === 0;
 
 	const grades = [
 		'4c',
@@ -48,7 +48,7 @@
 	</div>
 {/if}
 
-<RouteViewer walls={data.gym.walls} bind:moves isEditing={true} />
+<RouteViewer walls={data.gym.walls} bind:route isEditing={true} />
 
 <div class="card p-6 mt-6">
 	<h2 class="h3 mb-4">Route Details</h2>
@@ -80,26 +80,30 @@
 		<label class="label mb-4">
 			<span>Description</span>
 			<textarea
-				name="routeDescription"
+				name="description"
 				placeholder="Describe the route, tips, or any special notes..."
 				class="textarea"
 				rows="3"
-				value={route?.routeDescription || ''}
+				value={route?.description || ''}
 			></textarea>
 		</label>
 
-		<input type="hidden" name="moves" value={JSON.stringify(moves)} />
+		<input type="hidden" name="moves" value={JSON.stringify(route.moves)} />
 
 		<div class="flex gap-4">
-			<button type="submit" class="btn preset-filled-primary-500" disabled={moves.length === 0}>
-				Enregistrer le bloc ({moves.length} mouvements)
+			<button
+				type="submit"
+				class="btn preset-filled-primary-500"
+				disabled={route.moves.length === 0}
+			>
+				Enregistrer le bloc ({route.moves.length} mouvements)
 			</button>
 
 			<button
 				type="button"
 				class="btn preset-tonal"
 				onclick={() => {
-					moves = [];
+					route.moves = [];
 				}}
 			>
 				Enlever tous les mouvements

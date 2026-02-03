@@ -2,14 +2,13 @@
 	import RouteEditor from '$lib/components/RouteEditor.svelte';
 
 	let { data, form } = $props();
-	const route = $state(data.route);
 </script>
 
 <svelte:head>
 	<title>Edition du bloc - {data.gym.name}</title>
 </svelte:head>
 
-<RouteEditor {data} {form} {route}></RouteEditor>
+<RouteEditor {data} {form} route={data.route}></RouteEditor>
 
 <form method="POST" action="?/delete">
 	<button class="btn preset-tonal-error" type="submit">Supprimer la route</button>

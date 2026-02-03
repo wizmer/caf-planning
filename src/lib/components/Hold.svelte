@@ -7,16 +7,41 @@
 		idx,
 		isEditing = false,
 		editingMove = $bindable(),
-		updateMoveType,
-		updateMoveRadius,
 		deleteMove,
-		handleMoveDragStart,
-		currentWallMoves = $bindable(),
 		imageWidth = 0
 	} = $props();
 
 	// Calculate pixel radius from percentage of image width
 	let holdRadius = $derived(imageWidth > 0 ? (move.radius * imageWidth) / 100 : 16);
+	let color = $derived(`var(--hold-${move.type.replace('_', '-')})`);
+
+	function handleMoveDragStart(event: MouseEvent, index: number) {
+		if (!isEditing) return;
+		event.stopPropagation();
+		editingMove = null;
+
+		const img = (event.currentTarget as HTMLElement).closest('.wall-image-container');
+		if (!img) return;
+
+		const handleDrag = (e: MouseEvent) => {
+			const rect = img.getBoundingClientRect();
+			const x = ((e.clientX - rect.left) / rect.width) * 100;
+			const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+			if (index !== -1) {
+				move.x = Math.max(0, Math.min(100, Math.round(x * 10) / 10));
+				move.y = Math.max(0, Math.min(100, Math.round(y * 10) / 10));
+			}
+		};
+
+		const handleDragEnd = () => {
+			document.removeEventListener('mousemove', handleDrag);
+			document.removeEventListener('mouseup', handleDragEnd);
+		};
+
+		document.addEventListener('mousemove', handleDrag);
+		document.addEventListener('mouseup', handleDragEnd);
+	}
 </script>
 
 <div
@@ -27,10 +52,7 @@
 	<div
 		class="spinner-ring"
 		style="width: {holdRadius * 2 + 16}px; height: {holdRadius * 2 +
-			16}px; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); --spinner-color: var(--hold-{move.type.replace(
-			'_',
-			'-'
-		)});"
+			16}px; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); --spinner-color: {color};"
 	></div>
 
 	{#snippet circle()}
@@ -48,7 +70,7 @@
 		<Popover defaultOpen={true}>
 			<Popover.Trigger
 				class="btn {isEditing ? 'cursor-move' : 'cursor-pointer'}"
-				onmousedown={(e) => isEditing && handleMoveDragStart(e, move)}
+				onmousedown={(e) => isEditing && handleMoveDragStart(e, idx)}
 				style="pointer-events: auto;"
 			>
 				{@render circle()}
@@ -58,13 +80,7 @@
 					<Popover.Content
 						class="card w-96 bg-surface-500 p-3 shadow-xl min-w-[250px] max-h-[500px]"
 					>
-						<HoldEditor
-							bind:move
-							onUpdateType={(type) => updateMoveType(move, type)}
-							onUpdateRadius={(radius) => updateMoveRadius(move, radius)}
-							onDelete={() => deleteMove(move)}
-							onClose={() => (editingMove = null)}
-						/>
+						<HoldEditor bind:move {idx} onDelete={deleteMove} />
 
 						<Popover.Arrow
 							class="[--arrow-size:--spacing(4)] [--arrow-background:var(--color-surface-500)]"

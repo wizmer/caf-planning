@@ -5,13 +5,11 @@
 
 	interface Props {
 		move: Move;
-		onUpdateType: (type: Move['type']) => void;
-		onUpdateRadius: (radius: number) => void;
-		onDelete: () => void;
-		onClose: () => void;
+		idx: number;
+		onDelete: (idx: number) => void;
 	}
 
-	let { move = $bindable(), onUpdateType, onDelete, onClose }: Props = $props();
+	let { move = $bindable(), onDelete, idx }: Props = $props();
 </script>
 
 <h5 class="text-sm font-bold mb-3">Edit Hold</h5>
@@ -21,7 +19,7 @@
 	<div class="flex flex-col gap-1">
 		{#each ['hand_start', 'foot_start', 'hand', 'foot', 'both', 'finish'] as holdType}
 			<button
-				onclick={() => onUpdateType(holdType as Move['type'])}
+				onclick={() => (move.type = holdType)}
 				class="btn btn-sm {move.type === holdType
 					? 'preset-filled'
 					: 'preset-tonal border border-surface-500'} justify-start"
@@ -42,7 +40,7 @@
 
 	<!-- Delete Button -->
 	<hr class="my-1" />
-	<button onclick={onDelete} class="btn btn-sm preset-filled-error-500 w-full">
+	<button onclick={() => onDelete(idx)} class="btn btn-sm preset-filled-error-500 w-full">
 		Delete Hold
 	</button>
 </div>

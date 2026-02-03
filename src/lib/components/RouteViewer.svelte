@@ -1,14 +1,19 @@
 <script lang="ts">
 	import { PUBLIC_UPLOAD_URL } from '$env/static/public';
 	import { getMoveLabel } from '$lib/move-utils';
-	import type { Move } from '@prisma/client';
+	import type { Move, Prisma, Route } from '@prisma/client';
 	import Hold from './Hold.svelte';
-	let { walls, moves = $bindable([]) as Move[], isEditing = false, legend = true } = $props();
+	let {
+		walls,
+		route = $bindable() as Route & { moves: Move[] },
+		isEditing = false,
+		legend = true
+	} = $props();
 
 	let initCurrentWallIndex = 0;
 
-	if (moves.length > 0) {
-		const wallIdsWithMoves = new Set(moves.map((move) => move.wallId));
+	if (route.moves.length > 0) {
+		const wallIdsWithMoves = new Set(route.moves.map((move) => move.wallId));
 		const firstWallIndex = walls.findIndex((wall) => wallIdsWithMoves.has(wall.id));
 		if (firstWallIndex !== -1) {
 			initCurrentWallIndex = firstWallIndex;
@@ -17,10 +22,9 @@
 
 	let currentWallIndex = $state(initCurrentWallIndex);
 	let selectedHoldType = $state<Move['type']>(
-		moves.length > 0 ? moves[moves.length - 1].type : 'hand'
+		route.moves.length > 0 ? route.moves[route.moves.length - 1].type : 'hand'
 	);
 	let editingMove = $state<Move | null>(null);
-	let isDragging = $state(false);
 	let isFullscreen = $state(false);
 	let wallContainerRef: HTMLDivElement | null = $state(null);
 	let imageWidth = $state(0);
@@ -78,16 +82,10 @@
 
 	let currentWall = $derived(walls[currentWallIndex]);
 
-	// Use simple $derived instead of $derived.by for better reactivity with bindable props
-	let currentWallMoves = $derived(
-		(() => {
-			const wallId = currentWall?.id;
-			return moves.filter((move) => move.wallId === wallId).sort((a, b) => a.index - b.index);
-		})()
-	);
+	$inspect(route.moves);
 
 	function handleImageClick(event: MouseEvent) {
-		if (!isEditing || isDragging) return;
+		if (!isEditing) return;
 		if (!currentWall) {
 			console.error('No current wall');
 			return;
@@ -99,75 +97,24 @@
 		const y = ((event.clientY - rect.top) / rect.height) * 100;
 
 		// Create new move
-		const newMove: Move = {
-			id: crypto.randomUUID(),
-			index: moves.length,
+		const newMove: Prisma.MoveUncheckedCreateInput = {
 			wallId: currentWall.id,
 			type: selectedHoldType,
 			x,
 			y,
-			radius: 1.6
+			radius: 1.6,
+			routeId: route.id
 		};
 
-		moves = [...moves, newMove];
+		route.moves.push(newMove);
 
 		// Set selectedHoldType to the type of the newly added hold
 		selectedHoldType = newMove.type;
 	}
 
-	function updateMoveType(move: Move, newType: Move['type']) {
-		const index = moves.findIndex((m) => m.id === move.id);
-		if (index !== -1) {
-			moves[index] = { ...moves[index], type: newType };
-			moves = [...moves];
-		}
-	}
-
-	function updateMoveRadius(move: Move, radius: number) {
-		const index = moves.findIndex((m) => m.id === move.id);
-		if (index !== -1) {
-			moves[index] = { ...moves[index], radius };
-			moves = [...moves];
-		}
-	}
-
-	function deleteMove(move: Move) {
-		moves = moves.filter((m) => m.id !== move.id).map((m, idx) => ({ ...m, index: idx }));
+	function deleteMove(index: number) {
+		route.moves = route.moves.slice(0, index).concat(route.moves.slice(index + 1));
 		editingMove = null;
-	}
-
-	function handleMoveDragStart(event: MouseEvent, move: Move) {
-		if (!isEditing) return;
-		event.stopPropagation();
-		isDragging = true;
-		editingMove = null;
-
-		const img = (event.currentTarget as HTMLElement).closest('.wall-image-container');
-		if (!img) return;
-
-		const handleDrag = (e: MouseEvent) => {
-			const rect = img.getBoundingClientRect();
-			const x = ((e.clientX - rect.left) / rect.width) * 100;
-			const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-			const index = moves.findIndex((m) => m.id === move.id);
-			if (index !== -1) {
-				moves[index] = {
-					...moves[index],
-					x: Math.max(0, Math.min(100, Math.round(x * 10) / 10)),
-					y: Math.max(0, Math.min(100, Math.round(y * 10) / 10))
-				};
-			}
-		};
-
-		const handleDragEnd = () => {
-			isDragging = false;
-			document.removeEventListener('mousemove', handleDrag);
-			document.removeEventListener('mouseup', handleDragEnd);
-		};
-
-		document.addEventListener('mousemove', handleDrag);
-		document.addEventListener('mouseup', handleDragEnd);
 	}
 </script>
 
@@ -239,19 +186,8 @@
 					imageWidth = contentRect.width;
 				}}
 			/>
-			{#each currentWallMoves as move, idx}
-				<Hold
-					{move}
-					{idx}
-					{isEditing}
-					bind:editingMove
-					bind:currentWallMoves
-					{updateMoveType}
-					{updateMoveRadius}
-					{deleteMove}
-					{handleMoveDragStart}
-					{imageWidth}
-				/>
+			{#each route.moves as move, idx}
+				<Hold {move} {idx} {isEditing} bind:editingMove {deleteMove} {imageWidth} />
 			{/each}
 
 			<!-- Navigation Arrows -->
@@ -307,9 +243,9 @@
 					{#if currentWall.description}
 						<p class="text-surface-200 mt-1">{currentWall.description}</p>
 					{/if}
-					{#if currentWallMoves.length > 0}
+					{#if route.moves.length > 0}
 						<p class="text-surface-300 text-sm mt-1">
-							{currentWallMoves.length} move{currentWallMoves.length !== 1 ? 's' : ''}
+							{route.moves.length} move{route.moves.length !== 1 ? 's' : ''}
 						</p>
 					{/if}
 				</div>

@@ -1,3 +1,4 @@
+import type { Move } from '@lucide/svelte';
 import { PrismaClient } from '@prisma/client';
 import { fail } from '@sveltejs/kit';
 
@@ -6,8 +7,8 @@ const prisma = new PrismaClient();
 export async function saveRoute(formData: FormData, gymId: number, routeId?: number) {
 	const name = formData.get('name') as string;
 	const grade = formData.get('grade') as string;
-	const description = formData.get('routeDescription') as string;
-	const bodyString = formData.get('body') as string;
+	const description = formData.get('description') as string;
+	const movesString = formData.get('moves') as string;
 
 	// Validate input
 	if (!name?.trim()) {
@@ -19,14 +20,14 @@ export async function saveRoute(formData: FormData, gymId: number, routeId?: num
 	}
 
 	// Parse and validate route moves
-	let routeMoves;
+	let moves: Move[];
 	try {
-		routeMoves = JSON.parse(bodyString || '[]');
+		moves = JSON.parse(movesString || '[]');
 	} catch (error) {
 		return fail(400, { error: 'Invalid route data' });
 	}
 
-	if (!Array.isArray(routeMoves) || routeMoves.length === 0) {
+	if (!Array.isArray(moves) || moves.length === 0) {
 		return fail(400, { error: 'At least one move is required' });
 	}
 
@@ -48,7 +49,6 @@ export async function saveRoute(formData: FormData, gymId: number, routeId?: num
 			name: name.trim(),
 			grade: grade.trim(),
 			description: description?.trim() || null,
-			body: routeMoves,
 			gymId: gymId
 		};
 
@@ -69,12 +69,24 @@ export async function saveRoute(formData: FormData, gymId: number, routeId?: num
 
 			await prisma.route.update({
 				where: { id: routeId },
-				data: routeData
+				data: {
+					...routeData,
+					moves: {
+						deleteMany: {},
+						create: moves
+					}
+				}
 			});
 		} else {
 			// Create new route
-			await prisma.route.create({
+			const route = await prisma.route.create({
 				data: routeData
+			});
+			await prisma.move.createMany({
+				data: moves.map((move) => ({
+					...move,
+					routeId: route.id
+				}))
 			});
 		}
 

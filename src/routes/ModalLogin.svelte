@@ -93,90 +93,85 @@
 		<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
 		<Dialog.Positioner class="fixed inset-0 z-50 flex justify-center items-center p-4">
 			<Dialog.Content class="card bg-surface-100-900 w-full max-w-xl p-4 space-y-4 shadow-xl ">
-				<div class={cBase}>
-					<header class={cHeader}>Referent</header>
+				<header class={cHeader}>Referent</header>
 
-					prese: {preselected_user}
-					last user: {$last_user}
-					referents: {referents}
-					<SegmentedControl
-						defaultValue="existing"
-						value={radio}
-						onValueChange={(e) => (radio = e.value)}
-					>
-						<SegmentedControl.Control>
-							<SegmentedControl.Indicator />
-							<SegmentedControl.Item value="existing" title="existing" aria-label="existing">
-								<SegmentedControl.ItemText>Utilisateur existant</SegmentedControl.ItemText>
-								<SegmentedControl.ItemHiddenInput />
-							</SegmentedControl.Item>
-							<SegmentedControl.Item value="new" title="new" aria-label="new">
-								<SegmentedControl.ItemText>Utilisateur nouveau</SegmentedControl.ItemText>
-								<SegmentedControl.ItemHiddenInput />
-							</SegmentedControl.Item>
-						</SegmentedControl.Control>
-					</SegmentedControl>
+				<SegmentedControl
+					defaultValue="existing"
+					value={radio}
+					onValueChange={(e) => (radio = e.value)}
+				>
+					<SegmentedControl.Control>
+						<SegmentedControl.Indicator />
+						<SegmentedControl.Item value="existing" title="existing" aria-label="existing">
+							<SegmentedControl.ItemText>Utilisateur existant</SegmentedControl.ItemText>
+							<SegmentedControl.ItemHiddenInput />
+						</SegmentedControl.Item>
+						<SegmentedControl.Item value="new" title="new" aria-label="new">
+							<SegmentedControl.ItemText>Utilisateur nouveau</SegmentedControl.ItemText>
+							<SegmentedControl.ItemHiddenInput />
+						</SegmentedControl.Item>
+					</SegmentedControl.Control>
+				</SegmentedControl>
 
-					<form id="login-form" class="modal-form {cForm}">
-						{#if radio === 'existing'}
-							<Listbox
-								class="w-full max-w-md"
-								{collection}
-								defaultValue={[preselected_user]}
-								onValueChange={(e) => {
-									selected_user = e.value[0];
-								}}
-							>
-								<Listbox.Content>
-									{#each collection.items as item (item.value)}
-										<Listbox.Item {item}>
-											<Listbox.ItemText>{item.label}</Listbox.ItemText>
-											<Listbox.ItemIndicator />
-										</Listbox.Item>
-									{/each}
-								</Listbox.Content>
-							</Listbox>
-						{:else}
-							<input
-								id="new-user"
-								class="input"
-								type="text"
-								name="new-user"
-								bind:value={new_user}
-								autocomplete="off"
-								placeholder="Valentine S."
-							/>
-						{/if}
-
-						<label class="space-x-2">
-							<p>Mot de passe</p>
-							<input
-								id="current-password"
-								class="input"
-								type="password"
-								name="password"
-								bind:value={password}
-								autocomplete="current-password"
-								placeholder="Mot de passe"
-								required
-							/>
-						</label>
-					</form>
-
-					<footer class="modal-footer">
-						<Dialog.CloseTrigger class="btn preset-tonal">Annuler</Dialog.CloseTrigger>
-						<button
-							class="btn"
-							onclick={onFormSubmit}
-							disabled={!login_enabled}
-							type="submit"
-							form="login-form">{connection_string}</button
+				<form id="login-form" class="modal-form {cForm}">
+					{#if radio === 'existing'}
+						<Listbox
+							class="w-full max-w-md "
+							{collection}
+							defaultValue={[preselected_user]}
+							onValueChange={(e) => {
+								selected_user = e.value[0];
+							}}
 						>
-						{#if failed_login_text}
-							<div class="text-red">{failed_login_text}</div>
-						{/if}
-					</footer>
-				</div>
+							<Listbox.Content class="overflow-y-auto max-h-[50vh]">
+								{#each collection.items as item (item.value)}
+									<Listbox.Item {item}>
+										<Listbox.ItemText>{item.label}</Listbox.ItemText>
+										<Listbox.ItemIndicator />
+									</Listbox.Item>
+								{/each}
+							</Listbox.Content>
+						</Listbox>
+					{:else}
+						<input
+							id="new-user"
+							class="input"
+							type="text"
+							name="new-user"
+							bind:value={new_user}
+							autocomplete="off"
+							placeholder="Valentine S."
+						/>
+					{/if}
+
+					<label class="space-x-2">
+						<p>Mot de passe</p>
+						<input
+							id="current-password"
+							class="input"
+							type="password"
+							name="password"
+							bind:value={password}
+							autocomplete="current-password"
+							placeholder="Mot de passe"
+							required
+						/>
+					</label>
+				</form>
+
+				<footer class="modal-footer">
+					<Dialog.CloseTrigger class="btn preset-tonal">Annuler</Dialog.CloseTrigger>
+					<button
+						class="btn"
+						onclick={onFormSubmit}
+						disabled={!login_enabled}
+						type="submit"
+						form="login-form">{connection_string}</button
+					>
+					{#if failed_login_text}
+						<div class="text-red">{failed_login_text}</div>
+					{/if}
+				</footer>
 			</Dialog.Content>
 		</Dialog.Positioner>
 	</Portal>

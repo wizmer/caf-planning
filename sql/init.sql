@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict NQpwQIuJa27kHmZpdlEbLBnSCyVq1biLExbdkAkYnTpIsAxVOVSqJMiJUKOMBjJ
+\restrict bnEe2xdftnr1pYm1E0RyHHW8I7wMnV2l8HMPXT50V5SmcTzbomKODZtgDvd2rhm
 
 -- Dumped from database version 17.6 (Debian 17.6-2.pgdg13+1)
 -- Dumped by pg_dump version 17.7 (Ubuntu 17.7-3.pgdg22.04+1)
@@ -34,6 +34,22 @@ ALTER SCHEMA public OWNER TO bcoste;
 
 COMMENT ON SCHEMA public IS '';
 
+
+--
+-- Name: enum_move_type; Type: TYPE; Schema: public; Owner: bcoste
+--
+
+CREATE TYPE public.enum_move_type AS ENUM (
+    'hand_start',
+    'foot_start',
+    'hand',
+    'foot',
+    'both',
+    'finish'
+);
+
+
+ALTER TYPE public.enum_move_type OWNER TO bcoste;
 
 SET default_tablespace = '';
 
@@ -247,6 +263,45 @@ ALTER SEQUENCE public.events_id_seq OWNED BY public.events.id;
 
 
 --
+-- Name: moves; Type: TABLE; Schema: public; Owner: bcoste
+--
+
+CREATE TABLE public.moves (
+    id integer NOT NULL,
+    route_id integer NOT NULL,
+    x double precision NOT NULL,
+    y double precision NOT NULL,
+    type public.enum_move_type NOT NULL,
+    radius double precision NOT NULL,
+    wall_id integer NOT NULL
+);
+
+
+ALTER TABLE public.moves OWNER TO bcoste;
+
+--
+-- Name: moves_id_seq; Type: SEQUENCE; Schema: public; Owner: bcoste
+--
+
+CREATE SEQUENCE public.moves_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.moves_id_seq OWNER TO bcoste;
+
+--
+-- Name: moves_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bcoste
+--
+
+ALTER SEQUENCE public.moves_id_seq OWNED BY public.moves.id;
+
+
+--
 -- Name: referents; Type: TABLE; Schema: public; Owner: bcoste
 --
 
@@ -353,6 +408,13 @@ ALTER TABLE ONLY public.events ALTER COLUMN id SET DEFAULT nextval('public.event
 
 
 --
+-- Name: moves id; Type: DEFAULT; Schema: public; Owner: bcoste
+--
+
+ALTER TABLE ONLY public.moves ALTER COLUMN id SET DEFAULT nextval('public.moves_id_seq'::regclass);
+
+
+--
 -- Name: referents id; Type: DEFAULT; Schema: public; Owner: bcoste
 --
 
@@ -371,8 +433,8 @@ ALTER TABLE ONLY public.slots ALTER COLUMN id SET DEFAULT nextval('public.slots_
 --
 
 COPY public."Gym" (id, name, description, created_at, updated_at) FROM stdin;
-0	Gym A	\N	2026-02-02 11:09:01.447	2026-02-02 11:09:01.447
-1	Gym B	\N	2026-02-02 11:09:01.447	2026-02-02 11:09:01.447
+0	Gym A	\N	2026-02-03 09:30:55.756	2026-02-03 09:30:55.756
+1	Gym B	\N	2026-02-03 09:30:55.756	2026-02-03 09:30:55.756
 \.
 
 
@@ -381,8 +443,8 @@ COPY public."Gym" (id, name, description, created_at, updated_at) FROM stdin;
 --
 
 COPY public."Photo" (id, file_path, file_name, mime_type, file_size, uploaded_at) FROM stdin;
-0	walls/sample.jpeg	sample.jpeg	image/jpeg	123456	2026-02-02 11:09:01.448
-1	walls/sample2.jpeg	sample2.jpeg	image/jpeg	123456	2026-02-02 11:09:01.448
+0	walls/sample.jpeg	sample.jpeg	image/jpeg	123456	2026-02-03 09:30:55.757
+1	walls/sample2.jpeg	sample2.jpeg	image/jpeg	123456	2026-02-03 09:30:55.757
 \.
 
 
@@ -391,7 +453,7 @@ COPY public."Photo" (id, file_path, file_name, mime_type, file_size, uploaded_at
 --
 
 COPY public."Route" (id, name, grade, description, created_at, updated_at, "gymId", body) FROM stdin;
-1	Route 1	5a	\N	2026-02-02 11:09:01.451	2026-02-02 11:09:01.451	0	[{"x": 16.86643835616438, "y": 40.43949771689498, "id": "17d8c7fa-cfb4-43ed-90a8-20428c1c7d00", "type": "finish", "index": 0, "radius": 16, "wallId": 1}, {"x": 57.61986301369863, "y": 42.83675799086758, "id": "5208827e-b716-449f-bbae-f24636c20b03", "type": "finish", "index": 1, "radius": 16, "wallId": 1}, {"x": 71.4041095890411, "y": 34.16095890410959, "id": "f2476d0d-3eca-497a-8ea5-a9275e3bc135", "type": "finish", "index": 2, "radius": 16, "wallId": 1}, {"x": 34.41780821917808, "y": 74.57191780821918, "id": "e80fd826-f6ef-41fc-b304-a3fcca16f390", "type": "finish", "index": 3, "radius": 16, "wallId": 1}, {"x": 73.03082191780823, "y": 84.96004566210046, "id": "d13705eb-54e9-41b5-8202-ec9b44843d13", "type": "finish", "index": 4, "radius": 16, "wallId": 1}]
+1	Route 1	5a	\N	2026-02-03 09:30:55.759	2026-02-03 09:30:55.759	0	[{"x": 16.86643835616438, "y": 40.43949771689498, "id": "17d8c7fa-cfb4-43ed-90a8-20428c1c7d00", "type": "finish", "index": 0, "radius": 16, "wallId": 1}, {"x": 57.61986301369863, "y": 42.83675799086758, "id": "5208827e-b716-449f-bbae-f24636c20b03", "type": "finish", "index": 1, "radius": 16, "wallId": 1}, {"x": 71.4041095890411, "y": 34.16095890410959, "id": "f2476d0d-3eca-497a-8ea5-a9275e3bc135", "type": "finish", "index": 2, "radius": 16, "wallId": 1}, {"x": 34.41780821917808, "y": 74.57191780821918, "id": "e80fd826-f6ef-41fc-b304-a3fcca16f390", "type": "finish", "index": 3, "radius": 16, "wallId": 1}, {"x": 73.03082191780823, "y": 84.96004566210046, "id": "d13705eb-54e9-41b5-8202-ec9b44843d13", "type": "finish", "index": 4, "radius": 16, "wallId": 1}]
 \.
 
 
@@ -410,14 +472,15 @@ COPY public."Wall" (id, gym_id, name, description, created_at, updated_at, photo
 --
 
 COPY public._prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count) FROM stdin;
-9c89bd5c-a3da-42fe-b43e-f0db207260a6	d889dd9c3eaeaebc7a0d56956c86c8e414a4a47ba6b32d1e07895aa739236110	2026-02-02 11:09:00.111095+00	0_init	\N	\N	2026-02-02 11:09:00.108288+00	1
-5464914f-9bb8-44ea-9989-901df90a908d	119c0dfc8d65d91ab505cedda4ef312e67f3f38a4712182c7331998bcabfaf18	2026-02-02 11:09:00.114278+00	20251111225852_walls	\N	\N	2026-02-02 11:09:00.111384+00	1
-e5d25208-194d-40c4-9eaa-b51a65c3dc27	902e71fabdf00eec5575e1929e0308147cbd7075f1df5b9b1f2ff04654ca3e65	2026-02-02 11:09:00.118463+00	20251111231218_camel	\N	\N	2026-02-02 11:09:00.114459+00	1
-6dada241-823b-4a60-9310-40d45130d1e8	6d54113df50ef981922bfcfe2bf076e1f0e1069326cbaeac785689423221936b	2026-02-02 11:09:00.120681+00	20251111235107_photo	\N	\N	2026-02-02 11:09:00.118644+00	1
-9e6936b2-25b1-4f7f-bd80-d7e179faffd1	73fa5f252c12dc303b77fbb25cc24c9a25eb5d9987eefa1dc040e7a0cee95c29	2026-02-02 11:09:00.122176+00	20251112001542_walloptionaal	\N	\N	2026-02-02 11:09:00.120896+00	1
-94966787-211c-46cc-a1bf-88eee9662bb8	323cf8bc438e909846706b2c83a04f493b7e100dc6ef44f30527b488916337b7	2026-02-02 11:09:00.123415+00	20251112003915_routes	\N	\N	2026-02-02 11:09:00.122354+00	1
-9c931983-b46b-4808-bee4-ad1034607a01	e039575ab9b5c640d239e5de43bd8fbd56d71fbd47b9018f706f5cd3b1f14d34	2026-02-02 11:09:00.124508+00	20251112004221_routes	\N	\N	2026-02-02 11:09:00.123607+00	1
-e8304552-fe04-4f20-950e-236fcbb6c0b3	2dd17832f576c78512270137479e0aeb58487c7478cbcba207566118f34236f2	2026-02-02 11:09:00.125149+00	20251113002411_jjson	\N	\N	2026-02-02 11:09:00.124674+00	1
+57b7aa06-765f-4e55-8817-045d0653bbab	d889dd9c3eaeaebc7a0d56956c86c8e414a4a47ba6b32d1e07895aa739236110	2026-02-03 09:30:54.192483+00	0_init	\N	\N	2026-02-03 09:30:54.18952+00	1
+f22ce71c-5adf-4272-a306-9a22c13ffd22	119c0dfc8d65d91ab505cedda4ef312e67f3f38a4712182c7331998bcabfaf18	2026-02-03 09:30:54.195518+00	20251111225852_walls	\N	\N	2026-02-03 09:30:54.192667+00	1
+c02a430e-9573-4344-a0cd-e7174bcb7ef3	902e71fabdf00eec5575e1929e0308147cbd7075f1df5b9b1f2ff04654ca3e65	2026-02-03 09:30:54.199664+00	20251111231218_camel	\N	\N	2026-02-03 09:30:54.195693+00	1
+4abd8cdb-2e4f-4ba2-95b9-1c97916d7cd4	6d54113df50ef981922bfcfe2bf076e1f0e1069326cbaeac785689423221936b	2026-02-03 09:30:54.20193+00	20251111235107_photo	\N	\N	2026-02-03 09:30:54.199828+00	1
+c2e0fe41-e8ba-4e32-a2db-25b0e9eefff7	73fa5f252c12dc303b77fbb25cc24c9a25eb5d9987eefa1dc040e7a0cee95c29	2026-02-03 09:30:54.204028+00	20251112001542_walloptionaal	\N	\N	2026-02-03 09:30:54.202144+00	1
+dd88084c-3885-4630-9a53-77ec2bedb4ee	323cf8bc438e909846706b2c83a04f493b7e100dc6ef44f30527b488916337b7	2026-02-03 09:30:54.205279+00	20251112003915_routes	\N	\N	2026-02-03 09:30:54.204207+00	1
+4269ba0b-3b7d-4eb6-b553-0f57fcd72b1a	e039575ab9b5c640d239e5de43bd8fbd56d71fbd47b9018f706f5cd3b1f14d34	2026-02-03 09:30:54.206212+00	20251112004221_routes	\N	\N	2026-02-03 09:30:54.205423+00	1
+77229003-fc5c-42b1-a75e-d2b6c7ad6d5c	2dd17832f576c78512270137479e0aeb58487c7478cbcba207566118f34236f2	2026-02-03 09:30:54.206865+00	20251113002411_jjson	\N	\N	2026-02-03 09:30:54.206344+00	1
+a81cac81-eb03-414f-8eeb-92840b739c88	7e60a62e9498950179d23ad80e446586d60b7c8b271231c7dee338f21734b8f2	2026-02-03 09:30:54.208989+00	20260202120901_moves	\N	\N	2026-02-03 09:30:54.207058+00	1
 \.
 
 
@@ -430,12 +493,48 @@ COPY public.events (id, day, type) FROM stdin;
 
 
 --
+-- Data for Name: moves; Type: TABLE DATA; Schema: public; Owner: bcoste
+--
+
+COPY public.moves (id, route_id, x, y, type, radius, wall_id) FROM stdin;
+\.
+
+
+--
 -- Data for Name: referents; Type: TABLE DATA; Schema: public; Owner: bcoste
 --
 
 COPY public.referents (id, name) FROM stdin;
-1	Alice
-2	Bob
+0	referent1
+1	referent2
+2	referent3
+3	referent4
+4	referent5
+5	referent6
+6	referent7
+7	referent8
+8	referent9
+9	referent10
+10	referent11
+11	referent12
+12	referent13
+13	referent14
+14	referent15
+15	referent16
+16	referent17
+17	referent18
+18	referent19
+19	referent20
+20	referent21
+21	referent22
+22	referent23
+23	referent24
+24	referent25
+25	referent26
+26	referent27
+27	referent28
+28	referent29
+29	referent30
 \.
 
 
@@ -483,10 +582,17 @@ SELECT pg_catalog.setval('public.events_id_seq', 1, false);
 
 
 --
+-- Name: moves_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bcoste
+--
+
+SELECT pg_catalog.setval('public.moves_id_seq', 1, false);
+
+
+--
 -- Name: referents_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bcoste
 --
 
-SELECT pg_catalog.setval('public.referents_id_seq', 2, true);
+SELECT pg_catalog.setval('public.referents_id_seq', 1, false);
 
 
 --
@@ -542,6 +648,14 @@ ALTER TABLE ONLY public._prisma_migrations
 
 ALTER TABLE ONLY public.events
     ADD CONSTRAINT events_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: moves moves_pkey; Type: CONSTRAINT; Schema: public; Owner: bcoste
+--
+
+ALTER TABLE ONLY public.moves
+    ADD CONSTRAINT moves_pkey PRIMARY KEY (id);
 
 
 --
@@ -606,6 +720,22 @@ ALTER TABLE ONLY public."Wall"
 
 
 --
+-- Name: moves moves_route_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bcoste
+--
+
+ALTER TABLE ONLY public.moves
+    ADD CONSTRAINT moves_route_id_fkey FOREIGN KEY (route_id) REFERENCES public."Route"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: moves moves_wall_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bcoste
+--
+
+ALTER TABLE ONLY public.moves
+    ADD CONSTRAINT moves_wall_id_fkey FOREIGN KEY (wall_id) REFERENCES public."Wall"(id);
+
+
+--
 -- Name: slots slots_ref_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bcoste
 --
 
@@ -624,5 +754,5 @@ REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict NQpwQIuJa27kHmZpdlEbLBnSCyVq1biLExbdkAkYnTpIsAxVOVSqJMiJUKOMBjJ
+\unrestrict bnEe2xdftnr1pYm1E0RyHHW8I7wMnV2l8HMPXT50V5SmcTzbomKODZtgDvd2rhm
 

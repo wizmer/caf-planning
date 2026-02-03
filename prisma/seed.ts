@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 async function main() {
 	await prisma.referents.createMany({
-		data: [{ name: 'Alice' }, { name: 'Bob' }]
+		data: [Array.from({ length: 30 }, (_, i) => ({ id: i, name: `referent${i + 1}` }))].flat()
 	});
 
 	await prisma.gym.createMany({

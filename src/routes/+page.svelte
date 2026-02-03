@@ -4,7 +4,6 @@
 	import { base } from '$app/paths';
 	import { REFERENT, user } from '$lib/stores';
 	import { Trash } from '@lucide/svelte';
-	import { createToaster } from '@skeletonlabs/skeleton-svelte';
 	import type { PageData } from './$types';
 	import { capitalize, create_slots, timeslots } from './utils';
 
@@ -13,8 +12,6 @@
 	}
 
 	let { data }: Props = $props();
-
-	const toastStore = createToaster();
 
 	const events = data.events;
 	const refs = data.slots;
@@ -50,6 +47,7 @@
 			});
 		}
 	}
+	$inspect(data);
 </script>
 
 <div>
@@ -140,45 +138,45 @@
 							</button>
 						</div>
 					{/if}
+				{/if}
 
-					<div class="table-container">
-						<table class="table table-auto max-w-prose">
-							<thead class="divider-x">
+				<div class="table-container">
+					<table class="table table-auto max-w-prose">
+						<thead class="divider-x">
+							<tr>
+								<th>Nom</th>
+								<th colspan="2">18:00</th>
+								<th colspan="2">19:00</th>
+								<th colspan="2">20:00</th>
+								<th colspan="2">21:00</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							{#if Object.values(row.refs).filter((ref) => ref.start && ref.end).length == 0}
 								<tr>
-									<th>Nom</th>
-									<th colspan="2">18:00</th>
-									<th colspan="2">19:00</th>
-									<th colspan="2">20:00</th>
-									<th colspan="2">21:00</th>
+									<td colspan="100%">
+										<div class="h3">Pas de {REFERENT} pour le moment</div>
+									</td>
 								</tr>
-							</thead>
+							{/if}
 
-							<tbody>
-								{#if Object.values(row.refs).filter((ref) => ref.start && ref.end).length == 0}
-									<tr>
-										<td colspan="100%">
-											<div class="h3">Pas de {REFERENT} pour le moment</div>
+							{#each Object.values(row.refs) as ref}
+								{#if ['ok', 'new-slot'].includes(row.status) && ref.start && ref.end}
+									<tr class="py-0 divider-x divide-y">
+										<td>
+											{ref.name}
 										</td>
+
+										{#each timeslots.slice(0, -1) as time}
+											<td class:present={ref.start <= time && ref.end > time}></td>
+										{/each}
 									</tr>
 								{/if}
-
-								{#each Object.values(row.refs) as ref}
-									{#if ['ok', 'new-slot'].includes(row.status) && ref.start && ref.end}
-										<tr class="py-0 divider-x divide-y">
-											<td>
-												{ref.name}
-											</td>
-
-											{#each timeslots.slice(0, -1) as time}
-												<td class:present={ref.start <= time && ref.end > time}></td>
-											{/each}
-										</tr>
-									{/if}
-								{/each}
-							</tbody>
-						</table>
-					</div>
-				{/if}
+							{/each}
+						</tbody>
+					</table>
+				</div>
 			</section>
 		</div>
 	{/each}

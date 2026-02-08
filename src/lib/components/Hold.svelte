@@ -76,9 +76,7 @@
 			</Popover.Trigger>
 			<Portal>
 				<Popover.Positioner>
-					<Popover.Content
-						class="card w-96 bg-surface-500 p-3 shadow-xl min-w-[250px] max-h-[500px]"
-					>
+					<Popover.Content class="card w-96 bg-surface-500 p-3 shadow-xl min-w-62.5 max-h-125 z-10">
 						<HoldEditor bind:move {idx} onDelete={deleteMove} />
 
 						<Popover.Arrow

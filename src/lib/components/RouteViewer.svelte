@@ -138,7 +138,7 @@
 			<button
 				onclick={toggleFullscreen}
 				aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-				class="absolute top-4 left-4 z-50 btn preset-filled-surface-500 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:scale-110 transition-transform"
+				class="absolute top-4 left-4 z-5 btn preset-filled-surface-500 rounded-full w-10 h-10 p-0 flex items-center justify-center hover:scale-110 transition-transform"
 			>
 				{#if isFullscreen}
 					<svg

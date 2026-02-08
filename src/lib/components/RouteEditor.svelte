@@ -1,39 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import RouteViewer from '$lib/components/RouteViewer.svelte';
+	import GradeSelector from './GradeSelector.svelte';
 
 	let { data, form, route = $bindable() } = $props();
 	const isNewRoute = route.moves.length === 0;
-
-	const grades = [
-		'4c',
-		'4c+',
-		'5a',
-		'5a+',
-		'5b',
-		'5b+',
-		'5c',
-		'5c+',
-		'6a',
-		'6a+',
-		'6b',
-		'6b+',
-		'6c',
-		'6c+',
-		'7a',
-		'7a+',
-		'7b',
-		'7b+',
-		'7c',
-		'7c+',
-		'8a',
-		'8a+',
-		'8b',
-		'8b+',
-		'8c',
-		'8c+',
-		'9a'
-	];
 </script>
 
 <div class="mb-6">
@@ -66,15 +37,7 @@
 				/>
 			</label>
 
-			<label class="label">
-				<span>Grade *</span>
-				<select name="grade" class="input" required value={route?.grade || ''}>
-					<option value="" disabled selected>Choisir la cote</option>
-					{#each grades as grade}
-						<option value={grade}>{grade}</option>
-					{/each}
-				</select></label
-			>
+			<GradeSelector bind:value={route.grade} />
 		</div>
 
 		<label class="label mb-4">

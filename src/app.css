@@ -51,3 +51,12 @@
 	background-color: rgb(var(--hold-finish));
 	border-color: rgb(var(--hold-finish));
 }
+
+//To avoid a breaking style issue in Windows-based browsers , it’s recommended you include this temporary fix into your global stylesheet. Please note this change will be automatically and permanently applied for you in Skeleton v5+.
+.select,
+.input,
+.textarea,
+.input-group {
+	background-color: var(--color-surface-50-950);
+	color: var(--color-surface-950-50);
+}

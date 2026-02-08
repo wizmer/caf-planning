@@ -31,7 +31,7 @@
 	<!-- Radius Slider -->
 	<div class="space-y-2">
 		<label class="block text-sm font-medium">Taille du cercle: {move.radius}%</label>
-		<Slider type="single" bind:value={move.radius} max={15} step={1} class="max-w-[70%]" />
+		<Slider type="single" bind:value={move.radius} max={10} step={0.5} class="max-w-[70%]" />
 	</div>
 
 	<!-- Delete Button -->

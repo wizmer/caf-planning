@@ -4,9 +4,12 @@
 	import { createToaster, Toast } from '@skeletonlabs/skeleton-svelte';
 	import '../app.css';
 
+	import { page } from '$app/state';
 	import LightSwitch from '$lib/components/LightSwitch.svelte';
 	import { user } from '$lib/stores.svelte';
+	import { Calendar, Library } from '@lucide/svelte';
 	import ModalLogin from './ModalLogin.svelte';
+	import { routes } from './routes';
 
 	let { data, children } = $props();
 	const toaster = createToaster();
@@ -21,8 +24,23 @@
 			>
 		</a>
 
-		<div class="flex flex-row items-center gap-4 flex-wrap">
-			<a href="/pan/gym" class="hover:underline border rounded p-2">Espace Pan</a>
+		<div class="flex flex-row items-stretch gap-4 flex-wrap">
+			<a
+				href={routes.planning}
+				class="hover:underline p-2 rounded"
+				class:active={page.url.pathname.startsWith(routes.planning)}
+			>
+				<Calendar class="inline" />
+				Planning</a
+			>
+			<a
+				href={routes.gym + '/2'}
+				class="hover:underline p-2 rounded"
+				class:active={page.url.pathname.startsWith(routes.gym)}
+			>
+				<Library class="inline" />
+				Espace Pan</a
+			>
 			{#if $user}
 				<button
 					class="btn border"
@@ -67,5 +85,9 @@
 		max-width: 1200px;
 		margin: 2rem auto;
 		padding: 0 1rem;
+	}
+
+	.active {
+		border-bottom: 1px solid currentColor;
 	}
 </style>

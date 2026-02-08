@@ -47,7 +47,6 @@
 			});
 		}
 	}
-	$inspect(data);
 </script>
 
 <div>

@@ -67,6 +67,9 @@ export async function saveRoute(formData: FormData, gymId: number, routeId?: num
 				return fail(403, { error: 'Route does not belong to this gym' });
 			}
 
+			moves.forEach((move) => {
+				delete move.routeId;
+			});
 			await prisma.route.update({
 				where: { id: routeId },
 				data: {
@@ -75,7 +78,8 @@ export async function saveRoute(formData: FormData, gymId: number, routeId?: num
 						deleteMany: {},
 						create: moves
 					}
-				}
+				},
+				include: { moves: true }
 			});
 		} else {
 			// Create new route

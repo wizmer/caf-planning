@@ -10,7 +10,6 @@
 	let { data }: Props = $props();
 
 	const { gym } = data;
-	$inspect(gym);
 </script>
 
 <svelte:head>

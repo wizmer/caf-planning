@@ -11,15 +11,10 @@
 <div class="space-y-4">
 	<!-- Hold Type Selection -->
 	<div class="flex flex-col gap-1">
-		move type = {move.type}
 		{#each ['hand_start', 'foot_start', 'hand', 'foot', 'both', 'finish'] as holdType}
 			<button
 				onclick={() => {
-					console.log('setting move type to', holdType);
-					console.log('before:', move);
 					move.type = holdType as Move['type'];
-					move = { ...move, type: holdType as Move['type'] };
-					console.log('after:', move);
 				}}
 				class="btn btn-sm {move.type === holdType
 					? 'preset-filled'

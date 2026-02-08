@@ -10,7 +10,6 @@
 		deleteMove,
 		imageWidth = 0
 	} = $props();
-	$inspect(move);
 
 	// Calculate pixel radius from percentage of image width
 	let holdRadius = $derived(imageWidth > 0 ? (move.radius * imageWidth) / 100 : 16);
@@ -64,7 +63,6 @@
 		></div>
 	{/snippet}
 
-	move type: {move.type}
 	{#if !isEditing}
 		{@render circle()}
 	{:else}

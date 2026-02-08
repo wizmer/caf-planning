@@ -83,8 +83,6 @@
 
 	let currentWall = $derived(walls[currentWallIndex]);
 
-	$inspect(route.moves);
-
 	function handleImageClick(event: MouseEvent) {
 		if (!isEditing) {
 			console.warn('clicking does nothing when not in edition mode');
@@ -110,10 +108,7 @@
 			routeId: route.id
 		};
 
-		console.log('before', route.moves);
 		route.moves.push(newMove);
-		route.moves = [...route.moves];
-		console.log('after', route.moves);
 	}
 
 	function deleteMove(index: number) {

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict bnEe2xdftnr1pYm1E0RyHHW8I7wMnV2l8HMPXT50V5SmcTzbomKODZtgDvd2rhm
+\restrict EHNT3gX36TWj2FRuUghIi4Tn1J42taeY1qmBDifaNVmp9fDLyqU9r63CoEkPwXG
 
 -- Dumped from database version 17.6 (Debian 17.6-2.pgdg13+1)
 -- Dumped by pg_dump version 17.7 (Ubuntu 17.7-3.pgdg22.04+1)
@@ -141,8 +141,7 @@ CREATE TABLE public."Route" (
     description text,
     created_at timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp(3) without time zone NOT NULL,
-    "gymId" integer,
-    body jsonb NOT NULL
+    "gymId" integer
 );
 
 
@@ -433,8 +432,8 @@ ALTER TABLE ONLY public.slots ALTER COLUMN id SET DEFAULT nextval('public.slots_
 --
 
 COPY public."Gym" (id, name, description, created_at, updated_at) FROM stdin;
-0	Gym A	\N	2026-02-03 09:30:55.756	2026-02-03 09:30:55.756
-1	Gym B	\N	2026-02-03 09:30:55.756	2026-02-03 09:30:55.756
+0	Gym A	\N	2026-02-08 12:53:48.798	2026-02-08 12:53:48.798
+1	Gym B	\N	2026-02-08 12:53:48.798	2026-02-08 12:53:48.798
 \.
 
 
@@ -443,8 +442,8 @@ COPY public."Gym" (id, name, description, created_at, updated_at) FROM stdin;
 --
 
 COPY public."Photo" (id, file_path, file_name, mime_type, file_size, uploaded_at) FROM stdin;
-0	walls/sample.jpeg	sample.jpeg	image/jpeg	123456	2026-02-03 09:30:55.757
-1	walls/sample2.jpeg	sample2.jpeg	image/jpeg	123456	2026-02-03 09:30:55.757
+0	walls/sample.jpeg	sample.jpeg	image/jpeg	123456	2026-02-08 12:53:48.801
+1	walls/sample2.jpeg	sample2.jpeg	image/jpeg	123456	2026-02-08 12:53:48.801
 \.
 
 
@@ -452,8 +451,8 @@ COPY public."Photo" (id, file_path, file_name, mime_type, file_size, uploaded_at
 -- Data for Name: Route; Type: TABLE DATA; Schema: public; Owner: bcoste
 --
 
-COPY public."Route" (id, name, grade, description, created_at, updated_at, "gymId", body) FROM stdin;
-1	Route 1	5a	\N	2026-02-03 09:30:55.759	2026-02-03 09:30:55.759	0	[{"x": 16.86643835616438, "y": 40.43949771689498, "id": "17d8c7fa-cfb4-43ed-90a8-20428c1c7d00", "type": "finish", "index": 0, "radius": 16, "wallId": 1}, {"x": 57.61986301369863, "y": 42.83675799086758, "id": "5208827e-b716-449f-bbae-f24636c20b03", "type": "finish", "index": 1, "radius": 16, "wallId": 1}, {"x": 71.4041095890411, "y": 34.16095890410959, "id": "f2476d0d-3eca-497a-8ea5-a9275e3bc135", "type": "finish", "index": 2, "radius": 16, "wallId": 1}, {"x": 34.41780821917808, "y": 74.57191780821918, "id": "e80fd826-f6ef-41fc-b304-a3fcca16f390", "type": "finish", "index": 3, "radius": 16, "wallId": 1}, {"x": 73.03082191780823, "y": 84.96004566210046, "id": "d13705eb-54e9-41b5-8202-ec9b44843d13", "type": "finish", "index": 4, "radius": 16, "wallId": 1}]
+COPY public."Route" (id, name, grade, description, created_at, updated_at, "gymId") FROM stdin;
+1	Route 1	5a	\N	2026-02-08 12:53:48.805	2026-02-08 12:53:48.805	0
 \.
 
 
@@ -472,15 +471,17 @@ COPY public."Wall" (id, gym_id, name, description, created_at, updated_at, photo
 --
 
 COPY public._prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count) FROM stdin;
-57b7aa06-765f-4e55-8817-045d0653bbab	d889dd9c3eaeaebc7a0d56956c86c8e414a4a47ba6b32d1e07895aa739236110	2026-02-03 09:30:54.192483+00	0_init	\N	\N	2026-02-03 09:30:54.18952+00	1
-f22ce71c-5adf-4272-a306-9a22c13ffd22	119c0dfc8d65d91ab505cedda4ef312e67f3f38a4712182c7331998bcabfaf18	2026-02-03 09:30:54.195518+00	20251111225852_walls	\N	\N	2026-02-03 09:30:54.192667+00	1
-c02a430e-9573-4344-a0cd-e7174bcb7ef3	902e71fabdf00eec5575e1929e0308147cbd7075f1df5b9b1f2ff04654ca3e65	2026-02-03 09:30:54.199664+00	20251111231218_camel	\N	\N	2026-02-03 09:30:54.195693+00	1
-4abd8cdb-2e4f-4ba2-95b9-1c97916d7cd4	6d54113df50ef981922bfcfe2bf076e1f0e1069326cbaeac785689423221936b	2026-02-03 09:30:54.20193+00	20251111235107_photo	\N	\N	2026-02-03 09:30:54.199828+00	1
-c2e0fe41-e8ba-4e32-a2db-25b0e9eefff7	73fa5f252c12dc303b77fbb25cc24c9a25eb5d9987eefa1dc040e7a0cee95c29	2026-02-03 09:30:54.204028+00	20251112001542_walloptionaal	\N	\N	2026-02-03 09:30:54.202144+00	1
-dd88084c-3885-4630-9a53-77ec2bedb4ee	323cf8bc438e909846706b2c83a04f493b7e100dc6ef44f30527b488916337b7	2026-02-03 09:30:54.205279+00	20251112003915_routes	\N	\N	2026-02-03 09:30:54.204207+00	1
-4269ba0b-3b7d-4eb6-b553-0f57fcd72b1a	e039575ab9b5c640d239e5de43bd8fbd56d71fbd47b9018f706f5cd3b1f14d34	2026-02-03 09:30:54.206212+00	20251112004221_routes	\N	\N	2026-02-03 09:30:54.205423+00	1
-77229003-fc5c-42b1-a75e-d2b6c7ad6d5c	2dd17832f576c78512270137479e0aeb58487c7478cbcba207566118f34236f2	2026-02-03 09:30:54.206865+00	20251113002411_jjson	\N	\N	2026-02-03 09:30:54.206344+00	1
-a81cac81-eb03-414f-8eeb-92840b739c88	7e60a62e9498950179d23ad80e446586d60b7c8b271231c7dee338f21734b8f2	2026-02-03 09:30:54.208989+00	20260202120901_moves	\N	\N	2026-02-03 09:30:54.207058+00	1
+3a027500-87a2-45b7-91a8-3468c03b96ca	d889dd9c3eaeaebc7a0d56956c86c8e414a4a47ba6b32d1e07895aa739236110	2026-02-08 12:53:47.413286+00	0_init	\N	\N	2026-02-08 12:53:47.410376+00	1
+aacb8da0-a305-4636-a364-927a77b06be2	119c0dfc8d65d91ab505cedda4ef312e67f3f38a4712182c7331998bcabfaf18	2026-02-08 12:53:47.416246+00	20251111225852_walls	\N	\N	2026-02-08 12:53:47.413444+00	1
+a4829182-b6a1-4f84-91de-02785617256f	902e71fabdf00eec5575e1929e0308147cbd7075f1df5b9b1f2ff04654ca3e65	2026-02-08 12:53:47.420289+00	20251111231218_camel	\N	\N	2026-02-08 12:53:47.416402+00	1
+4e4c3e77-7b2b-47e0-8c55-cb7498401d88	6d54113df50ef981922bfcfe2bf076e1f0e1069326cbaeac785689423221936b	2026-02-08 12:53:47.422481+00	20251111235107_photo	\N	\N	2026-02-08 12:53:47.420435+00	1
+45cd3df5-5cbd-460d-b01d-72030996eb9c	73fa5f252c12dc303b77fbb25cc24c9a25eb5d9987eefa1dc040e7a0cee95c29	2026-02-08 12:53:47.424008+00	20251112001542_walloptionaal	\N	\N	2026-02-08 12:53:47.422639+00	1
+dcc4a487-c289-4a4e-9b11-a91083dbe127	323cf8bc438e909846706b2c83a04f493b7e100dc6ef44f30527b488916337b7	2026-02-08 12:53:47.425473+00	20251112003915_routes	\N	\N	2026-02-08 12:53:47.424203+00	1
+85a25acb-1100-4669-b170-1e0977f372e5	e039575ab9b5c640d239e5de43bd8fbd56d71fbd47b9018f706f5cd3b1f14d34	2026-02-08 12:53:47.426606+00	20251112004221_routes	\N	\N	2026-02-08 12:53:47.425667+00	1
+9cb9116b-890a-48d9-9d8a-dd77d5d111c8	2dd17832f576c78512270137479e0aeb58487c7478cbcba207566118f34236f2	2026-02-08 12:53:47.427431+00	20251113002411_jjson	\N	\N	2026-02-08 12:53:47.42678+00	1
+c6540008-d878-4013-a784-b89438dfea23	7e60a62e9498950179d23ad80e446586d60b7c8b271231c7dee338f21734b8f2	2026-02-08 12:53:47.42962+00	20260202120901_moves	\N	\N	2026-02-08 12:53:47.427626+00	1
+68291d17-e676-4f4c-b5c1-c71c0008760f	08d5b3d175f51daa9e78cc018aabe3870599ec00b597d6a872958b7cc34cae4b	2026-02-08 12:53:47.43031+00	20260203095801_deprecated_move_body	\N	\N	2026-02-08 12:53:47.429829+00	1
+8fe92766-173d-4bc1-b310-67334817bd71	5d55b9a4c267da99dd564ec40e71523dde7606f33ed2ed2a8b45e7c4c021955a	2026-02-08 12:53:47.431013+00	20260205182625_remove_body	\N	\N	2026-02-08 12:53:47.43051+00	1
 \.
 
 
@@ -754,5 +755,5 @@ REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict bnEe2xdftnr1pYm1E0RyHHW8I7wMnV2l8HMPXT50V5SmcTzbomKODZtgDvd2rhm
+\unrestrict EHNT3gX36TWj2FRuUghIi4Tn1J42taeY1qmBDifaNVmp9fDLyqU9r63CoEkPwXG
 

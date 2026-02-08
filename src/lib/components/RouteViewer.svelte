@@ -3,6 +3,7 @@
 	import { getMoveLabel } from '$lib/move-utils';
 	import type { Move, Prisma, Route } from '@prisma/client';
 	import Hold from './Hold.svelte';
+	import MoveLegend from './MoveLegend.svelte';
 	let {
 		walls,
 		route = $bindable() as Route & { moves: Move[] },
@@ -11,6 +12,7 @@
 	} = $props();
 
 	let initCurrentWallIndex = 0;
+	let openedMoveId = $state<number | null>(null);
 
 	if (route.moves.length > 0) {
 		const wallIdsWithMoves = new Set(route.moves.map((move) => move.wallId));
@@ -24,7 +26,6 @@
 	let selectedHoldType = $state<Move['type']>(
 		route.moves.length > 0 ? route.moves[route.moves.length - 1].type : 'hand'
 	);
-	let editingMove = $state<Move | null>(null);
 	let isFullscreen = $state(false);
 	let wallContainerRef: HTMLDivElement | null = $state(null);
 	let imageWidth = $state(0);
@@ -85,7 +86,10 @@
 	$inspect(route.moves);
 
 	function handleImageClick(event: MouseEvent) {
-		if (!isEditing) return;
+		if (!isEditing) {
+			console.warn('clicking does nothing when not in edition mode');
+			return;
+		}
 		if (!currentWall) {
 			console.error('No current wall');
 			return;
@@ -106,15 +110,14 @@
 			routeId: route.id
 		};
 
+		console.log('before', route.moves);
 		route.moves.push(newMove);
-
-		// Set selectedHoldType to the type of the newly added hold
-		selectedHoldType = newMove.type;
+		route.moves = [...route.moves];
+		console.log('after', route.moves);
 	}
 
 	function deleteMove(index: number) {
 		route.moves = route.moves.slice(0, index).concat(route.moves.slice(index + 1));
-		editingMove = null;
 	}
 </script>
 
@@ -186,8 +189,16 @@
 					imageWidth = contentRect.width;
 				}}
 			/>
+
 			{#each route.moves as move, idx}
-				<Hold {move} {idx} {isEditing} bind:editingMove {deleteMove} {imageWidth} />
+				<Hold
+					bind:move={route.moves[idx]}
+					{idx}
+					{isEditing}
+					bind:openedMoveId
+					{deleteMove}
+					{imageWidth}
+				/>
 			{/each}
 
 			<!-- Navigation Arrows -->
@@ -261,35 +272,7 @@
 
 		<!-- Move Legend (View Mode) -->
 		{#if !isEditing && legend}
-			<div class="card p-4 mt-4">
-				<h4 class="h4 mb-2">Move Legend</h4>
-				<div class="flex flex-wrap gap-4 text-sm">
-					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full hand_start border border-surface-50"></div>
-						<span>Hand Start</span>
-					</div>
-					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full foot_start border border-surface-50"></div>
-						<span>Foot Start</span>
-					</div>
-					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full hand border border-surface-50"></div>
-						<span>Hand</span>
-					</div>
-					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full foot border border-surface-50"></div>
-						<span>Foot</span>
-					</div>
-					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full both border border-surface-50"></div>
-						<span>Both</span>
-					</div>
-					<div class="flex items-center gap-2">
-						<div class="w-4 h-4 rounded-full finish border border-surface-50"></div>
-						<span>Finish</span>
-					</div>
-				</div>
-			</div>
+			<MoveLegend />
 		{/if}
 
 		<!-- Thumbnail Navigation -->

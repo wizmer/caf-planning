@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Stores
 	import { base } from '$app/paths';
-	import { last_user, user } from '$lib/stores';
+	import { last_user, user } from '$lib/stores.svelte';
 	import {
 		createToaster,
 		Dialog,

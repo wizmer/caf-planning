@@ -8,7 +8,7 @@
 	<title>Edition du bloc - {data.gym.name}</title>
 </svelte:head>
 
-<RouteEditor {data} {form} route={data.route}></RouteEditor>
+<RouteEditor {data} {form} bind:route={data.route}></RouteEditor>
 
 <form method="POST" action="?/delete">
 	<button class="btn preset-tonal-error" type="submit">Supprimer la route</button>

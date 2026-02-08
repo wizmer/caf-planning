@@ -5,7 +5,7 @@
 	import '../app.css';
 
 	import LightSwitch from '$lib/components/LightSwitch.svelte';
-	import { user } from '$lib/stores';
+	import { user } from '$lib/stores.svelte';
 	import ModalLogin from './ModalLogin.svelte';
 
 	let { data, children } = $props();

@@ -2,7 +2,7 @@
 	import { run } from 'svelte/legacy';
 
 	import { base } from '$app/paths';
-	import { REFERENT, user } from '$lib/stores';
+	import { REFERENT, user } from '$lib/stores.svelte';
 	import { Trash } from '@lucide/svelte';
 	import type { PageData } from './$types';
 	import { capitalize, create_slots, timeslots } from './utils';

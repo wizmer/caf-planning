@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
-	import { admin, REFERENT } from '$lib/stores';
+	import { admin, REFERENT } from '$lib/stores.svelte';
 
 	import { dev } from '$app/environment';
 	import { base } from '$app/paths';

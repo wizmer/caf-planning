@@ -5,6 +5,7 @@
 	let { data } = $props();
 
 	const route = $derived(data.route);
+	const moves = $derived(route.moves);
 </script>
 
 <svelte:head>
@@ -23,5 +24,5 @@
 		</div>
 	</div>
 
-	<RouteViewer walls={data.gym.walls} {route} />
+	<RouteViewer walls={data.gym.walls} {route} {moves} />
 </div>

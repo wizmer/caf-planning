@@ -58,54 +58,7 @@ async function main() {
 			{
 				name: 'Route 1',
 				grade: '5a',
-				gymId: 0,
-				body: [
-					{
-						x: 16.86643835616438,
-						y: 40.43949771689498,
-						id: '17d8c7fa-cfb4-43ed-90a8-20428c1c7d00',
-						type: 'finish',
-						index: 0,
-						radius: 16,
-						wallId: 1
-					},
-					{
-						x: 57.61986301369863,
-						y: 42.83675799086758,
-						id: '5208827e-b716-449f-bbae-f24636c20b03',
-						type: 'finish',
-						index: 1,
-						radius: 16,
-						wallId: 1
-					},
-					{
-						x: 71.4041095890411,
-						y: 34.16095890410959,
-						id: 'f2476d0d-3eca-497a-8ea5-a9275e3bc135',
-						type: 'finish',
-						index: 2,
-						radius: 16,
-						wallId: 1
-					},
-					{
-						x: 34.41780821917808,
-						y: 74.57191780821918,
-						id: 'e80fd826-f6ef-41fc-b304-a3fcca16f390',
-						type: 'finish',
-						index: 3,
-						radius: 16,
-						wallId: 1
-					},
-					{
-						x: 73.03082191780823,
-						y: 84.96004566210046,
-						id: 'd13705eb-54e9-41b5-8202-ec9b44843d13',
-						type: 'finish',
-						index: 4,
-						radius: 16,
-						wallId: 1
-					}
-				]
+				gymId: 0
 			}
 		]
 	});

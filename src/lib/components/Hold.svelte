@@ -5,11 +5,12 @@
 	let {
 		move = $bindable(),
 		idx,
+		openedMoveId = $bindable(),
 		isEditing = false,
-		editingMove = $bindable(),
 		deleteMove,
 		imageWidth = 0
 	} = $props();
+	$inspect(move);
 
 	// Calculate pixel radius from percentage of image width
 	let holdRadius = $derived(imageWidth > 0 ? (move.radius * imageWidth) / 100 : 16);
@@ -18,7 +19,6 @@
 	function handleMoveDragStart(event: MouseEvent, index: number) {
 		if (!isEditing) return;
 		event.stopPropagation();
-		editingMove = null;
 
 		const img = (event.currentTarget as HTMLElement).closest('.wall-image-container');
 		if (!img) return;
@@ -64,10 +64,11 @@
 		></div>
 	{/snippet}
 
+	move type: {move.type}
 	{#if !isEditing}
 		{@render circle()}
 	{:else}
-		<Popover defaultOpen={true}>
+		<Popover defaultOpen={openedMoveId === idx}>
 			<Popover.Trigger
 				class="btn {isEditing ? 'cursor-move' : 'cursor-pointer'}"
 				onmousedown={(e) => isEditing && handleMoveDragStart(e, idx)}
@@ -94,7 +95,7 @@
 	{/if}
 </div>
 
-<style>
+<!-- <style>
 	@keyframes spin {
 		from {
 			transform: translate(-50%, -50%) rotate(0deg);
@@ -135,4 +136,4 @@
 		will-change: opacity, scale;
 		background-color: transparent;
 	}
-</style>
+</style> -->

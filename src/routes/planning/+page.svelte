@@ -22,6 +22,7 @@
 	const events = data.events;
 	const refs = data.slots;
 	const recurring = data.recurring;
+	console.log('refs', refs);
 
 	let slots = $state(create_slots(events, recurring));
 
@@ -54,10 +55,11 @@
 	});
 
 	function update_timeslot(ref, day) {
+		console.log('ref', ref);
 		if ((!ref.start && !ref.end) || (ref.start && ref.end)) {
 			fetch(`${base}/api/slot`, {
 				method: 'POST',
-				body: JSON.stringify({ day: day, ref: ref }),
+				body: JSON.stringify({ day: day, ref: $state.snapshot(ref) }),
 				headers: {
 					'content-type': 'application/json'
 				}

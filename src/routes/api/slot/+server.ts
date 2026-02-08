@@ -5,6 +5,8 @@ const prisma = new PrismaClient();
 
 export const POST: RequestHandler = async ({ request }) => {
 	const { day, ref } = await request.json();
+	console.log('day', day);
+	console.log('ref received by slots', ref);
 
 	try {
 		// Find the referent by name
@@ -20,15 +22,16 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		if (ref.start && ref.end) {
 			// Delete existing slot for this referent and day
-			await prisma.slots.deleteMany({
+			const deleted = await prisma.slots.deleteMany({
 				where: {
 					ref_id: referent.id,
 					day: day
 				}
 			});
+			console.log('deleted slots', deleted);
 
 			// Create new slot
-			await prisma.slots.create({
+			const createdSlot = await prisma.slots.create({
 				data: {
 					ref_id: referent.id,
 					day: day,
@@ -36,6 +39,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					end_at: new Date(`1970-01-01T${ref.end}:00Z`)
 				}
 			});
+			console.log('created slot', createdSlot);
 
 			return new Response('ok');
 		} else if (!ref.start && !ref.end) {

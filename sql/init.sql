@@ -446,8 +446,9 @@ ALTER TABLE ONLY public.slots ALTER COLUMN id SET DEFAULT nextval('public.slots_
 --
 
 COPY public."Gym" (id, name, description, created_at, updated_at) FROM stdin;
-0	Gym A	\N	2026-02-08 12:53:48.798	2026-02-08 12:53:48.798
-1	Gym B	\N	2026-02-08 12:53:48.798	2026-02-08 12:53:48.798
+0	Gym A	\N	2026-02-08 23:46:23.075	2026-02-08 23:46:23.075
+1	Gym B	\N	2026-02-08 23:46:23.075	2026-02-08 23:46:23.075
+2	Gym C	\N	2026-02-08 23:46:23.075	2026-02-08 23:46:23.075
 \.
 
 
@@ -456,8 +457,8 @@ COPY public."Gym" (id, name, description, created_at, updated_at) FROM stdin;
 --
 
 COPY public."Photo" (id, file_path, file_name, mime_type, file_size, uploaded_at) FROM stdin;
-0	walls/sample.jpeg	sample.jpeg	image/jpeg	123456	2026-02-08 12:53:48.801
-1	walls/sample2.jpeg	sample2.jpeg	image/jpeg	123456	2026-02-08 12:53:48.801
+0	walls/sample.jpeg	sample.jpeg	image/jpeg	123456	2026-02-08 23:46:23.077
+1	walls/sample2.jpeg	sample2.jpeg	image/jpeg	123456	2026-02-08 23:46:23.077
 \.
 
 
@@ -466,7 +467,16 @@ COPY public."Photo" (id, file_path, file_name, mime_type, file_size, uploaded_at
 --
 
 COPY public."Route" (id, name, grade, description, created_at, updated_at, "gymId") FROM stdin;
-1	Route 1	5a	\N	2026-02-08 12:53:48.805	2026-02-08 12:53:48.805	0
+1	Route 1	4c	\N	2026-02-08 23:46:23.08	2026-02-08 23:46:23.08	2
+2	Route 2	5a	\N	2026-02-08 23:46:23.084	2026-02-08 23:46:23.084	2
+3	Route 3	5b	\N	2026-02-08 23:46:23.086	2026-02-08 23:46:23.086	2
+4	Route 4	6a	\N	2026-02-08 23:46:23.089	2026-02-08 23:46:23.089	2
+5	Route 5	6b	\N	2026-02-08 23:46:23.092	2026-02-08 23:46:23.092	2
+6	Route 6	7a	\N	2026-02-08 23:46:23.095	2026-02-08 23:46:23.095	2
+7	Route 7	7b	\N	2026-02-08 23:46:23.097	2026-02-08 23:46:23.097	2
+8	Route 8	8a	\N	2026-02-08 23:46:23.099	2026-02-08 23:46:23.099	2
+9	Route 9	8b	\N	2026-02-08 23:46:23.101	2026-02-08 23:46:23.101	2
+10	Route 10	9a	\N	2026-02-08 23:46:23.103	2026-02-08 23:46:23.103	2
 \.
 
 
@@ -475,8 +485,8 @@ COPY public."Route" (id, name, grade, description, created_at, updated_at, "gymI
 --
 
 COPY public."Wall" (id, gym_id, name, description, created_at, updated_at, photo_id) FROM stdin;
-0	0	Mur 1	\N	2026-02-01 10:47:45.371	2026-02-01 10:47:45.371	0
-1	0	Mur 2	\N	2026-02-02 10:47:45.381	2026-02-02 10:47:45.381	1
+0	2	Mur 1	\N	2026-02-01 10:47:45.371	2026-02-01 10:47:45.371	0
+1	2	Mur 2	\N	2026-02-02 10:47:45.381	2026-02-02 10:47:45.381	1
 \.
 
 
@@ -513,6 +523,26 @@ COPY public.events (id, day, type) FROM stdin;
 --
 
 COPY public.moves (id, route_id, x, y, type, radius, wall_id) FROM stdin;
+1	1	10	20	foot	5	0
+2	1	30	40	hand	5	0
+3	2	10	20	foot	5	0
+4	2	30	40	hand	5	0
+5	3	10	20	foot	5	0
+6	3	30	40	hand	5	0
+7	4	10	20	foot	5	0
+8	4	30	40	hand	5	0
+9	5	10	20	foot	5	0
+10	5	30	40	hand	5	0
+11	6	10	20	foot	5	0
+12	6	30	40	hand	5	0
+13	7	10	20	foot	5	0
+14	7	30	40	hand	5	0
+15	8	10	20	foot	5	0
+16	8	30	40	hand	5	0
+17	9	10	20	foot	5	0
+18	9	30	40	hand	5	0
+19	10	10	20	foot	5	0
+20	10	30	40	hand	5	0
 \.
 
 
@@ -598,7 +628,7 @@ SELECT pg_catalog.setval('public."Photo_id_seq"', 1, false);
 -- Name: Route_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bcoste
 --
 
-SELECT pg_catalog.setval('public."Route_id_seq"', 1, true);
+SELECT pg_catalog.setval('public."Route_id_seq"', 10, true);
 
 
 --
@@ -619,7 +649,7 @@ SELECT pg_catalog.setval('public.events_id_seq', 1, false);
 -- Name: moves_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bcoste
 --
 
-SELECT pg_catalog.setval('public.moves_id_seq', 1, false);
+SELECT pg_catalog.setval('public.moves_id_seq', 20, true);
 
 
 --

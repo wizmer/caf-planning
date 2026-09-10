@@ -5,7 +5,14 @@
 	import { REFERENT, user } from '$lib/stores.svelte';
 	import { Trash } from '@lucide/svelte';
 	import type { PageData } from './$types';
-	import { capitalize, create_slots, timeslots } from '../utils';
+	import {
+		RECURRING_DAYS,
+		DEFAULT_TIMES,
+		capitalize,
+		create_slots,
+		get_hour_labels,
+		get_timeslots
+	} from '../utils';
 
 	interface Props {
 		data: PageData;
@@ -17,6 +24,16 @@
 	const refs = data.slots;
 
 	let slots = $state(create_slots(events));
+
+	function day_grid(weekday: number): string[] {
+		const times = RECURRING_DAYS[weekday] ?? DEFAULT_TIMES;
+		return get_timeslots(times.start, times.end);
+	}
+
+	function day_hours(weekday: number): string[] {
+		const times = RECURRING_DAYS[weekday] ?? DEFAULT_TIMES;
+		return get_hour_labels(times.start, times.end);
+	}
 
 	Object.entries(slots).forEach(([date, slot]) => {
 		const day = slot.day;
@@ -103,7 +120,7 @@
 								bind:value={row.refs[$user].start}
 								onchange={() => update_timeslot(row.refs[$user], row.day)}
 							>
-								{#each timeslots.slice(0, -1) as time}
+								{#each day_grid(row.weekday).slice(0, -1) as time}
 									<option value={time}>{time}</option>
 								{/each}
 							</select>
@@ -114,7 +131,7 @@
 								bind:value={row.refs[$user].end}
 								onchange={() => update_timeslot(row.refs[$user], row.day)}
 							>
-								{#each timeslots.slice(1) as time}
+								{#each day_grid(row.weekday).slice(1) as time}
 									{#if !row.refs[$user].start || row.refs[$user].start < time}
 										<option value={time}>{time}</option>
 									{/if}
@@ -144,10 +161,9 @@
 						<thead class="divider-x">
 							<tr>
 								<th>Nom</th>
-								<th colspan="2">18:00</th>
-								<th colspan="2">19:00</th>
-								<th colspan="2">20:00</th>
-								<th colspan="2">21:00</th>
+								{#each day_hours(row.weekday) as hour}
+									<th colspan="2">{hour}</th>
+								{/each}
 							</tr>
 						</thead>
 
@@ -167,7 +183,7 @@
 											{ref.name}
 										</td>
 
-										{#each timeslots.slice(0, -1) as time}
+										{#each day_grid(row.weekday).slice(0, -1) as time}
 											<td class:present={ref.start <= time && ref.end > time}></td>
 										{/each}
 									</tr>

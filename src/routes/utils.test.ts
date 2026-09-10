@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DateTime } from 'luxon';
-import {
-	create_slots,
-	get_hour_labels,
-	get_timeslots,
-	RECURRING_DAYS
-} from './utils';
+import { create_slots, get_hour_labels, get_timeslots, RECURRING_DAYS } from './utils';
 
 describe('get_timeslots', () => {
 	it('génère la grille du samedi 9-13, bornes incluses, zéro-padée', () => {
@@ -72,7 +67,10 @@ describe('create_slots', () => {
 	});
 
 	it('ajoute un jour ponctuel new-slot même hors jours récurrents', () => {
-		let target = DateTime.now().setZone('utc+0', { keepLocalTime: true }).startOf('day').plus({ days: 5 });
+		let target = DateTime.now()
+			.setZone('utc+0', { keepLocalTime: true })
+			.startOf('day')
+			.plus({ days: 5 });
 		while (target.weekday !== 3) target = target.plus({ days: 1 });
 		const dayStr = target.toISO().slice(0, 10);
 		const slots = create_slots({ [dayStr]: [1, dayStr, 'new-slot'] });

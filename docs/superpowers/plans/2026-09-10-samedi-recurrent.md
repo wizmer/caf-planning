@@ -22,10 +22,12 @@
 ### Task 1: Config par jour + helpers dans `src/routes/utils.ts`
 
 **Files:**
+
 - Modify: `src/routes/utils.ts`
 - Create: `src/routes/utils.test.ts`
 
 **Interfaces:**
+
 - Consumes: `DateTime` de luxon (déjà importé), `events` au format `{ [day: string]: [id, day, type] }` (déjà le cas).
 - Produces (utilisés par Task 2) :
   - `RECURRING_DAYS: Record<number, { start: number; end: number }>` (clés Luxon : 1=lundi … 7=dimanche)
@@ -42,12 +44,7 @@ Créer `src/routes/utils.test.ts` :
 ```ts
 import { describe, expect, it } from 'vitest';
 import { DateTime } from 'luxon';
-import {
-	create_slots,
-	get_hour_labels,
-	get_timeslots,
-	RECURRING_DAYS
-} from './utils';
+import { create_slots, get_hour_labels, get_timeslots, RECURRING_DAYS } from './utils';
 
 describe('get_timeslots', () => {
 	it('génère la grille du samedi 9-13, bornes incluses, zéro-padée', () => {
@@ -114,7 +111,10 @@ describe('create_slots', () => {
 	});
 
 	it('ajoute un jour ponctuel new-slot même hors jours récurrents', () => {
-		let target = DateTime.now().setZone('utc+0', { keepLocalTime: true }).startOf('day').plus({ days: 5 });
+		let target = DateTime.now()
+			.setZone('utc+0', { keepLocalTime: true })
+			.startOf('day')
+			.plus({ days: 5 });
 		while (target.weekday !== 3) target = target.plus({ days: 1 });
 		const dayStr = target.toISO().slice(0, 10);
 		const slots = create_slots({ [dayStr]: [1, dayStr, 'new-slot'] });
@@ -215,6 +215,7 @@ export function capitalize(val) {
 ```
 
 Notes :
+
 - L'ancienne constante `timeslots` (18-22) est supprimée ; le commentaire `// date:` et le bloc `cancelled_day` commentés sont conservés tels quels (style existant).
 - Seuls les changements fonctionnels : condition de récurrence (`day.weekday in RECURRING_DAYS`), champ `weekday` dans l'item, suppression de `timeslots`.
 
@@ -242,37 +243,33 @@ their weekday so the UI can pick the right grid."
 ### Task 2: Page planning — grilles par jour + header dynamique
 
 **Files:**
+
 - Modify: `src/routes/planning/+page.svelte`
 
 **Interfaces:**
+
 - Consumes: `RECURRING_DAYS`, `DEFAULT_TIMES`, `get_timeslots`, `get_hour_labels` depuis `../utils` (Task 1). `row.weekday` (nombre Luxon 1-7) présent sur chaque slot depuis Task 1.
 - Produces: rien (consommateur final).
 
 - [ ] **Step 1: Mettre à jour l'import (ligne 8)**
 
 ```svelte
-	import {
-		RECURRING_DAYS,
-		DEFAULT_TIMES,
-		capitalize,
-		create_slots,
-		get_hour_labels,
-		get_timeslots
-	} from '../utils';
+import {(RECURRING_DAYS, DEFAULT_TIMES, capitalize, create_slots, get_hour_labels, get_timeslots)} from
+'../utils';
 ```
 
 - [ ] **Step 2: Ajouter les helpers de grille par jour (dans le `<script>`, après la déclaration `slots`)**
 
 ```ts
-	function day_grid(weekday: number): string[] {
-		const times = RECURRING_DAYS[weekday] ?? DEFAULT_TIMES;
-		return get_timeslots(times.start, times.end);
-	}
+function day_grid(weekday: number): string[] {
+	const times = RECURRING_DAYS[weekday] ?? DEFAULT_TIMES;
+	return get_timeslots(times.start, times.end);
+}
 
-	function day_hours(weekday: number): string[] {
-		const times = RECURRING_DAYS[weekday] ?? DEFAULT_TIMES;
-		return get_hour_labels(times.start, times.end);
-	}
+function day_hours(weekday: number): string[] {
+	const times = RECURRING_DAYS[weekday] ?? DEFAULT_TIMES;
+	return get_hour_labels(times.start, times.end);
+}
 ```
 
 - [ ] **Step 3: Header du tableau dynamique (remplacer les lignes 144-152)**
@@ -280,28 +277,28 @@ their weekday so the UI can pick the right grid."
 Remplacer :
 
 ```svelte
-		<thead class="divider-x">
-			<tr>
-				<th>Nom</th>
-				<th colspan="2">18:00</th>
-				<th colspan="2">19:00</th>
-				<th colspan="2">20:00</th>
-				<th colspan="2">21:00</th>
-			</tr>
-		</thead>
+<thead class="divider-x">
+	<tr>
+		<th>Nom</th>
+		<th colspan="2">18:00</th>
+		<th colspan="2">19:00</th>
+		<th colspan="2">20:00</th>
+		<th colspan="2">21:00</th>
+	</tr>
+</thead>
 ```
 
 par :
 
 ```svelte
-		<thead class="divider-x">
-			<tr>
-				<th>Nom</th>
-				{#each day_hours(row.weekday) as hour}
-					<th colspan="2">{hour}</th>
-				{/each}
-			</tr>
-		</thead>
+<thead class="divider-x">
+	<tr>
+		<th>Nom</th>
+		{#each day_hours(row.weekday) as hour}
+			<th colspan="2">{hour}</th>
+		{/each}
+	</tr>
+</thead>
 ```
 
 - [ ] **Step 4: Selects et cellules de présence sur la grille du jour**

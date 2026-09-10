@@ -5,7 +5,7 @@
 	import { REFERENT, user } from '$lib/stores.svelte';
 	import { Trash } from '@lucide/svelte';
 	import type { PageData } from './$types';
-	import { capitalize, create_slots, timeslots } from './utils';
+	import { capitalize, create_slots, timeslots } from '../utils';
 
 	interface Props {
 		data: PageData;

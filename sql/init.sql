@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict EHNT3gX36TWj2FRuUghIi4Tn1J42taeY1qmBDifaNVmp9fDLyqU9r63CoEkPwXG
+\restrict nONNf3aNOsufeMhy47RKhuTkbzWm7qFqy8oKlclkpuDNkQfylYJIeFhOApmsqxS
 
--- Dumped from database version 17.6 (Debian 17.6-2.pgdg13+1)
--- Dumped by pg_dump version 17.7 (Ubuntu 17.7-3.pgdg22.04+1)
+-- Dumped from database version 17.11 (Debian 17.11-1.pgdg13+2)
+-- Dumped by pg_dump version 17.11 (Debian 17.11-1.pgdg13+2)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -301,6 +301,20 @@ ALTER SEQUENCE public.moves_id_seq OWNED BY public.moves.id;
 
 
 --
+-- Name: recurring_days; Type: TABLE; Schema: public; Owner: bcoste
+--
+
+CREATE TABLE public.recurring_days (
+    weekday integer NOT NULL,
+    start integer NOT NULL,
+    "end" integer NOT NULL,
+    active boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.recurring_days OWNER TO bcoste;
+
+--
 -- Name: referents; Type: TABLE; Schema: public; Owner: bcoste
 --
 
@@ -482,6 +496,7 @@ dcc4a487-c289-4a4e-9b11-a91083dbe127	323cf8bc438e909846706b2c83a04f493b7e100dc6e
 c6540008-d878-4013-a784-b89438dfea23	7e60a62e9498950179d23ad80e446586d60b7c8b271231c7dee338f21734b8f2	2026-02-08 12:53:47.42962+00	20260202120901_moves	\N	\N	2026-02-08 12:53:47.427626+00	1
 68291d17-e676-4f4c-b5c1-c71c0008760f	08d5b3d175f51daa9e78cc018aabe3870599ec00b597d6a872958b7cc34cae4b	2026-02-08 12:53:47.43031+00	20260203095801_deprecated_move_body	\N	\N	2026-02-08 12:53:47.429829+00	1
 8fe92766-173d-4bc1-b310-67334817bd71	5d55b9a4c267da99dd564ec40e71523dde7606f33ed2ed2a8b45e7c4c021955a	2026-02-08 12:53:47.431013+00	20260205182625_remove_body	\N	\N	2026-02-08 12:53:47.43051+00	1
+c492a331-4bf4-431b-8102-4021e253ab2c	f6feb0e2c1aa3543e22dba5906bb6634d35054f6ed3e7dd996b610d06b22f90e	2026-09-24 15:19:42.451523+00	20260924151810_recurring_days	\N	\N	2026-09-24 15:19:42.448638+00	1
 \.
 
 
@@ -498,6 +513,21 @@ COPY public.events (id, day, type) FROM stdin;
 --
 
 COPY public.moves (id, route_id, x, y, type, radius, wall_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: recurring_days; Type: TABLE DATA; Schema: public; Owner: bcoste
+--
+
+COPY public.recurring_days (weekday, start, "end", active) FROM stdin;
+1	18	22	t
+2	18	22	t
+3	20	22	t
+4	18	22	f
+5	18	22	t
+6	9	13	t
+7	18	22	f
 \.
 
 
@@ -660,6 +690,14 @@ ALTER TABLE ONLY public.moves
 
 
 --
+-- Name: recurring_days recurring_days_pkey; Type: CONSTRAINT; Schema: public; Owner: bcoste
+--
+
+ALTER TABLE ONLY public.recurring_days
+    ADD CONSTRAINT recurring_days_pkey PRIMARY KEY (weekday);
+
+
+--
 -- Name: referents referents_pkey; Type: CONSTRAINT; Schema: public; Owner: bcoste
 --
 
@@ -755,5 +793,5 @@ REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict EHNT3gX36TWj2FRuUghIi4Tn1J42taeY1qmBDifaNVmp9fDLyqU9r63CoEkPwXG
+\unrestrict nONNf3aNOsufeMhy47RKhuTkbzWm7qFqy8oKlclkpuDNkQfylYJIeFhOApmsqxS
 

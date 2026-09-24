@@ -6,7 +6,6 @@
 	import { Trash } from '@lucide/svelte';
 	import type { PageData } from './$types';
 	import {
-		RECURRING_DAYS,
 		DEFAULT_TIMES,
 		capitalize,
 		create_slots,
@@ -22,16 +21,17 @@
 
 	const events = data.events;
 	const refs = data.slots;
+	const recurring = data.recurring;
 
-	let slots = $state(create_slots(events));
+	let slots = $state(create_slots(events, recurring));
 
 	function day_grid(weekday: number): string[] {
-		const times = RECURRING_DAYS[weekday] ?? DEFAULT_TIMES;
+		const times = recurring[weekday] ?? DEFAULT_TIMES;
 		return get_timeslots(times.start, times.end);
 	}
 
 	function day_hours(weekday: number): string[] {
-		const times = RECURRING_DAYS[weekday] ?? DEFAULT_TIMES;
+		const times = recurring[weekday] ?? DEFAULT_TIMES;
 		return get_hour_labels(times.start, times.end);
 	}
 

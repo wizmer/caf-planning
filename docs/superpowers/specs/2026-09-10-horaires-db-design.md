@@ -32,10 +32,10 @@ model recurring_days {
 }
 ```
 
-Migration SQL : création + **seed des 7 jours** — lun(1)/mar(2)/ven(5)/sam(6)
-actifs avec les horaires actuels (18-22, 18-22, 18-22, 9-13) ;
-mer(3)/jeu(4)/dim(7) inactifs (18-22 par défaut). **Comportement de prod
-inchangé au déploiement.** Après application en local, `sql/init.sql` est
+Migration SQL : création + **seed des 7 jours** — lun(1)/mar(2)/mer(3)/ven(5)/sam(6)
+actifs avec les horaires actuels (18-22, 18-22, 20-22, 18-22, 9-13 — le
+mercredi devient récurrent 20-22 sur décision utilisateur) ;
+jeu(4)/dim(7) inactifs (18-22 par défaut). Après application en local, `sql/init.sql` est
 régénéré (`npm run db:pgdump:dev`) pour que les conteneurs neufs aient la table.
 
 ### 2. Config et `create_slots`

@@ -19,6 +19,13 @@ model referents {
   slots slots[]
 }
 
+model recurring_days {
+  weekday Int  @id
+  start   Int
+  end     Int
+  active  Boolean @default(true)
+}
+
 model slots {
   id        Int        @id @default(autoincrement())
   ref_id    Int?

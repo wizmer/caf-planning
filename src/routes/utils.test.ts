@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { DateTime } from 'luxon';
-import { create_slots, get_hour_labels, get_timeslots, RECURRING_DAYS } from './utils';
+import {
+	config_from_rows,
+	create_slots,
+	get_hour_labels,
+	get_timeslots,
+	RECURRING_DAYS
+} from './utils';
 
 describe('get_timeslots', () => {
 	it('génère la grille du samedi 9-13, bornes incluses, zéro-padée', () => {
@@ -47,15 +53,15 @@ describe('get_hour_labels', () => {
 describe('create_slots', () => {
 	const values = Object.values(create_slots({}));
 
-	it('inclut lun, mar, ven et sam (≥ 8 occurrences chacun sur 60 jours)', () => {
-		for (const weekday of [1, 2, 5, 6]) {
+	it('inclut lun, mar, mer, ven et sam (≥ 8 occurrences chacun sur 60 jours)', () => {
+		for (const weekday of [1, 2, 3, 5, 6]) {
 			const count = values.filter((slot) => slot.weekday === weekday).length;
 			expect(count).toBeGreaterThanOrEqual(8);
 		}
 	});
 
-	it('exclut mercredi, jeudi et dimanche', () => {
-		for (const weekday of [3, 4, 7]) {
+	it('exclut jeudi et dimanche', () => {
+		for (const weekday of [4, 7]) {
 			expect(values.some((slot) => slot.weekday === weekday)).toBe(false);
 		}
 	});
@@ -76,5 +82,39 @@ describe('create_slots', () => {
 		const slots = create_slots({ [dayStr]: [1, dayStr, 'new-slot'] });
 		expect(slots[dayStr]).toBeDefined();
 		expect(slots[dayStr].weekday).toBe(3);
+	});
+});
+
+describe('create_slots avec config custom', () => {
+	const config = {
+		1: { start: 14, end: 16, active: true },
+		6: { start: 9, end: 13, active: false }
+	};
+	const values = Object.values(create_slots({}, config));
+
+	it("n'inclut que les jours actifs de la config", () => {
+		expect(values.some((slot) => slot.weekday === 6)).toBe(false);
+		expect(values.every((slot) => slot.weekday === 1)).toBe(true);
+	});
+
+	it('traite un flag active manquant comme actif', () => {
+		const implicit = Object.values(create_slots({}, { 5: { start: 10, end: 12 } }));
+		expect(implicit.every((slot) => slot.weekday === 5)).toBe(true);
+		expect(implicit.length).toBeGreaterThanOrEqual(8);
+	});
+});
+
+describe('config_from_rows', () => {
+	it('normalise les lignes DB en config', () => {
+		const config = config_from_rows([
+			{ weekday: 3, start: 20, end: 22, active: true },
+			{ weekday: 4, start: 18, end: 22, active: false }
+		]);
+		expect(config[3]).toEqual({ start: 20, end: 22, active: true });
+		expect(config[4]).toEqual({ start: 18, end: 22, active: false });
+	});
+
+	it('retombe sur la config par défaut si la table est vide', () => {
+		expect(config_from_rows([])).toEqual(RECURRING_DAYS);
 	});
 });

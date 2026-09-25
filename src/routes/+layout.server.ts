@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
+import { config_from_rows } from './utils';
+
 const prisma = new PrismaClient();
 
 export async function load() {
@@ -56,10 +58,14 @@ export async function load() {
 			events.map((event) => [event.day, [event.id, event.day, event.type]])
 		);
 
+		// Get recurring days config (falls back to defaults if table is empty)
+		const recurring_rows = await prisma.recurring_days.findMany({ orderBy: { weekday: 'asc' } });
+
 		return {
 			slots,
 			events: events_groups,
-			referents: referents.map((ref) => [ref.id, ref.name])
+			referents: referents.map((ref) => [ref.id, ref.name]),
+			recurring: config_from_rows(recurring_rows)
 		};
 	} catch (error) {
 		console.error('Error loading data:', error);
@@ -67,7 +73,8 @@ export async function load() {
 		return {
 			slots: {},
 			events: {},
-			referents: []
+			referents: [],
+			recurring: config_from_rows([])
 		};
 	}
 }

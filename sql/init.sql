@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict nONNf3aNOsufeMhy47RKhuTkbzWm7qFqy8oKlclkpuDNkQfylYJIeFhOApmsqxS
+\restrict ErQW1tQMg1ue1yxeMlevR8eTk84i0zReX72FOtIFnRQ97oRm86WqtaPMjBxJcp3
 
 -- Dumped from database version 17.11 (Debian 17.11-1.pgdg13+2)
 -- Dumped by pg_dump version 17.11 (Debian 17.11-1.pgdg13+2)
@@ -526,8 +526,8 @@ COPY public.recurring_days (weekday, start, "end", active) FROM stdin;
 3	20	22	t
 4	18	22	f
 5	18	22	t
-6	9	13	t
 7	18	22	f
+6	9	13	f
 \.
 
 
@@ -574,6 +574,9 @@ COPY public.referents (id, name) FROM stdin;
 --
 
 COPY public.slots (id, ref_id, day, start_at, end_at) FROM stdin;
+1	0	2026-09-25	18:00:00	20:00:00
+2	2	2026-09-26	09:00:00	13:00:00
+3	2	2026-09-30	20:00:00	22:00:00
 \.
 
 
@@ -630,7 +633,7 @@ SELECT pg_catalog.setval('public.referents_id_seq', 1, false);
 -- Name: slots_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bcoste
 --
 
-SELECT pg_catalog.setval('public.slots_id_seq', 1, false);
+SELECT pg_catalog.setval('public.slots_id_seq', 3, true);
 
 
 --
@@ -793,5 +796,5 @@ REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict nONNf3aNOsufeMhy47RKhuTkbzWm7qFqy8oKlclkpuDNkQfylYJIeFhOApmsqxS
+\unrestrict ErQW1tQMg1ue1yxeMlevR8eTk84i0zReX72FOtIFnRQ97oRm86WqtaPMjBxJcp3
 

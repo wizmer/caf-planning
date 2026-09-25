@@ -8,12 +8,12 @@ CREATE TABLE "recurring_days" (
     CONSTRAINT "recurring_days_pkey" PRIMARY KEY ("weekday")
 );
 
--- Seed: lun/mar/mer/ven/sam actifs avec les horaires actuels, jeu/dim inactifs
+-- Seed: lun/mar/mer/ven actifs avec les horaires actuels, sam/jeu/dim inactifs
 INSERT INTO "recurring_days" ("weekday", "start", "end", "active") VALUES
     (1, 18, 22, true),
     (2, 18, 22, true),
     (3, 20, 22, true),
     (4, 18, 22, false),
     (5, 18, 22, true),
-    (6, 9, 13, true),
+    (6, 9, 13, false),
     (7, 18, 22, false);

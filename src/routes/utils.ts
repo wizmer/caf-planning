@@ -8,23 +8,13 @@ export interface Times {
 
 export type RecurringConfig = Record<number, Times>;
 
-export const RECURRING_DAYS: RecurringConfig = {
-	1: { start: 18, end: 22, active: true },
-	2: { start: 18, end: 22, active: true },
-	3: { start: 20, end: 22, active: true },
-	4: { start: 18, end: 22, active: false },
-	5: { start: 18, end: 22, active: true },
-	6: { start: 9, end: 13, active: true },
-	7: { start: 18, end: 22, active: false }
-};
-
 export const DEFAULT_TIMES: Times = { start: 18, end: 22 };
 
 export function config_from_rows(rows): RecurringConfig {
-	if (!rows || rows.length === 0) {
-		return RECURRING_DAYS;
-	}
 	const config: RecurringConfig = {};
+	if (!rows) {
+		return config;
+	}
 	for (const row of rows) {
 		config[row.weekday] = { start: row.start, end: row.end, active: row.active };
 	}
@@ -49,7 +39,7 @@ export function get_hour_labels(start: number, end: number): string[] {
 	return labels;
 }
 
-export function create_slots(events, config: RecurringConfig = RECURRING_DAYS) {
+export function create_slots(events, config: RecurringConfig) {
 	const slots = {};
 
 	const newSlotEvents = Object.fromEntries(

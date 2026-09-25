@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { DateTime } from 'luxon';
+import { describe, expect, it } from 'vitest';
+import { DateTime } from 'luxon';
 import {
 	config_from_rows,
 	create_slots,
 	get_hour_labels,
 	get_timeslots,
-	RECURRING_DAYS
+	type RecurringConfig
 } from './utils';
 
 describe('get_timeslots', () => {
@@ -51,24 +53,33 @@ describe('get_hour_labels', () => {
 });
 
 describe('create_slots', () => {
-	const values = Object.values(create_slots({}));
+	const WEEK: RecurringConfig = {
+		1: { start: 18, end: 22, active: true },
+		2: { start: 18, end: 22, active: true },
+		3: { start: 20, end: 22, active: true },
+		4: { start: 18, end: 22, active: false },
+		5: { start: 18, end: 22, active: true },
+		6: { start: 9, end: 13, active: false },
+		7: { start: 18, end: 22, active: false }
+	};
+	const values = Object.values(create_slots({}, WEEK));
 
-	it('inclut lun, mar, mer, ven et sam (≥ 8 occurrences chacun sur 60 jours)', () => {
-		for (const weekday of [1, 2, 3, 5, 6]) {
+	it('inclut lun, mar, mer et ven (≥ 8 occurrences chacun sur 60 jours)', () => {
+		for (const weekday of [1, 2, 3, 5]) {
 			const count = values.filter((slot) => slot.weekday === weekday).length;
 			expect(count).toBeGreaterThanOrEqual(8);
 		}
 	});
 
-	it('exclut jeudi et dimanche', () => {
-		for (const weekday of [4, 7]) {
+	it('exclut jeudi, samedi et dimanche', () => {
+		for (const weekday of [4, 6, 7]) {
 			expect(values.some((slot) => slot.weekday === weekday)).toBe(false);
 		}
 	});
 
-	it('expose une weekday couverte par RECURRING_DAYS', () => {
+	it('expose une weekday couverte par la config', () => {
 		for (const slot of values) {
-			expect(RECURRING_DAYS[slot.weekday]).toBeDefined();
+			expect(WEEK[slot.weekday]).toBeDefined();
 		}
 	});
 
@@ -79,7 +90,7 @@ describe('create_slots', () => {
 			.plus({ days: 5 });
 		while (target.weekday !== 3) target = target.plus({ days: 1 });
 		const dayStr = target.toISO().slice(0, 10);
-		const slots = create_slots({ [dayStr]: [1, dayStr, 'new-slot'] });
+		const slots = create_slots({ [dayStr]: [1, dayStr, 'new-slot'] }, WEEK);
 		expect(slots[dayStr]).toBeDefined();
 		expect(slots[dayStr].weekday).toBe(3);
 	});
@@ -114,7 +125,7 @@ describe('config_from_rows', () => {
 		expect(config[4]).toEqual({ start: 18, end: 22, active: false });
 	});
 
-	it('retombe sur la config par défaut si la table est vide', () => {
-		expect(config_from_rows([])).toEqual(RECURRING_DAYS);
+	it('retourne une config vide si la table est vide', () => {
+		expect(config_from_rows([])).toEqual({});
 	});
 });

@@ -14,7 +14,7 @@
 	} from '@skeletonlabs/skeleton-svelte';
 	import { DateTime } from 'luxon';
 	import type { PageData } from '../$types';
-	import { create_slots } from '../utils';
+	import { capitalize, create_slots, DEFAULT_TIMES } from '../utils';
 	interface Props {
 		data: PageData;
 	}
@@ -29,7 +29,7 @@
 
 	let dialogOpen = $state(false);
 
-	const slots = create_slots({});
+	const slots = create_slots({}, data.recurring);
 	let events = $state(data.events);
 	let type = $state('cancelled');
 	let date = $state(Object.values(slots)[0].day);
@@ -38,6 +38,42 @@
 	const toastStore = createToaster();
 
 	let referents = $state(data.referents);
+
+	const weekdays = [1, 2, 3, 4, 5, 6, 7];
+	const day_names = {
+		1: 'lundi',
+		2: 'mardi',
+		3: 'mercredi',
+		4: 'jeudi',
+		5: 'vendredi',
+		6: 'samedi',
+		7: 'dimanche'
+	};
+	const start_hours = Array.from({ length: 24 }, (_, i) => i);
+	const end_hours = Array.from({ length: 24 }, (_, i) => i + 1);
+
+	let recurring = $state(structuredClone(data.recurring));
+	let save_error = $state(false);
+
+	async function save_recurring() {
+		const rows = weekdays.map((weekday) => ({
+			weekday,
+			start: recurring[weekday].start,
+			end: recurring[weekday].end,
+			active: recurring[weekday].active === true
+		}));
+		const response = await fetch(`${base}/api/recurring`, {
+			method: 'POST',
+			body: JSON.stringify(rows),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+		save_error = !response.ok;
+		if (response.ok) {
+			invalidateAll();
+		}
+	}
 	function enter_admin() {
 		if (password == 'AdminSallaz') {
 			goto('/admin');
@@ -226,6 +262,45 @@
 					</Dialog.Positioner>
 				</Portal>
 			</Dialog>
+		</div>
+
+		<div class="card flex flex-col m-4 p-4 gap-4">
+			<h2 class="h2">Horaires récurrents</h2>
+
+			{#each weekdays as weekday (weekday)}
+				{@const times = recurring[weekday] ?? DEFAULT_TIMES}
+				<div class="flex flex-row flex-wrap items-center gap-4">
+					<label class="w-28 text-left" for="active-{weekday}">
+						{capitalize(day_names[weekday])}
+					</label>
+					<input
+						id="active-{weekday}"
+						type="checkbox"
+						class="checkbox"
+						bind:checked={times.active}
+					/>
+					<select class="select w-fit" bind:value={times.start} disabled={!times.active}>
+						{#each start_hours as h (h)}
+							<option value={h}>{String(h).padStart(2, '0')}:00</option>
+						{/each}
+					</select>
+					<span>→</span>
+					<select class="select w-fit" bind:value={times.end} disabled={!times.active}>
+						{#each end_hours as h (h)}
+							{#if times.start < h}
+								<option value={h}>{String(h).padStart(2, '0')}:00</option>
+							{/if}
+						{/each}
+					</select>
+				</div>
+			{/each}
+
+			<div class="flex flex-row items-center gap-4">
+				<button class="btn bg-primary-500 w-fit" onclick={save_recurring}>Enregistrer</button>
+				{#if save_error}
+					<span class="text-error-500">Erreur lors de l'enregistrement</span>
+				{/if}
+			</div>
 		</div>
 	</div>
 {/if}
